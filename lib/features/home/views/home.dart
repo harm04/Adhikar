@@ -1,3 +1,5 @@
+import 'package:adhikar/features/posts/views/create_post.dart';
+import 'package:adhikar/features/posts/widgets/posts_list.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -110,7 +112,16 @@ class _HomePageState extends State<HomePage>
         //flotting action button
         floatingActionButton: FloatingActionButton(
           backgroundColor: Pallete.primaryColor,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return CreatePostScreen();
+                },
+              ),
+            );
+          },
           child: SvgPicture.asset(
             'assets/svg/pencil.svg',
             height: 30,
@@ -189,7 +200,7 @@ class _HomePageState extends State<HomePage>
           body: const TabBarView(
             children: [
               // Replace with content widgets
-              ListTabContent(title: "Law"),
+              PostList(),
               ListTabContent(title: "Rights"),
               ListTabContent(title: "Awareness"),
             ],
