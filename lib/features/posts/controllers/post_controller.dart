@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:adhikar/apis/posts_api.dart';
@@ -13,38 +12,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //provider
-final postControllerProvider =
-    StateNotifierProvider<PostController, bool>((ref) {
+final postControllerProvider = StateNotifierProvider<PostController, bool>((
+  ref,
+) {
   return PostController(
-      ref: ref,
-      postAPI: ref.watch(postAPIProvider),
-      storageApi: ref.watch(storageAPIProvider));
+    ref: ref,
+    postAPI: ref.watch(postAPIProvider),
+    storageApi: ref.watch(storageAPIProvider),
+  );
 });
 
-final getPostProvider = FutureProvider((ref) async {
+final getPostProvider = FutureProvider.autoDispose((ref) async {
   final postController = ref.watch(postControllerProvider.notifier);
   return postController.getPost();
 });
-final getCommentsProvider =
-    FutureProvider.family((ref, PostModel postModel) async {
+final getCommentsProvider = FutureProvider.family((
+  ref,
+  PostModel postModel,
+) async {
   final commentsController = ref.watch(postControllerProvider.notifier);
   return commentsController.getComments(postModel);
 });
 
-final getUsersPostProvider =
-    FutureProvider.family((ref, UserModel userModel) async {
+final getUsersPostProvider = FutureProvider.family((
+  ref,
+  UserModel userModel,
+) async {
   final postController = ref.watch(postControllerProvider.notifier);
   return postController.getUsersPost(userModel);
 });
 
-final getPodsPostProvider =
-    FutureProvider.family((ref, String podName) async {
+final getPodsPostProvider = FutureProvider.family((ref, String podName) async {
   final postController = ref.watch(postControllerProvider.notifier);
   return postController.getPodsPost(podName);
 });
 
-final getLatestPostProvider = StreamProvider((ref) {
+final getLatestPostProvider = StreamProvider.autoDispose((ref) {
+  ref.keepAlive();
   final postAPI = ref.watch(postAPIProvider);
+
   return postAPI.getLatestPosts();
 });
 
@@ -52,23 +58,24 @@ class PostController extends StateNotifier<bool> {
   final Ref _ref;
   final PostAPI _postAPI;
   final StorageApi _storageApi;
-  PostController(
-      {required Ref ref,
-      required PostAPI postAPI,
-      required StorageApi storageApi})
-      : _ref = ref,
-        _postAPI = postAPI,
-        _storageApi = storageApi,
-        super(false);
+  PostController({
+    required Ref ref,
+    required PostAPI postAPI,
+    required StorageApi storageApi,
+  }) : _ref = ref,
+       _postAPI = postAPI,
+       _storageApi = storageApi,
+       super(false);
 
-//sharing post main function
-  void sharePost(
-      {required String text,
-      required bool isAnonymous,
-      required String pod,
-      required List<File> images,
-      required String commentedTo,
-      required BuildContext context}) {
+  //sharing post main function
+  void sharePost({
+    required String text,
+    required bool isAnonymous,
+    required String pod,
+    required List<File> images,
+    required String commentedTo,
+    required BuildContext context,
+  }) {
     if (text.isEmpty) {
       showSnackbar(context, 'Please write something');
       return;
@@ -76,30 +83,33 @@ class PostController extends StateNotifier<bool> {
 
     if (images.isNotEmpty) {
       _shareImagePost(
-          text: text,
-          images: images,
-          commentedTo: commentedTo,
-          context: context,
-          isAnonymous: isAnonymous,
-          pod: pod);
+        text: text,
+        images: images,
+        commentedTo: commentedTo,
+        context: context,
+        isAnonymous: isAnonymous,
+        pod: pod,
+      );
     } else {
       _shareTextPost(
-          text: text,
-          context: context,
-          isAnonymous: isAnonymous,
-          pod: pod,
-          commentedTo: commentedTo);
+        text: text,
+        context: context,
+        isAnonymous: isAnonymous,
+        pod: pod,
+        commentedTo: commentedTo,
+      );
     }
   }
 
-//sharing image post
-  void _shareImagePost(
-      {required String text,
-      required List<File> images,
-      required String commentedTo,
-      required bool isAnonymous,
-      required String pod,
-      required BuildContext context}) async {
+  //sharing image post
+  void _shareImagePost({
+    required String text,
+    required List<File> images,
+    required String commentedTo,
+    required bool isAnonymous,
+    required String pod,
+    required BuildContext context,
+  }) async {
     state = true;
     String link = _linkInTheText(text);
     final hashtags = _hashtagInText(text);
@@ -123,11 +133,13 @@ class PostController extends StateNotifier<bool> {
     final res = await _postAPI.sharePost(postModel);
     state = false;
     Navigator.pop(context);
-    res.fold((l) => showSnackbar(context, l.message),
-        (r) => showSnackbar(context, 'Post uploaded successfully'));
+    res.fold(
+      (l) => showSnackbar(context, l.message),
+      (r) => showSnackbar(context, 'Post uploaded successfully'),
+    );
   }
 
-//sharing text post
+  //sharing text post
   void _shareTextPost({
     required String text,
     required String commentedTo,
@@ -141,27 +153,30 @@ class PostController extends StateNotifier<bool> {
     final user = _ref.watch(currentUserDataProvider).value!;
 
     PostModel postModel = PostModel(
-        text: text,
-        link: link,
-        hashtags: hashtags,
-        uid: user.uid,
-        id: '',
-        pod: pod,
-        isAnonymous: isAnonymous,
-        createdAt: DateTime.now(),
-        images: [],
-        likes: [],
-        commentIds: [],
-        type: PostType.text,
-        commentedTo: commentedTo);
+      text: text,
+      link: link,
+      hashtags: hashtags,
+      uid: user.uid,
+      id: '',
+      pod: pod,
+      isAnonymous: isAnonymous,
+      createdAt: DateTime.now(),
+      images: [],
+      likes: [],
+      commentIds: [],
+      type: PostType.text,
+      commentedTo: commentedTo,
+    );
     final res = await _postAPI.sharePost(postModel);
     state = false;
     Navigator.pop(context);
-    res.fold((l) => showSnackbar(context, l.message),
-        (r) => showSnackbar(context, 'Post uploaded successfully'));
+    res.fold(
+      (l) => showSnackbar(context, l.message),
+      (r) => showSnackbar(context, 'Post uploaded successfully'),
+    );
   }
 
-//identifying link in the text
+  //identifying link in the text
   String _linkInTheText(String text) {
     String link = '';
     final List<String> wordsInSentence = text.split(' ');
@@ -175,7 +190,7 @@ class PostController extends StateNotifier<bool> {
     return link;
   }
 
-//identifying hashtag in the text
+  //identifying hashtag in the text
   List<String> _hashtagInText(String text) {
     List<String> hashtags = [];
     final List<String> wordsInSentence = text.split(' ');
@@ -197,12 +212,12 @@ class PostController extends StateNotifier<bool> {
     return commentsList.map((post) => PostModel.fromMap(post.data)).toList();
   }
 
-Future<List<PostModel>> getUsersPost( UserModel userModel) async {
+  Future<List<PostModel>> getUsersPost(UserModel userModel) async {
     final postList = await _postAPI.getUsersPost(userModel);
     return postList.map((post) => PostModel.fromMap(post.data)).toList();
   }
 
-Future<List<PostModel>> getPodsPost(String podName) async {
+  Future<List<PostModel>> getPodsPost(String podName) async {
     final postList = await _postAPI.getPodsPost(podName);
     return postList.map((post) => PostModel.fromMap(post.data)).toList();
   }
@@ -218,6 +233,4 @@ Future<List<PostModel>> getPodsPost(String podName) async {
     postModel = postModel.copyWith(likes: likes);
     await _postAPI.likePost(postModel);
   }
-
-  
 }

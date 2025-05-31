@@ -1,14 +1,16 @@
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/posts/widgets/carousel.dart';
-import 'package:adhikar/features/posts/widgets/hashtags.dart';
+import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
 import 'package:adhikar/models/posts_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:like_button/like_button.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class PostCard extends ConsumerWidget {
@@ -17,6 +19,11 @@ class PostCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = ref.watch(currentUserDataProvider).value;
+     if (currentUser == null) {
+    // You can show a loader, placeholder, or SizedBox.shrink()
+    return const SizedBox.shrink();
+  }
     String getPod(String text) {
       Map<String, String> podImageMap = {
         'General': 'assets/icons/ic_general.png',
@@ -121,12 +128,26 @@ class PostCard extends ConsumerWidget {
                     ],
                   ),
                   SizedBox(height: 10),
-                  HashTags(text: postmodel.text),
+
+                  //text content
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      return SizedBox(
+                        width: double.infinity,
+                        child: ExpandableHashtags(text: postmodel.text),
+                      );
+                    },
+                  ),
+
                   SizedBox(height: 5),
+                  //image
                   if (postmodel.type == PostType.image)
                     postmodel.images.length <= 4
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 8.0,bottom: 10),
+                            padding: const EdgeInsets.only(
+                              top: 8.0,
+                              bottom: 10,
+                            ),
                             child: GridView.builder(
                               padding: const EdgeInsets.only(top: 10),
                               shrinkWrap: true,
@@ -203,13 +224,34 @@ class PostCard extends ConsumerWidget {
                             height: 28,
                           ),
                           SizedBox(width: 20),
-                          SvgPicture.asset(
-                            'assets/svg/like_outline.svg',
-                            colorFilter: ColorFilter.mode(
-                              Pallete.greyColor,
-                              BlendMode.srcIn,
-                            ),
-                            height: 32,
+                          LikeButton(
+                            size: 26,
+                            isLiked: postmodel.likes.contains(currentUser!.uid),
+                            onTap: (isLiked) async {
+                              ref
+                                  .read(postControllerProvider.notifier)
+                                  .likePost(postmodel, currentUser);
+                              return !isLiked;
+                            },
+                            likeBuilder: (isLiked) {
+                              return isLiked
+                                  ? SvgPicture.asset(
+                                      'assets/svg/like_filled.svg',
+                                      colorFilter: ColorFilter.mode(
+                                        Pallete.secondaryColor,
+                                        BlendMode.srcIn,
+                                      ),
+                                      height: 32,
+                                    )
+                                  : SvgPicture.asset(
+                                      'assets/svg/like_outline.svg',
+                                      colorFilter: ColorFilter.mode(
+                                        Pallete.greyColor,
+                                        BlendMode.srcIn,
+                                      ),
+                                      height: 32,
+                                    );
+                            },
                           ),
                           SizedBox(width: 20),
                           SvgPicture.asset(
