@@ -1,19 +1,24 @@
+import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/posts/views/create_post.dart';
 import 'package:adhikar/features/posts/widgets/posts_list.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
+class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  void signout() {
+    ref.read(authControllerProvider.notifier).signout(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +103,13 @@ class _HomePageState extends State<HomePage>
                       child: Column(
                         children: [
                           drawerItems('Settings', 'assets/svg/settings.svg'),
-                          drawerItems('Logout', 'assets/svg/logout.svg'),
+                          GestureDetector(
+                            onTap: ()=> signout(),
+                            child: drawerItems(
+                              'Logout',
+                              'assets/svg/logout.svg',
+                            ),
+                          ),
                         ],
                       ),
                     ),

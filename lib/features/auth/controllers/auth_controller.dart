@@ -19,9 +19,10 @@ final authControllerProvider = StateNotifierProvider<AuthController, bool>((
 });
 
 final currentUserDataProvider = FutureProvider((ref) async {
-  final currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
-  final userData = ref.watch(userDataProvider(currentUserId));
-  return userData.value;
+  final currentUserId = ref.watch(currentUserAccountProvider).value?.$id;
+  if (currentUserId == null) return null;
+  final userData = await ref.watch(userDataProvider(currentUserId).future);
+  return userData;
 });
 
 final userDataProvider = FutureProvider.family((ref, String uid) async {
@@ -84,14 +85,17 @@ class AuthController extends StateNotifier<bool> {
       );
 
       final res2 = await _userAPI.saveUserData(userModel);
-      res2.fold((l) => showSnackbar(context, l.message), (r) {
-        null;
-      });
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => SignInScreen()),
+      res2.fold(
+        (l) => showSnackbar(context, l.message),
+        (r) {
+          // Only navigate after user data is saved
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SignInScreen()),
+          );
+          showSnackbar(context, 'Welcome ${userModel.email}. Please login to continue');
+        },
       );
-      showSnackbar(context, 'Welcome ${r.email}. Please login to continue');
     });
   }
 
@@ -115,20 +119,24 @@ class AuthController extends StateNotifier<bool> {
   Future<models.User?> currentUser() => _authAPI.currentUserAccount();
 
   void signout(BuildContext context) async {
-    state = true;
-    await _authAPI.signout();
-
-    state = false;
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return SignInScreen();
-        },
-      ),
-      (Route) => false,
-    );
-  }
+  state = true;
+  final res = await _authAPI.signout();
+  state = false;
+  res.fold(
+    (l) => showSnackbar(context, l.message), // Show error if signout fails
+    (r) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return SignInScreen();
+          },
+        ),
+        (Route) => false,
+      );
+    },
+  );
+}
 
   Future<UserModel> getUserData(String uid) async {
     final document = await _userAPI.getUserData(uid);

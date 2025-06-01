@@ -14,6 +14,7 @@ class CustomTextfield extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+       textCapitalization: TextCapitalization.sentences,
       controller: controller,
       keyboardType: keyboardType,
         obscureText: obsecureText,

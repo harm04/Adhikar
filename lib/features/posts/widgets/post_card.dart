@@ -3,6 +3,7 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/posts/widgets/carousel.dart';
+import 'package:adhikar/features/posts/widgets/comment.dart';
 import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
 import 'package:adhikar/models/posts_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
@@ -20,10 +21,10 @@ class PostCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(currentUserDataProvider).value;
-     if (currentUser == null) {
-    // You can show a loader, placeholder, or SizedBox.shrink()
-    return const SizedBox.shrink();
-  }
+    if (currentUser == null) {
+      // You can show a loader, placeholder, or SizedBox.shrink()
+      return const SizedBox.shrink();
+    }
     String getPod(String text) {
       Map<String, String> podImageMap = {
         'General': 'assets/icons/ic_general.png',
@@ -64,6 +65,7 @@ class PostCard extends ConsumerWidget {
                     children: [
                       CircleAvatar(
                         radius: 28,
+                        backgroundColor: Pallete.whiteColor,
                         backgroundImage: postmodel.isAnonymous
                             ? AssetImage('assets/icons/anonymous.png')
                             : user.profileImage == ''
@@ -119,6 +121,7 @@ class PostCard extends ConsumerWidget {
                       ),
                       SizedBox(width: 18),
 
+                      //pod
                       CircleAvatar(
                         radius: 20,
                         backgroundColor: Pallete.secondaryColor,
@@ -134,7 +137,18 @@ class PostCard extends ConsumerWidget {
                     builder: (context, constraints) {
                       return SizedBox(
                         width: double.infinity,
-                        child: ExpandableHashtags(text: postmodel.text),
+                        child: GestureDetector(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Comment(
+                                postModel: postmodel,
+                                podImage: getPod(postmodel.pod),
+                              ),
+                            ),
+                          ),
+                          child: ExpandableHashtags(text: postmodel.text),
+                        ),
                       );
                     },
                   ),
@@ -195,13 +209,38 @@ class PostCard extends ConsumerWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            '${postmodel.commentIds.length.toString()} replies',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Pallete.secondaryColor,
-                            ),
+                          Consumer(
+                            builder: (context, ref, _) {
+                              final postStream = ref.watch(
+                                postStreamProvider(postmodel.id),
+                              );
+                              return postStream.when(
+                                data: (livePost) => Text(
+                                  '${livePost.commentIds.length} replies',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Pallete.secondaryColor,
+                                  ),
+                                ),
+                                loading: () => Text(
+                                  '${postmodel.commentIds.length} replies',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Pallete.secondaryColor,
+                                  ),
+                                ),
+                                error: (e, st) => Text(
+                                  '${postmodel.commentIds.length} replies',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Pallete.secondaryColor,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                           Text(
                             '. ${postmodel.likes.length} likes',
@@ -215,18 +254,40 @@ class PostCard extends ConsumerWidget {
                       ),
                       Row(
                         children: [
-                          SvgPicture.asset(
-                            'assets/svg/bookmark_outline.svg',
-                            colorFilter: ColorFilter.mode(
-                              Pallete.greyColor,
-                              BlendMode.srcIn,
-                            ),
-                            height: 28,
+                          LikeButton(
+                            isLiked: ref.watch(currentUserDataProvider).value?.bookmarked.contains(postmodel.id) ?? false,
+                            size: 32,
+                            onTap: (isLiked) async {
+                               ref.read(postControllerProvider.notifier).bookmarkPost(
+                                postmodel,
+                                ref.read(currentUserDataProvider).value!,
+                              );
+                              ref.invalidate(currentUserDataProvider);
+                              return !isLiked;
+                            },
+                            likeBuilder: (isLiked) {
+                              return isLiked
+                                  ? SvgPicture.asset(
+                                      'assets/svg/bookmark_filled.svg',
+                                      colorFilter: ColorFilter.mode(
+                                        Pallete.secondaryColor,
+                                        BlendMode.srcIn,
+                                      ),
+                                    )
+                                  : SvgPicture.asset(
+                                      'assets/svg/bookmark_outline.svg',
+                                      colorFilter: ColorFilter.mode(
+                                        Pallete.greyColor,
+                                        BlendMode.srcIn,
+                                      ),
+                                    );
+                            },
                           ),
+
                           SizedBox(width: 20),
                           LikeButton(
-                            size: 26,
-                            isLiked: postmodel.likes.contains(currentUser!.uid),
+                            isLiked: postmodel.likes.contains(currentUser.uid),
+                            size: 32,
                             onTap: (isLiked) async {
                               ref
                                   .read(postControllerProvider.notifier)
@@ -241,7 +302,6 @@ class PostCard extends ConsumerWidget {
                                         Pallete.secondaryColor,
                                         BlendMode.srcIn,
                                       ),
-                                      height: 32,
                                     )
                                   : SvgPicture.asset(
                                       'assets/svg/like_outline.svg',
@@ -249,7 +309,6 @@ class PostCard extends ConsumerWidget {
                                         Pallete.greyColor,
                                         BlendMode.srcIn,
                                       ),
-                                      height: 32,
                                     );
                             },
                           ),

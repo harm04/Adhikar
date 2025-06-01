@@ -53,6 +53,11 @@ final getLatestPostProvider = StreamProvider.autoDispose((ref) {
 
   return postAPI.getLatestPosts();
 });
+final postStreamProvider = StreamProvider.family.autoDispose<PostModel, String>((ref, postId) {
+  final postAPI = ref.watch(postAPIProvider);
+  // Listen to realtime updates for this post
+  return postAPI.getPostStream(postId);
+});
 
 class PostController extends StateNotifier<bool> {
   final Ref _ref;
@@ -176,6 +181,56 @@ class PostController extends StateNotifier<bool> {
     );
   }
 
+  Future shareComment({
+    required String text,
+    required String commentedTo,
+    required BuildContext context,
+    required bool isAnonymous,
+    required String pod,
+  }) async {
+    state = true;
+    String link = _linkInTheText(text);
+    final hashtags = _hashtagInText(text);
+    final user = _ref.watch(currentUserDataProvider).value!;
+
+    PostModel postModel = PostModel(
+      text: text,
+      link: link,
+      hashtags: hashtags,
+      uid: user.uid,
+      id: '',
+      pod: pod,
+      isAnonymous: isAnonymous,
+      createdAt: DateTime.now(),
+      images: [],
+      likes: [],
+      commentIds: [],
+      type: PostType.text,
+      commentedTo: commentedTo,
+    );
+    final res = await _postAPI.sharePost(postModel);
+    res.fold((l) => showSnackbar(context, l.message), (r) async {
+      // Fetch parent post to get current commentIds
+      final parentPosts = await _postAPI.getPosts();
+      final parentPostDoc = parentPosts.firstWhere(
+        (doc) => doc.$id == commentedTo,
+      );
+      final parentPost = PostModel.fromMap(parentPostDoc.data);
+      final updatedCommentIds = List<String>.from(parentPost.commentIds)
+        ..add(r.$id);
+      final res2 = await _postAPI.addCommentIdToPost(
+        commentedTo,
+        updatedCommentIds,
+      );
+      state = false;
+      Navigator.pop(context);
+      res2.fold(
+        (l) => showSnackbar(context, l.message),
+        (r) => showSnackbar(context, 'Post uploaded successfully'),
+      );
+        });
+  }
+
   //identifying link in the text
   String _linkInTheText(String text) {
     String link = '';
@@ -204,7 +259,10 @@ class PostController extends StateNotifier<bool> {
 
   Future<List<PostModel>> getPost() async {
     final postsList = await _postAPI.getPosts();
-    return postsList.map((post) => PostModel.fromMap(post.data)).toList();
+    return postsList
+        .map((post) => PostModel.fromMap(post.data))
+        .where((post) => post.pod != 'comment')
+        .toList();
   }
 
   Future<List<PostModel>> getComments(PostModel postModel) async {
@@ -233,4 +291,20 @@ class PostController extends StateNotifier<bool> {
     postModel = postModel.copyWith(likes: likes);
     await _postAPI.likePost(postModel);
   }
+  
+
+  //bookmark post
+
+  void bookmarkPost(PostModel postModel, UserModel userModel) async {
+    List<String> bookmarks = userModel.bookmarked;
+    if (bookmarks.contains(postModel.id)) {
+      bookmarks.remove(postModel.id);
+    } else {
+      bookmarks.add(postModel.id);
+    }
+    userModel = userModel.copyWith(bookmarked: bookmarks);
+    await _postAPI.bookmarkPost(userModel);
+  }
+
+  
 }

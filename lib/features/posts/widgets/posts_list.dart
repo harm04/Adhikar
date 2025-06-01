@@ -33,7 +33,9 @@ class PostList extends ConsumerWidget {
                         itemBuilder: (BuildContext context, int index) {
                           final post = posts[index];
 
-                          return PostCard(postmodel: post);
+                          return post.pod == 'comment'
+                              ? SizedBox()
+                              : PostCard(postmodel: post);
                         },
                       );
                     },
