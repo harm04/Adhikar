@@ -1,4 +1,5 @@
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/views/create_post.dart';
 import 'package:adhikar/features/posts/widgets/posts_list.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
@@ -88,7 +89,17 @@ class _HomePageState extends ConsumerState<HomePage>
 
                         Divider(color: Pallete.primaryColor),
                         //drawer Items
-                        drawerItems('Pods', 'assets/svg/pods.svg'),
+                        GestureDetector(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const PodsListView();
+                              },
+                            ),
+                          ),
+                          child: drawerItems('Pods', 'assets/svg/pods.svg'),
+                        ),
                         drawerItems(
                           'Apply for Lawyer',
                           'assets/svg/apply_for_lawyer.svg',
@@ -104,7 +115,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         children: [
                           drawerItems('Settings', 'assets/svg/settings.svg'),
                           GestureDetector(
-                            onTap: ()=> signout(),
+                            onTap: () => signout(),
                             child: drawerItems(
                               'Logout',
                               'assets/svg/logout.svg',

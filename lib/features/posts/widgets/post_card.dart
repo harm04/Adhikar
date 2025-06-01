@@ -3,7 +3,7 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/posts/widgets/carousel.dart';
-import 'package:adhikar/features/posts/widgets/comment.dart';
+import 'package:adhikar/features/posts/views/comment.dart';
 import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
 import 'package:adhikar/models/posts_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
