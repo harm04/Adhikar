@@ -26,7 +26,7 @@ class PodsCard extends StatelessWidget {
           );
         })),
         child: Card(
-          color: const Color.fromARGB(255, 20, 20, 40),
+          color: Pallete.cardColor,
           child: Container(
             height: 100,
             child: Row(

@@ -57,6 +57,7 @@ class AuthController extends StateNotifier<bool> {
       UserModel userModel = UserModel(
         firstName: firstName,
         lastName: lastName,
+        phone: '',
         email: email,
         credits: 50.0,
         meetings: [],

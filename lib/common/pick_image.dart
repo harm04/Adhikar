@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 Future<List<File>> pickImages() async {
   List<File> images = [];
   final ImagePicker picker = ImagePicker();
-  final imageFiles = await picker.pickMultiImage();
+  final imageFiles = await  picker.pickMultiImage();
   if (imageFiles.isNotEmpty) {
     for (final image in imageFiles) {
       images.add(File(image.path));

@@ -10,6 +10,7 @@ class UserModel {
   final List<String> meetings;
   final double credits;
   final String bio;
+  final String phone;
   final String createdAt;
   final String summary;
   final List<String> following;
@@ -40,6 +41,7 @@ class UserModel {
     required this.bio,
     required this.createdAt,
     required this.summary,
+    required this.phone,
     required this.following,
     required this.followers,
     required this.bookmarked,
@@ -63,6 +65,7 @@ class UserModel {
     String? firstName,
     String? lastName,
     String? email,
+    String? phone,
     String? password,
     String? profileImage,
     String? bio,
@@ -117,6 +120,7 @@ class UserModel {
       eduDegree: eduDegree ?? this.eduDegree,
       eduUniversity: eduUniversity ?? this.eduUniversity,
       userType: userType ?? this.userType,
+      phone: phone ?? this.phone,
     );
   }
 
@@ -133,6 +137,7 @@ class UserModel {
       'following': following,
       'followers': followers,
       'bookmarked': bookmarked,
+      'phone': phone,
       'meetings': meetings,
       'credits': credits,
       'isVerified': isVerified,
@@ -156,6 +161,7 @@ class UserModel {
       firstName: map['firstName'] as String,
       lastName: map['lastName'] as String,
       email: map['email'] as String,
+      phone: map['phone'] as String? ?? '',
       password: map['password'] as String,
       profileImage: map['profileImage'] as String,
       bio: map['bio'] as String,
@@ -195,7 +201,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(firstName: $firstName, lastName: $lastName, email: $email, password: $password, profileImage: $profileImage, bio: $bio, createdAt: $createdAt, summary: $summary, following: $following, followers: $followers, bookmarked: $bookmarked, isVerified: $isVerified, uid: $uid, location: $location, linkedin: $linkedin, twitter: $twitter, instagram: $instagram, facebook: $facebook, experienceTitle: $experienceTitle, experienceSummary: $experienceSummary, experienceOrganization: $experienceOrganization, eduStream: $eduStream, eduDegree: $eduDegree, eduUniversity: $eduUniversity, userType: $userType, credits: $credits, meetings: $meetings)';
+    return 'UserModel(firstName: $firstName,phone:$phone, lastName: $lastName, email: $email, password: $password, profileImage: $profileImage, bio: $bio, createdAt: $createdAt, summary: $summary, following: $following, followers: $followers, bookmarked: $bookmarked, isVerified: $isVerified, uid: $uid, location: $location, linkedin: $linkedin, twitter: $twitter, instagram: $instagram, facebook: $facebook, experienceTitle: $experienceTitle, experienceSummary: $experienceSummary, experienceOrganization: $experienceOrganization, eduStream: $eduStream, eduDegree: $eduDegree, eduUniversity: $eduUniversity, userType: $userType, credits: $credits, meetings: $meetings)';
   }
 
   @override
@@ -205,10 +211,10 @@ class UserModel {
     return other.firstName == firstName &&
         other.lastName == lastName &&
         other.email == email &&
+        other.phone == phone &&
         other.password == password &&
         other.profileImage == profileImage &&
         other.bio == bio &&
-
         other.createdAt == createdAt &&
         other.summary == summary &&
         listEquals(other.following, following) &&
@@ -237,6 +243,7 @@ class UserModel {
     return firstName.hashCode ^
         lastName.hashCode ^
         email.hashCode ^
+        phone.hashCode ^
         password.hashCode ^
         profileImage.hashCode ^
         bio.hashCode ^

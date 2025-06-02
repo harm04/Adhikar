@@ -531,6 +531,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                 //profile image
                                                 CircleAvatar(
                                                   radius: 25,
+                                                  backgroundColor: Pallete.whiteColor,
                                                   backgroundImage:
                                                       commentPost.isAnonymous
                                                       ? AssetImage(

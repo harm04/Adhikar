@@ -1,6 +1,7 @@
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/posts/widgets/carousel.dart';
 import 'package:adhikar/features/posts/views/comment.dart';
@@ -122,11 +123,20 @@ class PostCard extends ConsumerWidget {
                       SizedBox(width: 18),
 
                       //pod
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Pallete.secondaryColor,
-
-                        backgroundImage: AssetImage(getPod(postmodel.pod)),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PodsListView()
+                          ),
+                        ),
+                        child: CircleAvatar(
+                          
+                          radius: 20,
+                          backgroundColor: Pallete.secondaryColor,
+                        
+                          backgroundImage: AssetImage(getPod(postmodel.pod)),
+                        ),
                       ),
                     ],
                   ),

@@ -1,3 +1,4 @@
+import 'package:adhikar/features/expert/widgets/expert_list.dart';
 import 'package:adhikar/features/home/views/home.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
@@ -18,7 +19,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   List<Widget> pageList = [
     const HomePage(),
-    const Center(child: Text(" Expert")),
+    const ExpertList(),
     const Center(child: Text(" AI")),
     const Center(child: Text("Search")),
     const Center(child: Text("Jobs")),
