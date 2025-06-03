@@ -8,6 +8,7 @@ class UserModel {
   final String password;
   final String profileImage;
   final List<String> meetings;
+  final List<String> transactions;
   final double credits;
   final String bio;
   final String phone;
@@ -35,6 +36,7 @@ class UserModel {
     required this.lastName,
     required this.email,
     required this.credits,
+    required this.transactions,
     required this.meetings,
     required this.password,
     required this.profileImage,
@@ -71,6 +73,7 @@ class UserModel {
     String? bio,
     String? createdAt,
     String? summary,
+    List<String>? transactions,
     List<String>? following,
     List<String>? followers,
     List<String>? bookmarked,
@@ -103,6 +106,7 @@ class UserModel {
       following: following ?? this.following,
       followers: followers ?? this.followers,
       meetings: meetings ?? this.meetings,
+      transactions: transactions ?? this.transactions,
       credits: credits ?? this.credits,
       bookmarked: bookmarked ?? this.bookmarked,
       isVerified: isVerified ?? this.isVerified,
@@ -139,6 +143,7 @@ class UserModel {
       'bookmarked': bookmarked,
       'phone': phone,
       'meetings': meetings,
+      'transactions': transactions,
       'credits': credits,
       'isVerified': isVerified,
       'location': location,
@@ -171,6 +176,8 @@ class UserModel {
           List<String>.from((map['followers'] ?? []).map((x) => x as String)),
       meetings:
           List<String>.from((map['meetings'] ?? []).map((x) => x as String)),
+          transactions:
+          List<String>.from((map['transactions'] ?? []).map((x) => x as String)),
       following:
           List<String>.from((map['following'] ?? []).map((x) => x as String)),
       bookmarked:
@@ -201,7 +208,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(firstName: $firstName,phone:$phone, lastName: $lastName, email: $email, password: $password, profileImage: $profileImage, bio: $bio, createdAt: $createdAt, summary: $summary, following: $following, followers: $followers, bookmarked: $bookmarked, isVerified: $isVerified, uid: $uid, location: $location, linkedin: $linkedin, twitter: $twitter, instagram: $instagram, facebook: $facebook, experienceTitle: $experienceTitle, experienceSummary: $experienceSummary, experienceOrganization: $experienceOrganization, eduStream: $eduStream, eduDegree: $eduDegree, eduUniversity: $eduUniversity, userType: $userType, credits: $credits, meetings: $meetings)';
+    return 'UserModel(firstName: $firstName,phone:$phone, lastName: $lastName, email: $email, password: $password, profileImage: $profileImage, bio: $bio, createdAt: $createdAt, summary: $summary, following: $following, followers: $followers, bookmarked: $bookmarked, isVerified: $isVerified, uid: $uid, location: $location, linkedin: $linkedin, twitter: $twitter, instagram: $instagram, facebook: $facebook, experienceTitle: $experienceTitle, experienceSummary: $experienceSummary, experienceOrganization: $experienceOrganization, eduStream: $eduStream, eduDegree: $eduDegree, eduUniversity: $eduUniversity, userType: $userType, credits: $credits, meetings: $meetings, transactions: $transactions)';
   }
 
   @override
@@ -220,6 +227,7 @@ class UserModel {
         listEquals(other.following, following) &&
         listEquals(other.followers, followers) &&
         listEquals(other.meetings, meetings) &&
+        listEquals(other.transactions, transactions) &&
         listEquals(other.bookmarked, bookmarked) &&
         other.credits == credits &&
         other.isVerified == isVerified &&
@@ -249,6 +257,7 @@ class UserModel {
         bio.hashCode ^
         createdAt.hashCode ^
         meetings.hashCode ^
+        transactions.hashCode ^
         credits.hashCode ^
         summary.hashCode ^
         following.hashCode ^

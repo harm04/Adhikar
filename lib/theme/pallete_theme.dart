@@ -10,7 +10,7 @@ class Pallete {
   static const Color whiteColor = Colors.white;
   static const Color cardColor = Color.fromARGB(255, 20, 20, 40);
   static const Color greyColor = Colors.grey;
-  static const Color redColor = Color.fromRGBO(249, 25, 127, 1);
+  static const Color redColor = Colors.red;
 }
 
 class AppColors {

@@ -10,8 +10,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final expertControllerProvider =
-    StateNotifierProvider<ExpertController, bool>((ref) {
+final expertControllerProvider = StateNotifierProvider<ExpertController, bool>((
+  ref,
+) {
   return ExpertController(
     expertAPI: ref.watch(expertApiProvider),
     storageApi: ref.watch(storageAPIProvider),
@@ -23,7 +24,14 @@ final getExpertsProvider = FutureProvider.autoDispose((ref) async {
   return expertsController.getExpertsList();
 });
 
-
+//get experts by uid
+final expertDataProvider = FutureProvider.family<ExpertModel, String>((
+  ref,
+  uid,
+) async {
+  final expertController = ref.watch(expertControllerProvider.notifier);
+  return expertController.getExpertData(uid);
+});
 
 class ExpertController extends StateNotifier<bool> {
   final ExpertAPI _expertAPI;
@@ -87,12 +95,13 @@ class ExpertController extends StateNotifier<bool> {
     final res = await _expertAPI.applyForExpert(userModel, expertModel);
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) {
-      
-     showSnackbar(context, 'Your profile is sent for verification');
-     Navigator.of(context).pushAndRemoveUntil(
-  MaterialPageRoute(builder: (context) =>ExpertVerification()), // or your root widget
-  (route) => false,
-);
+      showSnackbar(context, 'Your profile is sent for verification');
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => ExpertVerification(),
+        ), // or your root widget
+        (route) => false,
+      );
     });
   }
 
@@ -101,5 +110,10 @@ class ExpertController extends StateNotifier<bool> {
     return lawyersList
         .map((lawyers) => ExpertModel.fromMap(lawyers.data))
         .toList();
+  }
+
+  Future<ExpertModel> getExpertData(String uid) async {
+    final document = await _expertAPI.getExpertData(uid);
+    return ExpertModel.fromMap(document.data);
   }
 }

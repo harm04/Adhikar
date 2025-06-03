@@ -19,14 +19,14 @@ final expertApiProvider = Provider((ref) {
 abstract class IUserAPI {
   Future<List<Document>> getExperts();
   FutureEitherVoid applyForExpert(UserModel userModel, ExpertModel lawyerModel);
+  Future<Document> getExpertData(String uid);
 }
 
 class ExpertAPI implements IUserAPI {
   final Databases _db;
   // final Realtime _realtime;
-  ExpertAPI({required Databases db, required Realtime realtime})
-    : _db = db;
-      // _realtime = realtime;
+  ExpertAPI({required Databases db, required Realtime realtime}) : _db = db;
+  // _realtime = realtime;
 
   @override
   FutureEitherVoid applyForExpert(
@@ -63,5 +63,14 @@ class ExpertAPI implements IUserAPI {
     );
 
     return documents.documents;
+  }
+
+  @override
+  Future<Document> getExpertData(String uid) {
+    return _db.getDocument(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.expertCollectionID,
+      documentId: uid,
+    );
   }
 }

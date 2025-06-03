@@ -47,6 +47,7 @@ dependencies:
   any_link_preview: ^3.0.3
   like_button: ^2.1.0
   file_picker: ^10.1.9
+  razorpay_flutter: ^1.4.0
 dependency_overrides:
   flutter_web_auth_2: 
 dev_dependencies:

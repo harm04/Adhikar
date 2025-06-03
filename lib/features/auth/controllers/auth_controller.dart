@@ -61,6 +61,7 @@ class AuthController extends StateNotifier<bool> {
         email: email,
         credits: 50.0,
         meetings: [],
+        transactions: [],
         password: password,
         profileImage: '',
         bio: '',

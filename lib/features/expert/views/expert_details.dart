@@ -4,6 +4,7 @@ import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ExpertDetails extends ConsumerStatefulWidget {
   final ExpertModel expertModel;
@@ -66,6 +67,26 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   fontSize: 33,
                   fontWeight: FontWeight.bold,
                 ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset(
+                    'assets/svg/location.svg',
+                    width: 30,
+                    height: 30,
+                    colorFilter: ColorFilter.mode(
+                      Pallete.greyColor,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    '${widget.expertModel.state}, ${widget.expertModel.city}',
+                    style: TextStyle(color: Pallete.greyColor, fontSize: 17),
+                  ),
+                ],
               ),
               const SizedBox(height: 15),
               Wrap(

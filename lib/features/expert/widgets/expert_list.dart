@@ -1,9 +1,12 @@
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/expert_controller.dart';
 import 'package:adhikar/features/expert/widgets/expert_list_card.dart';
+import 'package:adhikar/features/expert/widgets/meetings_list.dart';
+import 'package:adhikar/features/expert/widgets/transaction_list.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ExpertList extends ConsumerStatefulWidget {
   const ExpertList({super.key});
@@ -32,6 +35,58 @@ class _ExpertListState extends ConsumerState<ExpertList> {
                 : NetworkImage(currentUser.profileImage),
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 18.0),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MeetingsList();
+                        },
+                      ),
+                    );
+                  },
+                  child: SvgPicture.asset(
+                    'assets/svg/meetings.svg',
+                    width: 30,
+                    height: 30,
+                    colorFilter: ColorFilter.mode(
+                      Pallete.whiteColor,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 18),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return TransactionList();
+                        },
+                      ),
+                    );
+                  },
+                  child: SvgPicture.asset(
+                    'assets/svg/transaction.svg',
+                    width: 30,
+                    height: 30,
+                    colorFilter: ColorFilter.mode(
+                      Pallete.whiteColor,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         title: const Text('Book an Expert'),
         centerTitle: true,
       ),

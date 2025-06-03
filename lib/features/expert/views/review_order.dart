@@ -1,9 +1,14 @@
-import 'package:adhikar/common/widgets/custom_button.dart';
+import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
+import 'package:adhikar/common/widgets/snackbar.dart';
+import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/expert/controller/meetings_controller.dart';
+import 'package:adhikar/features/expert/controller/transaction_controller.dart';
 import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class ReviewOrder extends ConsumerStatefulWidget {
   final ExpertModel expertModel;
@@ -16,27 +21,133 @@ class ReviewOrder extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ReviewOrder> createState() => _ReviewOrderState();
-
-  static Widget infoRow(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: RichText(
-        text: TextSpan(
-          text: '$title\n',
-          style: const TextStyle(color: Colors.white, fontSize: 12),
-          children: [
-            TextSpan(
-              text: value,
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _ReviewOrderState extends ConsumerState<ReviewOrder> {
+  late Razorpay _razorpay;
+  bool isPaymentProcessing = false;
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    final currentUser = ref.watch(currentUserDataProvider).value;
+    if (currentUser == null) return;
+
+    setState(() => isPaymentProcessing = true);
+
+    // 1. Create meeting
+    final meetingRes = await ref
+        .read(meetingsControllerProvider.notifier)
+        .createMeeting(
+          userModel: currentUser,
+          expertModel: widget.expertModel,
+          phone: widget.phone,
+          transactionID: response.paymentId.toString(),
+          context: context,
+        );
+
+    await meetingRes.fold(
+      (failure) {
+        setState(() => isPaymentProcessing = false);
+        showSnackbar(context, "Failed to create meeting: ${failure.message}");
+      },
+      (meetingDoc) async {
+        // 2. Create transaction (Success)
+        ref
+            .read(transactionControllerProvider.notifier)
+            .createTransaction(
+              userModel: currentUser,
+              expertModel: widget.expertModel,
+              amount: 300, // Fixed amount for consultation
+              paymentStatus: 'Success',
+              phone: widget.phone,
+              paymentID: response.paymentId.toString(),
+              context: context,
+            );
+
+        setState(() => isPaymentProcessing = false);
+        showSnackbar(
+          context,
+          "Payment successful and meeting is created with the expert.",
+        );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const BottomNavBar()),
+          (route) => false,
+        );
+      },
+    );
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) async {
+    final currentUser = ref.watch(currentUserDataProvider).value;
+    if (currentUser == null) return;
+
+    setState(() => isPaymentProcessing = false);
+
+    // Only create a failed transaction, do NOT create meeting
+    ref
+        .read(transactionControllerProvider.notifier)
+        .createTransaction(
+          userModel: currentUser,
+          amount: 300,
+          expertModel: widget.expertModel,
+          paymentStatus: 'Failed',
+          phone: widget.phone,
+          paymentID: response.error.toString(),
+          context: context,
+        );
+
+    showSnackbar(context, "Payment failed. Please try again.");
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const BottomNavBar()),
+      (route) => false,
+    );
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    setState(() => isPaymentProcessing = false);
+    showSnackbar(context, "External wallet selected: ${response.walletName}");
+    // Do NOT create meeting or transaction here!
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
+
+  void openCheckout(String name, String description, String email) {
+    setState(() {
+      isPaymentProcessing = true; // Show loader
+    });
+    var options = {
+      'key': AppwriteConstants.razorpayKey,
+      'amount': (double.parse('300') * 100).toInt(),
+      'name': name,
+      'description': description,
+      'prefill': {'contact': widget.phone, 'email': email},
+    };
+
+    try {
+      _razorpay.open(options);
+      // Optionally, you can set isPaymentProcessing = false in payment success/error handlers if you want to hide loader after Razorpay closes.
+    } catch (e) {
+      setState(() {
+        isPaymentProcessing = false;
+      });
+      print("Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDataProvider).value;
@@ -63,23 +174,39 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
           top: 20,
         ),
         child: GestureDetector(
-          onTap: () {},
+          onTap: isPaymentProcessing
+              ? null
+              : () {
+                  openCheckout(
+                    '${currentUser.firstName} ${currentUser.lastName}',
+                    'Payment for consultation with ${widget.expertModel.firstName} ${widget.expertModel.lastName}',
+                    currentUser.email,
+                  );
+                },
           child: Container(
             height: 55,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Color.fromRGBO(231, 209, 95, 1),
+              color: isPaymentProcessing
+                  ? Colors.grey
+                  : const Color.fromRGBO(231, 209, 95, 1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
-              child: Text(
-                'Continue to Payment',
-                style: const TextStyle(
-                  color: Pallete.backgroundColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: isPaymentProcessing
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Pallete.backgroundColor,
+                      ),
+                    )
+                  : const Text(
+                      'Continue to Payment',
+                      style: TextStyle(
+                        color: Pallete.backgroundColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
         ),

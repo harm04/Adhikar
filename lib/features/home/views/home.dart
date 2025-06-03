@@ -5,6 +5,7 @@ import 'package:adhikar/features/expert/views/apply_for_expert.dart';
 import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/views/create_post.dart';
 import 'package:adhikar/features/posts/widgets/posts_list.dart';
+import 'package:adhikar/features/settings/views/settings.dart';
 import 'package:adhikar/features/showcase/views/showcase_list.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
@@ -157,20 +158,30 @@ class _HomePageState extends ConsumerState<HomePage>
                             ),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 20.0),
-                              child: Column(
-                                children: [
-                                  drawerItems(
-                                    'Settings',
-                                    'assets/svg/settings.svg',
+                              child: GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return const Settings();
+                                    },
                                   ),
-                                  GestureDetector(
-                                    onTap: () => signout(),
-                                    child: drawerItems(
-                                      'Logout',
-                                      'assets/svg/logout.svg',
+                                ),
+                                child: Column(
+                                  children: [
+                                    drawerItems(
+                                      'Settings',
+                                      'assets/svg/settings.svg',
                                     ),
-                                  ),
-                                ],
+                                    GestureDetector(
+                                      onTap: () => signout(),
+                                      child: drawerItems(
+                                        'Logout',
+                                        'assets/svg/logout.svg',
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],

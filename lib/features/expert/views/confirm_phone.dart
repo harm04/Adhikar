@@ -117,12 +117,12 @@ class _ConfirmPhoneState extends ConsumerState<ConfirmPhone> {
                     return;
                   }
                   // Proceed with booking logic here
-                  print(phoneController.text);
+                 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return ReviewOrder(expertModel: widget.expertModel,phone: phoneController.text,);
+                        return ReviewOrder(expertModel: widget.expertModel,phone: phoneDigits,);
                       },
                     ),
                   );
