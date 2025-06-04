@@ -48,6 +48,11 @@ dependencies:
   like_button: ^2.1.0
   file_picker: ^10.1.9
   razorpay_flutter: ^1.4.0
+  geocoding: ^4.0.0
+  geolocator: ^14.0.1
+  http: ^1.4.0
+  url_launcher: ^6.3.1
+  webview_flutter: ^4.13.0
 dependency_overrides:
   flutter_web_auth_2: 
 dev_dependencies:

@@ -5,6 +5,7 @@ import 'package:adhikar/features/expert/views/apply_for_expert.dart';
 import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/views/create_post.dart';
 import 'package:adhikar/features/posts/widgets/posts_list.dart';
+import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/features/settings/views/settings.dart';
 import 'package:adhikar/features/showcase/views/showcase_list.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
@@ -52,14 +53,14 @@ class _HomePageState extends ConsumerState<HomePage>
                               children: [
                                 //profile section
                                 GestureDetector(
-                                  // onTap: () => Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) {
-                                  //       return ProfileView(userModel: currentuser);
-                                  //     },
-                                  //   ),
-                                  // ),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return ProfileView(userModel: currentUser);
+                                      },
+                                    ),
+                                  ),
                                   child: Row(
                                     children: [
                                       CircleAvatar(

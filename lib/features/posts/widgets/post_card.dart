@@ -6,6 +6,7 @@ import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/posts/widgets/carousel.dart';
 import 'package:adhikar/features/posts/views/comment.dart';
 import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
+import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/posts_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:any_link_preview/any_link_preview.dart';
@@ -64,16 +65,28 @@ class PostCard extends ConsumerWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CircleAvatar(
-                        radius: 28,
-                        backgroundColor: Pallete.whiteColor,
-                        backgroundImage: postmodel.isAnonymous
-                            ? AssetImage('assets/icons/anonymous.png')
-                            : user.profileImage == ''
-                            ? NetworkImage(
-                                'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                              )
-                            : NetworkImage(user.profileImage),
+                      GestureDetector(
+                        onTap: () => postmodel.isAnonymous
+                            ? SizedBox()
+                            : Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return ProfileView(userModel: user);
+                                  },
+                                ),
+                              ),
+                        child: CircleAvatar(
+                          radius: 28,
+                          backgroundColor: Pallete.whiteColor,
+                          backgroundImage: postmodel.isAnonymous
+                              ? AssetImage('assets/icons/anonymous.png')
+                              : user.profileImage == ''
+                              ? NetworkImage(
+                                  'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
+                                )
+                              : NetworkImage(user.profileImage),
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -81,18 +94,30 @@ class PostCard extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(
-                              user.firstName + ' ' + user.lastName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                            GestureDetector(
+                              onTap: () => postmodel.isAnonymous
+                                  ? SizedBox()
+                                  : Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return ProfileView(userModel: user);
+                                        },
+                                      ),
+                                    ),
+                              child: Text(
+                               postmodel.isAnonymous?'Anonymous': user.firstName + ' ' + user.lastName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
                             Row(
                               children: [
                                 Expanded(
                                   child: Text(
-                                    user.bio == ''
+                                   postmodel.isAnonymous?'Anonymous User': user.bio == ''
                                         ? 'Adhikar user defc dddddd eeeeeeee eee wwwwww wwww w'
                                         : user.bio,
                                     maxLines: 1,
@@ -127,14 +152,13 @@ class PostCard extends ConsumerWidget {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PodsListView()
+                            builder: (context) => PodsListView(),
                           ),
                         ),
                         child: CircleAvatar(
-                          
                           radius: 20,
                           backgroundColor: Pallete.secondaryColor,
-                        
+
                           backgroundImage: AssetImage(getPod(postmodel.pod)),
                         ),
                       ),
@@ -265,13 +289,21 @@ class PostCard extends ConsumerWidget {
                       Row(
                         children: [
                           LikeButton(
-                            isLiked: ref.watch(currentUserDataProvider).value?.bookmarked.contains(postmodel.id) ?? false,
+                            isLiked:
+                                ref
+                                    .watch(currentUserDataProvider)
+                                    .value
+                                    ?.bookmarked
+                                    .contains(postmodel.id) ??
+                                false,
                             size: 32,
                             onTap: (isLiked) async {
-                               ref.read(postControllerProvider.notifier).bookmarkPost(
-                                postmodel,
-                                ref.read(currentUserDataProvider).value!,
-                              );
+                              ref
+                                  .read(postControllerProvider.notifier)
+                                  .bookmarkPost(
+                                    postmodel,
+                                    ref.read(currentUserDataProvider).value!,
+                                  );
                               ref.invalidate(currentUserDataProvider);
                               return !isLiked;
                             },

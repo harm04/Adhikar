@@ -25,13 +25,13 @@ abstract class IPostAPI {
   FutureEither<Document> likePost(PostModel postModel);
   FutureEither<Document> bookmarkPost(UserModel userModel);
   Future<List<Document>> getComments(PostModel postModel);
-  Future<List<Document>> getUsersPost(UserModel userModel);
-
+  Stream<List<PostModel>> getUserPostsStream(String uid);
   Future<List<Document>> getPodsPost(String podName);
   FutureEither<Document> addCommentIdToPost(
     String postId,
     List<String> commentIds,
   );
+  Future<List<Document>> searchPosts(String text);
 }
 
 class PostAPI implements IPostAPI {
@@ -116,17 +116,6 @@ class PostAPI implements IPostAPI {
   }
 
   @override
-  Future<List<Document>> getUsersPost(UserModel userModel) async {
-    final documents = await _db.listDocuments(
-      databaseId: AppwriteConstants.databaseID,
-      collectionId: AppwriteConstants.postCollectionID,
-      queries: [Query.equal('uid', userModel.uid)],
-    );
-
-    return documents.documents;
-  }
-
-  @override
   Future<List<Document>> getPodsPost(String podName) async {
     final documents = await _db.listDocuments(
       databaseId: AppwriteConstants.databaseID,
@@ -165,5 +154,42 @@ class PostAPI implements IPostAPI {
           final data = event.payload;
           return PostModel.fromMap(data);
         });
+  }
+
+  @override
+  Stream<List<PostModel>> getUserPostsStream(String uid) async* {
+    // 1. Emit initial data
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.postCollectionID,
+      queries: [Query.equal('uid', uid), Query.orderDesc('createdAt')],
+    );
+    yield documents.documents
+        .map((doc) => PostModel.fromMap(doc.data))
+        .toList();
+
+    // 2. Listen for realtime updates and re-fetch
+    await for (final _ in _realtime.subscribe([
+      'databases.${AppwriteConstants.databaseID}.collections.${AppwriteConstants.postCollectionID}.documents',
+    ]).stream) {
+      final documents = await _db.listDocuments(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.postCollectionID,
+        queries: [Query.equal('uid', uid), Query.orderDesc('createdAt')],
+      );
+      yield documents.documents
+          .map((doc) => PostModel.fromMap(doc.data))
+          .toList();
+    }
+  }
+
+  @override
+  Future<List<Document>> searchPosts(String text) async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.postCollectionID,
+      queries: [Query.search('text', text)],
+    );
+    return documents.documents;
   }
 }

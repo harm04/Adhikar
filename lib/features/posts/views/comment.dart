@@ -3,10 +3,12 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/posts/widgets/carousel.dart';
 import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
 import 'package:adhikar/features/posts/widgets/hashtags.dart';
+import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/posts_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:any_link_preview/any_link_preview.dart';
@@ -42,7 +44,6 @@ class _CommentViewState extends ConsumerState<Comment> {
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDataProvider).value;
     if (currentUser == null) {
-      
       return const SizedBox.shrink();
     }
     // final commentsAsyncValue = ref.watch(getCommentsProvider(widget.postModel));
@@ -192,16 +193,28 @@ class _CommentViewState extends ConsumerState<Comment> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             //profile image
-                            CircleAvatar(
-                              radius: 25,
-                              backgroundColor: Pallete.whiteColor,
-                              backgroundImage: widget.postModel.isAnonymous
-                                  ? AssetImage('assets/icons/anonymous.png')
-                                  : (user.profileImage == ''
-                                        ? NetworkImage(
-                                            'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                                          )
-                                        : NetworkImage(user.profileImage)),
+                            GestureDetector(
+                              onTap: () => widget.postModel.isAnonymous
+                                  ? SizedBox()
+                                  : Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return ProfileView(userModel: user);
+                                        },
+                                      ),
+                                    ),
+                              child: CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Pallete.whiteColor,
+                                backgroundImage: widget.postModel.isAnonymous
+                                    ? AssetImage('assets/icons/anonymous.png')
+                                    : (user.profileImage == ''
+                                          ? NetworkImage(
+                                              'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
+                                            )
+                                          : NetworkImage(user.profileImage)),
+                              ),
                             ),
                             SizedBox(width: 10),
                             Expanded(
@@ -211,11 +224,28 @@ class _CommentViewState extends ConsumerState<Comment> {
                                   Row(
                                     children: [
                                       //username
-                                      Text(
-                                        '${user.firstName} ${user.lastName}',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
+                                      GestureDetector(
+                                        onTap: () =>
+                                            widget.postModel.isAnonymous
+                                            ? SizedBox()
+                                            : Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return ProfileView(
+                                                      userModel: user,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                        child: Text(
+                                          widget.postModel.isAnonymous
+                                              ? 'Anonymous'
+                                              : '${user.firstName} ${user.lastName}',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                       SizedBox(width: 5),
@@ -231,7 +261,9 @@ class _CommentViewState extends ConsumerState<Comment> {
                                   ),
                                   //bio
                                   Text(
-                                    user.bio == ''
+                                    widget.postModel.isAnonymous
+                                        ? 'Anonymous User'
+                                        : user.bio == ''
                                         ? 'Adhikar user'
                                         : '${user.bio}',
                                     maxLines: 1,
@@ -245,9 +277,19 @@ class _CommentViewState extends ConsumerState<Comment> {
                               ),
                             ),
                             //pod
-                            CircleAvatar(
-                              radius: 22,
-                              backgroundImage: AssetImage(widget.podImage),
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return PodsListView();
+                                  },
+                                ),
+                              ),
+                              child: CircleAvatar(
+                                radius: 22,
+                                backgroundImage: AssetImage(widget.podImage),
+                              ),
                             ),
                           ],
                         ),
@@ -368,46 +410,58 @@ class _CommentViewState extends ConsumerState<Comment> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Consumer(
-      builder: (context, ref, _) {
-        final postStream = ref.watch(postStreamProvider(widget.postModel.id));
-        return postStream.when(
-          data: (livePost) => Text(
-            '${livePost.likes.length} likes',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Pallete.greyColor,
-            ),
-          ),
-          loading: () => Text(
-            '${widget.postModel.likes.length} likes',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Pallete.greyColor,
-            ),
-          ),
-          error: (e, st) => Text(
-            '${widget.postModel.likes.length} likes',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Pallete.greyColor,
-            ),
-          ),
-        );
-      },
-    ),
+                              builder: (context, ref, _) {
+                                final postStream = ref.watch(
+                                  postStreamProvider(widget.postModel.id),
+                                );
+                                return postStream.when(
+                                  data: (livePost) => Text(
+                                    '${livePost.likes.length} likes',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Pallete.greyColor,
+                                    ),
+                                  ),
+                                  loading: () => Text(
+                                    '${widget.postModel.likes.length} likes',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Pallete.greyColor,
+                                    ),
+                                  ),
+                                  error: (e, st) => Text(
+                                    '${widget.postModel.likes.length} likes',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Pallete.greyColor,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                             Row(
                               children: [
                                 LikeButton(
-                                  isLiked: ref.watch(currentUserDataProvider).value?.bookmarked.contains(widget.postModel.id) ?? false,
+                                  isLiked:
+                                      ref
+                                          .watch(currentUserDataProvider)
+                                          .value
+                                          ?.bookmarked
+                                          .contains(widget.postModel.id) ??
+                                      false,
                                   size: 32,
                                   onTap: (isLiked) async {
-                                     ref.read(postControllerProvider.notifier).bookmarkPost(
-                                      widget.postModel,
-                                      ref.read(currentUserDataProvider).value!,
-                                    );
+                                    ref
+                                        .read(postControllerProvider.notifier)
+                                        .bookmarkPost(
+                                          widget.postModel,
+                                          ref
+                                              .read(currentUserDataProvider)
+                                              .value!,
+                                        );
                                     ref.invalidate(currentUserDataProvider);
                                     return !isLiked;
                                   },
@@ -481,93 +535,165 @@ class _CommentViewState extends ConsumerState<Comment> {
                           thickness: 0,
                         ),
 
+                        //replies
                         SizedBox(height: 15),
-                        ref.watch(getCommentsProvider(widget.postModel)).when(
-                          data: (comments) => Text(
-                            '${comments.length} Replies',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          loading: () => Text(
-                            'Loading replies...',
+                        ref
+                            .watch(getCommentsProvider(widget.postModel))
+                            .when(
+                              data: (comments) => Text(
+                                '${comments.length} Replies',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              loading: () => Text(
+                                'Loading replies...',
 
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              error: (e, st) => Text(
+                                'Error loading replies',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
-                          error: (e, st) => Text(
-                            'Error loading replies',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
                         SizedBox(height: 15),
-                        ref.watch(getCommentsProvider(widget.postModel)).when(
-                          data: (comments) {
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: comments.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final commentPost = comments[index];
+                        ref
+                            .watch(getCommentsProvider(widget.postModel))
+                            .when(
+                              data: (comments) {
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: comments.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final commentPost = comments[index];
 
-                                return ref
-                                    .watch(userDataProvider(commentPost.uid))
-                                    .when(
-                                      data: (user) {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
+                                    return ref
+                                        .watch(
+                                          userDataProvider(commentPost.uid),
+                                        )
+                                        .when(
+                                          data: (user) {
+                                            return Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                //profile image
-                                                CircleAvatar(
-                                                  radius: 25,
-                                                  backgroundColor: Pallete.whiteColor,
-                                                  backgroundImage:
-                                                      commentPost.isAnonymous
-                                                      ? AssetImage(
-                                                          'assets/icons/anonymous.png',
-                                                        )
-                                                      : user.profileImage == ''
-                                                      ? NetworkImage(
-                                                          'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                                                        )
-                                                      : NetworkImage(
-                                                          user.profileImage,
-                                                        ),
-                                                ),
-                                                SizedBox(width: 10),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          //username
-                                                          Text(
-                                                            '${user.firstName} ${user.lastName}',
-                                                            style: TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    //profile image
+                                                    GestureDetector(
+                                                      onTap: () =>
+                                                          commentPost
+                                                              .isAnonymous
+                                                          ? SizedBox()
+                                                          : Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) {
+                                                                  return ProfileView(
+                                                                    userModel:
+                                                                        user,
+                                                                  );
+                                                                },
+                                                              ),
                                                             ),
+                                                      child: CircleAvatar(
+                                                        radius: 25,
+                                                        backgroundColor:
+                                                            Pallete.whiteColor,
+                                                        backgroundImage:
+                                                            commentPost
+                                                                .isAnonymous
+                                                            ? AssetImage(
+                                                                'assets/icons/anonymous.png',
+                                                              )
+                                                            : user.profileImage ==
+                                                                  ''
+                                                            ? NetworkImage(
+                                                                'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
+                                                              )
+                                                            : NetworkImage(
+                                                                user.profileImage,
+                                                              ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              //username
+                                                              GestureDetector(
+                                                                onTap: () =>
+                                                                    commentPost
+                                                                        .isAnonymous
+                                                                    ? SizedBox()
+                                                                    : Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder:
+                                                                              (
+                                                                                context,
+                                                                              ) {
+                                                                                return ProfileView(
+                                                                                  userModel: user,
+                                                                                );
+                                                                              },
+                                                                        ),
+                                                                      ),
+                                                                child: Text(
+                                                                  commentPost
+                                                                          .isAnonymous
+                                                                      ? 'Anonymous'
+                                                                      : '${user.firstName} ${user.lastName}',
+                                                                  style: TextStyle(
+                                                                    fontSize:
+                                                                        20,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              //time
+                                                              Text(
+                                                                ' . ${timeago.format(commentPost.createdAt, locale: 'en_short')}',
+                                                                style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Pallete
+                                                                      .greyColor,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                          SizedBox(width: 5),
-                                                          //time
+                                                          //bio
                                                           Text(
-                                                            ' . ${timeago.format(commentPost.createdAt, locale: 'en_short')}',
+                                                            commentPost
+                                                                    .isAnonymous
+                                                                ? 'Anonymous Post'
+                                                                : user.bio == ''
+                                                                ? 'Adhikar user'
+                                                                : '${user.bio}',
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                             style: TextStyle(
                                                               fontSize: 14,
                                                               color: Pallete
@@ -576,129 +702,117 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                           ),
                                                         ],
                                                       ),
-                                                      //bio
-                                                      Text(
-                                                        user.bio == ''
-                                                            ? 'Adhikar user'
-                                                            : '${user.bio}',
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          color:
-                                                              Pallete.greyColor,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                //hashtags
-                                                SizedBox(height: 10),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Expanded(
-                                                      child: HashTags(
-                                                        text: commentPost.text,
-                                                      ),
                                                     ),
-                                                    LikeButton(
-                                                      size: 26,
-                                                      onTap: (isLiked) async {
-                                                        ref
-                                                            .read(
-                                                              postControllerProvider
-                                                                  .notifier,
-                                                            )
-                                                            .likePost(
-                                                              commentPost,
-                                                              currentUser,
-                                                            );
-                                                        return !isLiked;
-                                                      },
-                                                      isLiked: commentPost.likes
-                                                          .contains(
-                                                            currentUser.uid,
+                                                  ],
+                                                ),
+
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    //hashtags
+                                                    SizedBox(height: 10),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Expanded(
+                                                          child: HashTags(
+                                                            text: commentPost
+                                                                .text,
                                                           ),
-                                                      likeBuilder: (isLiked) {
-                                                        return isLiked
-                                                            ? SvgPicture.asset(
-                                                                'assets/svg/like_filled.svg',
-                                                                colorFilter:
-                                                                    ColorFilter.mode(
+                                                        ),
+                                                        LikeButton(
+                                                          size: 26,
+                                                          onTap: (isLiked) async {
+                                                            ref
+                                                                .read(
+                                                                  postControllerProvider
+                                                                      .notifier,
+                                                                )
+                                                                .likePost(
+                                                                  commentPost,
+                                                                  currentUser,
+                                                                );
+                                                            return !isLiked;
+                                                          },
+                                                          isLiked: commentPost
+                                                              .likes
+                                                              .contains(
+                                                                currentUser.uid,
+                                                              ),
+                                                          likeBuilder: (isLiked) {
+                                                            return isLiked
+                                                                ? SvgPicture.asset(
+                                                                    'assets/svg/like_filled.svg',
+                                                                    colorFilter: ColorFilter.mode(
                                                                       Pallete
                                                                           .secondaryColor,
                                                                       BlendMode
                                                                           .srcIn,
                                                                     ),
-                                                              )
-                                                            : SvgPicture.asset(
-                                                                'assets/svg/like_outline.svg',
-                                                                colorFilter:
-                                                                    ColorFilter.mode(
+                                                                  )
+                                                                : SvgPicture.asset(
+                                                                    'assets/svg/like_outline.svg',
+                                                                    colorFilter: ColorFilter.mode(
                                                                       Pallete
                                                                           .greyColor,
                                                                       BlendMode
                                                                           .srcIn,
                                                                     ),
-                                                              );
-                                                      },
-                                                      likeCount: commentPost
-                                                          .likes
-                                                          .length,
-                                                      countBuilder:
-                                                          (
-                                                            likeCount,
-                                                            isLiked,
-                                                            text,
-                                                          ) => Padding(
-                                                            padding:
-                                                                const EdgeInsets.only(
-                                                                  left: 3.0,
+                                                                  );
+                                                          },
+                                                          likeCount: commentPost
+                                                              .likes
+                                                              .length,
+                                                          countBuilder:
+                                                              (
+                                                                likeCount,
+                                                                isLiked,
+                                                                text,
+                                                              ) => Padding(
+                                                                padding:
+                                                                    const EdgeInsets.only(
+                                                                      left: 3.0,
+                                                                    ),
+                                                                child: Text(
+                                                                  text,
+                                                                  style: TextStyle(
+                                                                    color:
+                                                                        isLiked
+                                                                        ? Pallete
+                                                                              .secondaryColor
+                                                                        : Pallete
+                                                                              .greyColor,
+                                                                    fontSize:
+                                                                        16,
+                                                                  ),
                                                                 ),
-                                                            child: Text(
-                                                              text,
-                                                              style: TextStyle(
-                                                                color: isLiked
-                                                                    ? Pallete
-                                                                          .secondaryColor
-                                                                    : Pallete
-                                                                          .greyColor,
-                                                                fontSize: 16,
                                                               ),
-                                                            ),
-                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
+                                                    SizedBox(height: 5),
                                                   ],
                                                 ),
-                                                SizedBox(height: 5),
-                                              ],
-                                            ),
 
-                                            Divider(),
-                                          ],
+                                                Divider(),
+                                              ],
+                                            );
+                                          },
+                                          error: (error, StackTrace) =>
+                                              ErrorText(
+                                                error: error.toString(),
+                                              ),
+                                          loading: () => SizedBox(),
                                         );
-                                      },
-                                      error: (error, StackTrace) =>
-                                          ErrorText(error: error.toString()),
-                                      loading: () => SizedBox(),
-                                    );
+                                  },
+                                );
                               },
-                            );
-                          },
-                          loading: () => Loader(),
-                          error: (e, st) => ErrorText(error: e.toString()),
-                        ),
+                              loading: () => Loader(),
+                              error: (e, st) => ErrorText(error: e.toString()),
+                            ),
                       ],
                     ),
                   ),
