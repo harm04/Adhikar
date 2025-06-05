@@ -45,10 +45,10 @@ class _ShowcaseState extends ConsumerState<Showcase> {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  widget.showcaseModel.logoImage == ''
+                  widget.showcaseModel.bannerImage == ''
                       ? Image.asset('assets/images/logo.png', fit: BoxFit.cover)
                       : Image.network(
-                          widget.showcaseModel.logoImage,
+                          widget.showcaseModel.bannerImage,
                           fit: BoxFit.cover,
                         ),
 
@@ -134,12 +134,16 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                         ),
                         SizedBox(width: 10),
                         //report
-                        SvgPicture.asset(
-                          height: 30,
-                          'assets/svg/report.svg',
-                          colorFilter: ColorFilter.mode(
-                            Pallete.whiteColor,
-                            BlendMode.srcIn,
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundColor: Colors.black.withOpacity(0.5),
+                          child: SvgPicture.asset(
+                            height: 30,
+                            'assets/svg/report.svg',
+                            colorFilter: ColorFilter.mode(
+                              Pallete.whiteColor,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                       ],

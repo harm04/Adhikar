@@ -1,5 +1,6 @@
 import 'package:adhikar/features/expert/widgets/expert_list.dart';
 import 'package:adhikar/features/home/views/home.dart';
+import 'package:adhikar/features/nyaysahayak/views/nyaysahayak.dart';
 import 'package:adhikar/features/search/views/search.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
@@ -21,7 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   List<Widget> pageList = [
     const HomePage(),
     const ExpertList(),
-    const Center(child: Text(" AI")),
+    const Nyaysahayak(),
     const Search(),
     const Center(child: Text("Jobs")),
   ];

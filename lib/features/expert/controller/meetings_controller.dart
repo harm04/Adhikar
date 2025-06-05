@@ -1,5 +1,6 @@
 import 'package:adhikar/apis/meetings_api.dart';
 import 'package:adhikar/common/failure.dart';
+import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/models/meetings_model.dart';
 import 'package:adhikar/models/user_model.dart';
@@ -10,7 +11,7 @@ import 'package:fpdart/fpdart.dart';
 
 final meetingsControllerProvider =
     StateNotifierProvider<MeetingsController, bool>((ref) {
-      return MeetingsController(meethingsAPI: ref.watch(meetingsAPIProvider));
+      return MeetingsController(meethingsAPI: ref.watch(meetingsAPIProvider), ref: ref);
     });
 
 final getUserMeetingsProvider = FutureProvider.family((
@@ -23,10 +24,10 @@ final getUserMeetingsProvider = FutureProvider.family((
 
 class MeetingsController extends StateNotifier<bool> {
   final MeetingsAPI _meetingsAPI;
+  final Ref ref;
 
-  MeetingsController({required MeetingsAPI meethingsAPI})
+  MeetingsController({required MeetingsAPI meethingsAPI, required this.ref})
     : _meetingsAPI = meethingsAPI,
-
       super(false);
 
   //create meeting
@@ -50,8 +51,29 @@ class MeetingsController extends StateNotifier<bool> {
     );
 
     final res = await _meetingsAPI.createMeeting(meetingsModel);
-    state = false;
 
+    // Update user's phone in UserModel after meeting creation
+    if (userModel.phone != phone) {
+      final updatedUser = userModel.copyWith(phone: phone);
+       ref
+          .read(authControllerProvider.notifier)
+          .updateUser(
+            userModel: updatedUser,
+            context: context,
+            profileImage: null,
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            bio: updatedUser.bio,
+            location: updatedUser.location,
+            linkedin: updatedUser.linkedin,
+            twitter: updatedUser.twitter,
+            instagram: updatedUser.instagram,
+            facebook: updatedUser.facebook,
+            summary: updatedUser.summary,
+          );
+    }
+
+    state = false;
     return res; // This will be used to get the meeting ID
   }
 

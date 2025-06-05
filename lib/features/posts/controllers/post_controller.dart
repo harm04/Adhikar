@@ -34,7 +34,10 @@ final getCommentsProvider = FutureProvider.family((
   return commentsController.getComments(postModel);
 });
 
-final getUsersPostProvider = StreamProvider.family<List<PostModel>, String>((ref, uid) {
+final getUsersPostProvider = StreamProvider.family<List<PostModel>, String>((
+  ref,
+  uid,
+) {
   final postAPI = ref.watch(postAPIProvider);
   return postAPI.getUserPostsStream(uid);
 });
@@ -296,5 +299,15 @@ class PostController extends StateNotifier<bool> {
     }
     userModel = userModel.copyWith(bookmarked: bookmarks);
     await _postAPI.bookmarkPost(userModel);
+  }
+
+  // //fetch posts with more likes
+  Future<List<PostModel>> getPostsWithMoreLikes() async {
+    final posts = await _postAPI.getPosts();
+    return posts
+        .map((doc) => PostModel.fromMap(doc.data))
+        .where((post) => post.pod != 'comment')
+        .toList()
+      ..sort((a, b) => b.likes.length.compareTo(a.likes.length));
   }
 }

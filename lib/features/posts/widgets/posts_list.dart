@@ -7,58 +7,68 @@ import 'package:adhikar/models/posts_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PostList extends ConsumerWidget {
+class PostList extends ConsumerStatefulWidget {
   const PostList({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PostList> createState() => _PostListState();
+}
+
+class _PostListState extends ConsumerState<PostList> {
+  Future<void> _refreshPosts() async {
+    ref.invalidate(getPostProvider);
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return _KeepAliveWrapper(
-      child: ref
-          .watch(getPostProvider)
-          .when(
-            data: (posts) {
-              return ref
-                  .watch(getLatestPostProvider)
-                  .when(
-                    data: (data) {
-                      if (data.events.contains(
-                        'databases.*.collections.${AppwriteConstants.postCollectionID}.documents.*.create',
-                      )) {
-                        posts.insert(0, PostModel.fromMap(data.payload));
-                      }
-                      //else write code to update the post
-                      return ListView.builder(
+      child: RefreshIndicator(
+        onRefresh: _refreshPosts,
+        child: ref
+            .watch(getPostProvider)
+            .when(
+              data: (posts) {
+                return ref
+                    .watch(getLatestPostProvider)
+                    .when(
+                      data: (data) {
+                        if (data.events.contains(
+                          'databases.*.collections.${AppwriteConstants.postCollectionID}.documents.*.create',
+                        )) {
+                          posts.insert(0, PostModel.fromMap(data.payload));
+                        }
+                        return ListView.builder(
+                          padding: const EdgeInsets.only(top: 10),
+                          itemCount: posts.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final post = posts[index];
+                            return post.pod == 'comment'
+                                ? const SizedBox()
+                                : PostCard(postmodel: post);
+                          },
+                        );
+                      },
+                      error: (error, StackTrace) =>
+                          ErrorText(error: error.toString()),
+                      loading: () => ListView.builder(
                         padding: const EdgeInsets.only(top: 10),
                         itemCount: posts.length,
                         itemBuilder: (BuildContext context, int index) {
                           final post = posts[index];
-
-                          return post.pod == 'comment'
-                              ? SizedBox()
-                              : PostCard(postmodel: post);
+                          return PostCard(postmodel: post);
                         },
-                      );
-                    },
-                    error: (error, StackTrace) =>
-                        ErrorText(error: error.toString()),
-                    loading: () => ListView.builder(
-                      padding: const EdgeInsets.only(top: 10),
-                      itemCount: posts.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final post = posts[index];
-
-                        return PostCard(postmodel: post);
-                      },
-                    ),
-                  );
-            },
-            error: (err, st) {
-              return ErrorText(error: err.toString());
-            },
-            loading: () {
-              return Loader();
-            },
-          ),
+                      ),
+                    );
+              },
+              error: (err, st) {
+                return ErrorText(error: err.toString());
+              },
+              loading: () {
+                return const Loader();
+              },
+            ),
+      ),
     );
   }
 }

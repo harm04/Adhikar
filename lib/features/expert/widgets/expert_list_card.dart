@@ -16,87 +16,95 @@ class ExpertListCard extends ConsumerStatefulWidget {
 class _ExpertListCardState extends ConsumerState<ExpertListCard> {
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        color: Pallete.cardColor,
+      ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min, // Let content dictate height
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              //take width of the gridview box
-              width: double.infinity,
-              height: 170,
+            AspectRatio(
+              aspectRatio: 1.2, // Keeps image proportional on all screens
               child: Card(
                 color: Pallete.cardColor,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(3.0),
                   child: Image.network(
                     widget.expertModel.profImage,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey[300],
+                      child: const Icon(
+                        Icons.person,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 7),
-            //name and description
+            const SizedBox(height: 7),
             Text(
               '${widget.expertModel.firstName} ${widget.expertModel.lastName}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: 6),
+            const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SvgPicture.asset(
                   'assets/svg/location.svg',
-                  width: 20,
-                  height: 20,
+                  width: 18,
+                  height: 18,
                   colorFilter: ColorFilter.mode(
                     Pallete.greyColor,
                     BlendMode.srcIn,
                   ),
                 ),
-                SizedBox(width: 5),
-                Text(
-                  widget.expertModel.state,
-                  style: TextStyle(color: Pallete.greyColor),
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    widget.expertModel.state,
+                    style: TextStyle(color: Pallete.greyColor),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 10),
-            Text(
-              widget.expertModel.description,
-              maxLines: widget.expertModel.tags.isEmpty ? 6 : 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 15),
+            const SizedBox(height: 8),
+            Flexible(
+              child: Text(
+                widget.expertModel.description,
+                maxLines: widget.expertModel.tags.isEmpty ? 4 : 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 14),
+              ),
             ),
-            const SizedBox(height: 10),
-            // Display tags
+            const SizedBox(height: 8),
             if (widget.expertModel.tags.isNotEmpty)
-              Row(
-                children: [
-                  Expanded(
-                    child: Wrap(
-                      spacing: 6,
-                      children: [
-                        ...widget.expertModel.tags
-                            .take(2)
-                            .map((tag) => Chip(label: Text(tag))),
-                      ],
-                    ),
-                  ),
-                ],
+              Wrap(
+                spacing: 6,
+                children: [Chip(label: Text(widget.expertModel.tags.first))],
               ),
-
-            SizedBox(height: 10),
-            Container(
+            const SizedBox(height: 8),
+            SizedBox(
               width: double.infinity,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Pallete.primaryColor,
-                borderRadius: BorderRadius.circular(8.0),
-              ),
+              height: 38,
               child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Pallete.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -111,7 +119,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                   'View Details',
                   style: TextStyle(
                     color: Pallete.secondaryColor,
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

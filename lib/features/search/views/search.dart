@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:adhikar/common/widgets/loader.dart';
+import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/search/widget/search_post.dart';
 import 'package:adhikar/features/search/widget/search_user.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
@@ -67,7 +68,7 @@ class _SearchState extends ConsumerState<Search>
           'https://api.indiankanoon.org/search/?formInput=${_searchController.text.trim()}&pagenum=0',
         ),
         headers: {
-          'Authorization': 'Token 130502b76136f79e9aeafd2f20283bc0cba32c68',
+          'Authorization': AppwriteConstants.indiakanoonAuthToken,
           'Content-Type': 'application/json',
         },
       );
@@ -297,13 +298,6 @@ class _SearchState extends ConsumerState<Search>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: TextField(
-        //   controller: _searchController,
-        //   decoration: const InputDecoration(
-        //     hintText: 'Search users or posts...',
-        //     border: InputBorder.none,
-        //   ),
-        // ),
         title: TextField(
           controller: _searchController,
           cursorColor: Colors.white,

@@ -1,4 +1,6 @@
+import 'package:adhikar/common/widgets/webview_page.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/settings/widget/my_account.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +15,10 @@ class Settings extends ConsumerWidget {
     if (currentUser == null) {
       return const SizedBox.shrink();
     }
+    void signout() {
+      ref.read(authControllerProvider.notifier).signout(context);
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Settings'), centerTitle: true),
       bottomNavigationBar: BottomAppBar(
@@ -39,14 +45,41 @@ class Settings extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              customRow('assets/svg/profile.svg', 'My Account'),
-              customRow('assets/svg/feedback.svg', 'Feedback & Support'),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const MyAccount();
+                    },
+                  ),
+                ),
+                child: customRow('assets/svg/profile.svg', 'My Account'),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WebViewPage(
+                      url: 'https://forms.gle/826x3NnDgAcVLRvp7',
+                      appBarText: 'Feedback',
+                    ),
+                  ),
+                ),
+                child: customRow(
+                  'assets/svg/feedback.svg',
+                  'Feedback & Support',
+                ),
+              ),
               customRow('assets/svg/faq.svg', 'FAQs'),
               customRow('assets/svg/lock.svg', 'Privacy Policy'),
               customRow('assets/svg/terms_of_service.svg', 'Terms of Service'),
               customRow('assets/svg/about.svg', 'About Adhikar'),
               customRow('assets/svg/share.svg', 'Share App'),
-              customRow('assets/svg/logout.svg', 'Logout'),
+              GestureDetector(
+                onTap: () => signout(),
+                child: customRow('assets/svg/logout.svg', 'Logout'),
+              ),
             ],
           ),
         ),

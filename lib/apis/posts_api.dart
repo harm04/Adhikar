@@ -27,6 +27,7 @@ abstract class IPostAPI {
   Future<List<Document>> getComments(PostModel postModel);
   Stream<List<PostModel>> getUserPostsStream(String uid);
   Future<List<Document>> getPodsPost(String podName);
+  // Future<List<PostModel>> getPopularPosts();
   FutureEither<Document> addCommentIdToPost(
     String postId,
     List<String> commentIds,
@@ -144,6 +145,7 @@ class PostAPI implements IPostAPI {
     }
   }
 
+  @override
   Stream<PostModel> getPostStream(String postId) {
     return _realtime
         .subscribe([
@@ -191,5 +193,41 @@ class PostAPI implements IPostAPI {
       queries: [Query.search('text', text)],
     );
     return documents.documents;
+  }
+
+  // //fetch post with more likes
+  // Future<List<PostModel>> getPopularPosts() async {
+  //   final documents = await _db.listDocuments(
+  //     databaseId: AppwriteConstants.databaseID,
+  //     collectionId: AppwriteConstants.postCollectionID,
+  //     queries: [Query.orderDesc('likes')],
+  //   );
+
+  //   return documents.documents
+  //       .map((doc) => PostModel.fromMap(doc.data))
+  //       .toList();
+  // }
+
+  @override
+  Stream<List<PostModel>> getAllPostsStream() async* {
+    // Initial fetch
+    final docs = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.postCollectionID,
+      queries: [Query.orderDesc('createdAt')],
+    );
+    yield docs.documents.map((doc) => PostModel.fromMap(doc.data)).toList();
+
+    // Listen for realtime changes
+    await for (final _ in _realtime.subscribe([
+      'databases.${AppwriteConstants.databaseID}.collections.${AppwriteConstants.postCollectionID}.documents',
+    ]).stream) {
+      final docs = await _db.listDocuments(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.postCollectionID,
+        queries: [Query.orderDesc('createdAt')],
+      );
+      yield docs.documents.map((doc) => PostModel.fromMap(doc.data)).toList();
+    }
   }
 }

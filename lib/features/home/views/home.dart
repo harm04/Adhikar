@@ -2,9 +2,13 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/views/apply_for_expert.dart';
+import 'package:adhikar/features/home/views/following_posts.dart';
+import 'package:adhikar/features/home/views/latest_posts.dart';
+import 'package:adhikar/features/home/views/trending_posts.dart';
+import 'package:adhikar/features/kyr/widget/kyr_list.dart';
+import 'package:adhikar/features/news/widget/news_list.dart';
 import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/views/create_post.dart';
-import 'package:adhikar/features/posts/widgets/posts_list.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/features/settings/views/settings.dart';
 import 'package:adhikar/features/showcase/views/showcase_list.dart';
@@ -57,7 +61,9 @@ class _HomePageState extends ConsumerState<HomePage>
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return ProfileView(userModel: currentUser);
+                                        return ProfileView(
+                                          userModel: currentUser,
+                                        );
                                       },
                                     ),
                                   ),
@@ -139,7 +145,20 @@ class _HomePageState extends ConsumerState<HomePage>
                                           'assets/svg/apply_for_lawyer.svg',
                                         ),
                                       ),
-                                drawerItems('News', 'assets/svg/news.svg'),
+                                GestureDetector(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return const NewsList();
+                                      },
+                                    ),
+                                  ),
+                                  child: drawerItems(
+                                    'News',
+                                    'assets/svg/news.svg',
+                                  ),
+                                ),
                                 GestureDetector(
                                   onTap: () => Navigator.push(
                                     context,
@@ -154,7 +173,20 @@ class _HomePageState extends ConsumerState<HomePage>
                                     'assets/svg/showcase.svg',
                                   ),
                                 ),
-                                drawerItems('KYR', 'assets/svg/kyr.svg'),
+                                GestureDetector(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return const KYRListView();
+                                      },
+                                    ),
+                                  ),
+                                  child: drawerItems(
+                                    'KYR',
+                                    'assets/svg/kyr.svg',
+                                  ),
+                                ),
                               ],
                             ),
                             Padding(
@@ -287,10 +319,10 @@ class _HomePageState extends ConsumerState<HomePage>
                   ],
                   body: const TabBarView(
                     children: [
-                      // Replace with content widgets
-                      PostList(),
-                      ListTabContent(title: "Rights"),
-                      ListTabContent(title: "Awareness"),
+                      TrendingPosts(),
+                      // PostList(),
+                      LatestPosts(),
+                      FollowingPosts(),
                     ],
                   ),
                 ),
