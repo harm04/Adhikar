@@ -33,6 +33,7 @@ abstract class IPostAPI {
     List<String> commentIds,
   );
   Future<List<Document>> searchPosts(String text);
+  Future<PostModel?> getPostById(String postId);
 }
 
 class PostAPI implements IPostAPI {
@@ -195,20 +196,16 @@ class PostAPI implements IPostAPI {
     return documents.documents;
   }
 
-  // //fetch post with more likes
-  // Future<List<PostModel>> getPopularPosts() async {
-  //   final documents = await _db.listDocuments(
-  //     databaseId: AppwriteConstants.databaseID,
-  //     collectionId: AppwriteConstants.postCollectionID,
-  //     queries: [Query.orderDesc('likes')],
-  //   );
-
-  //   return documents.documents
-  //       .map((doc) => PostModel.fromMap(doc.data))
-  //       .toList();
-  // }
-
   @override
+  Future<PostModel?> getPostById(String postId) async {
+    final doc = await _db.getDocument(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.postCollectionID,
+      documentId: postId,
+    );
+    return PostModel.fromMap(doc.data);
+  }
+
   Stream<List<PostModel>> getAllPostsStream() async* {
     // Initial fetch
     final docs = await _db.listDocuments(

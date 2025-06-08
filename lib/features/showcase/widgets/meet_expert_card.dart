@@ -1,6 +1,7 @@
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/user_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,7 +37,7 @@ class MeetExpertCard extends ConsumerWidget {
                 child: CircleAvatar(
                   radius: 30,
                   backgroundImage: user.profileImage == ''
-                      ? AssetImage('assets/images/logo.png')
+                      ? AssetImage(ImageTheme.defaultProfileImage)
                       : NetworkImage(user.profileImage) as ImageProvider,
                 ),
               ),
@@ -77,12 +78,13 @@ class MeetExpertCard extends ConsumerWidget {
                 child: GestureDetector(
                   onTap: () async {
                     if (user.uid != currentUser.uid) {
-                       ref
+                      ref
                           .read(authControllerProvider.notifier)
                           .followUser(
                             userModel: user,
                             currentUser: currentUser,
                             context: context,
+                            ref: ref
                           );
                       // Refresh current user data after follow/unfollow
                       ref.invalidate(currentUserDataProvider);

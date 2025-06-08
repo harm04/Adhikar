@@ -3,6 +3,7 @@ import 'package:adhikar/common/pick_image.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -85,9 +86,7 @@ class _AddPostViewState extends ConsumerState<CreatePostScreen> {
                                             ? NetworkImage(
                                                 currentUser.profileImage,
                                               )
-                                            : NetworkImage(
-                                                'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                                              )
+                                            : AssetImage(ImageTheme.defaultProfileImage)
                                       : AssetImage(
                                           'assets/icons/anonymous.png',
                                         ),

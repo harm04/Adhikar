@@ -1,17 +1,21 @@
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/bookmarks/bookmarks.dart';
 import 'package:adhikar/features/expert/views/apply_for_expert.dart';
-import 'package:adhikar/features/home/views/following_posts.dart';
-import 'package:adhikar/features/home/views/latest_posts.dart';
-import 'package:adhikar/features/home/views/trending_posts.dart';
+import 'package:adhikar/features/home/widgets/following_posts.dart';
+import 'package:adhikar/features/home/widgets/latest_posts.dart';
+import 'package:adhikar/features/home/widgets/trending_posts.dart';
 import 'package:adhikar/features/kyr/widget/kyr_list.dart';
+import 'package:adhikar/features/message/views/conversations.dart';
 import 'package:adhikar/features/news/widget/news_list.dart';
+import 'package:adhikar/features/notification/views/notifications.dart';
 import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/views/create_post.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/features/settings/views/settings.dart';
 import 'package:adhikar/features/showcase/views/showcase_list.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,8 +77,8 @@ class _HomePageState extends ConsumerState<HomePage>
                                         radius: 50,
                                         backgroundImage:
                                             currentUser!.profileImage == ''
-                                            ? NetworkImage(
-                                                'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
+                                            ? AssetImage(
+                                                ImageTheme.defaultProfileImage,
                                               )
                                             : NetworkImage(
                                                 currentUser.profileImage,
@@ -129,6 +133,22 @@ class _HomePageState extends ConsumerState<HomePage>
                                     'assets/svg/pods.svg',
                                   ),
                                 ),
+                                //bookmarks
+                                GestureDetector(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return BookmarksScreen();
+                                      },
+                                    ),
+                                  ),
+                                  child: drawerItems(
+                                    'Bookmarks',
+                                    'assets/svg/bookmark_outline.svg',
+                                  ),
+                                ),
+
                                 currentUser.userType == 'Expert'
                                     ? SizedBox()
                                     : GestureDetector(
@@ -264,9 +284,7 @@ class _HomePageState extends ConsumerState<HomePage>
                           child: CircleAvatar(
                             radius: 20,
                             backgroundImage: currentUser.profileImage == ''
-                                ? NetworkImage(
-                                    'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                                  )
+                                ? AssetImage(ImageTheme.defaultProfileImage)
                                 : NetworkImage(currentUser.profileImage),
                           ),
                         ),
@@ -277,24 +295,49 @@ class _HomePageState extends ConsumerState<HomePage>
                           child: Row(
                             children: [
                               //notification icon
-                              SvgPicture.asset(
-                                'assets/svg/notification.svg',
-                                colorFilter: ColorFilter.mode(
-                                  Colors.white,
-                                  BlendMode.srcIn,
+                              GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return const Notifications();
+                                    },
+                                  ),
                                 ),
-                                height: 30,
+                                child: SvgPicture.asset(
+                                  'assets/svg/notification.svg',
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                  height: 30,
+                                ),
                               ),
 
                               const SizedBox(width: 22),
                               //chat icon
-                              SvgPicture.asset(
-                                'assets/svg/chat.svg',
-                                colorFilter: const ColorFilter.mode(
-                                  Colors.white,
-                                  BlendMode.srcIn,
+                              GestureDetector(
+                                onTap: () {
+                                  final currentUser = ref
+                                      .watch(currentUserDataProvider)
+                                      .value!;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ConversationsListScreen(
+                                        currentUser: currentUser,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: SvgPicture.asset(
+                                  'assets/svg/chat.svg',
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                  height: 30,
                                 ),
-                                height: 30,
                               ),
                             ],
                           ),

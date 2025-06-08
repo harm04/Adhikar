@@ -5,6 +5,8 @@ import 'package:adhikar/apis/storage_api.dart';
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/notification/controller/notification_controller.dart';
+import 'package:adhikar/models/notification_modal.dart';
 import 'package:adhikar/models/showcase_model.dart';
 import 'package:adhikar/models/user_model.dart';
 
@@ -60,6 +62,34 @@ final showcaseStreamProvider = StreamProvider.family
       // Listen to realtime updates for this post
       return showcaseAPI.getShowcaseStream(showcaseId);
     });
+
+final singleShowcaseProvider = FutureProvider.family<ShowcaseModel?, String>((
+  ref,
+  showcaseId,
+) async {
+  final showcaseAPI = ref.watch(showcaseAPIProvider);
+  return await showcaseAPI.getShowcaseById(showcaseId);
+});
+
+final bookmarkedShowcasesProvider = FutureProvider<List<ShowcaseModel>>((
+  ref,
+) async {
+  final user = ref.watch(currentUserDataProvider).value;
+  final showcaseAPI = ref.watch(showcaseAPIProvider);
+  if (user == null || user.bookmarked.isEmpty) return [];
+  List<ShowcaseModel> showcases = [];
+  print('${user.bookmarked.length} bookmarked showcases found');
+  for (final id in user.bookmarked) {
+    try {
+      final showcase = await showcaseAPI.getShowcaseById(id);
+      if (showcase != null) showcases.add(showcase);
+    } catch (e) {
+      // Skip if not found
+      print('Bookmark showcase not found: $id');
+    }
+  }
+  return showcases;
+});
 
 class ShowcaseController extends StateNotifier<bool> {
   final Ref _ref;
@@ -265,6 +295,23 @@ class ShowcaseController extends StateNotifier<bool> {
         commentedTo,
         updatedCommentIds,
       );
+
+      if (parentShowcases.uid != user.uid) {
+        final notification = NotificationModel(
+          id: '',
+          userId: parentShowcases.uid,
+          senderId: user.uid,
+          type: 'comment',
+          showcaseId: parentShowcases.id,
+          title: 'New Comment',
+          body: '${user.firstName} commented on your showcase.',
+          createdAt: DateTime.now(),
+        );
+        _ref
+            .read(notificationControllerProvider.notifier)
+            .createNotification(notification);
+      }
+
       state = false;
       Navigator.pop(context);
       res2.fold(
@@ -332,9 +379,26 @@ class ShowcaseController extends StateNotifier<bool> {
       upvotes.remove(userModel.uid);
     } else {
       upvotes.add(userModel.uid);
+      // Send notification
+      if (showcaseModel.uid != userModel.uid) {
+        // Don't notify self
+        final notification = NotificationModel(
+          id: '',
+          userId: showcaseModel.uid, // showcase owner
+          senderId: userModel.uid,
+          type: 'upvote',
+          showcaseId: showcaseModel.id,
+          title: 'New Upvote',
+          body: '${userModel.firstName} upvoted your showcase.',
+          createdAt: DateTime.now(),
+        );
+        _ref
+            .read(notificationControllerProvider.notifier)
+            .createNotification(notification);
+      }
+      showcaseModel = showcaseModel.copyWith(upvotes: upvotes);
+      await _showcaseAPI.upvoteShowcase(showcaseModel);
     }
-    showcaseModel = showcaseModel.copyWith(upvotes: upvotes);
-    await _showcaseAPI.upvoteShowcase(showcaseModel);
   }
 
   //bookmark showcase

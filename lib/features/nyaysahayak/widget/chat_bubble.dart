@@ -1,3 +1,4 @@
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -7,12 +8,12 @@ enum Direction { left, right }
 
 class ChatBubble extends StatelessWidget {
   const ChatBubble({
-    Key? key,
+    super.key,
     required this.direction,
     required this.message,
     required this.type,
     this.photoUrl,
-  }) : super(key: key);
+  });
   final Direction direction;
   final String message;
   final String? photoUrl;
@@ -63,7 +64,7 @@ class ChatBubble extends StatelessWidget {
       return const CircleAvatar(
         backgroundColor: Colors.black12,
         radius: 14,
-        child: Icon(Icons.person, size: 12),
+        backgroundImage: AssetImage(ImageTheme.defaultProfileImage),
       );
     }
     return const SizedBox(width: 24);

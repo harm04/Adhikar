@@ -20,9 +20,11 @@ class EditProfileWidget extends ConsumerStatefulWidget {
   final TextEditingController facebookController;
   final TextEditingController linkedinController;
   final TextEditingController twitterController;
+  File? profileImage;
   final UserModel copyOfUserModel;
+  final void Function(File?)? onProfileImageChanged;
 
-  const EditProfileWidget({
+  EditProfileWidget({
     super.key,
     required this.firstNameController,
     required this.lastNameController,
@@ -33,7 +35,9 @@ class EditProfileWidget extends ConsumerStatefulWidget {
     required this.facebookController,
     required this.linkedinController,
     required this.twitterController,
+    this.profileImage,
     required this.copyOfUserModel,
+    this.onProfileImageChanged,
   });
 
   @override
@@ -41,14 +45,16 @@ class EditProfileWidget extends ConsumerStatefulWidget {
 }
 
 class _EditWidgetState extends ConsumerState<EditProfileWidget> {
-  File? profileImage;
   //pick profile image
   void pickProfileImage() async {
     final profImage = await pickImage();
     if (profImage != null) {
       setState(() {
-        profileImage = profImage;
+        widget.profileImage = profImage;
       });
+      if (widget.onProfileImageChanged != null) {
+        widget.onProfileImageChanged!(profImage);
+      }
     }
   }
 
@@ -121,8 +127,8 @@ class _EditWidgetState extends ConsumerState<EditProfileWidget> {
                     backgroundColor: Pallete.whiteColor,
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundImage: profileImage != null
-                          ? FileImage(profileImage!)
+                      backgroundImage: widget.profileImage != null
+                          ? FileImage(widget.profileImage!)
                           : widget.copyOfUserModel.profileImage == ''
                           ? NetworkImage(
                               'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',

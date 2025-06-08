@@ -4,6 +4,7 @@ import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/nyaysahayak/widget/chat_bubble.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:dropdownfield2/dropdownfield2.dart';
 import 'package:flutter/material.dart';
@@ -360,11 +361,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
             padding: const EdgeInsets.only(left: 18.0),
             child: CircleAvatar(
               radius: 40,
-              backgroundImage: currentUser.profileImage == ''
-                  ? NetworkImage(
-                      'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                    )
-                  : NetworkImage(currentUser.profileImage),
+              backgroundImage: AssetImage(ImageTheme.defaultAdhikarLogo),
             ),
           ),
           centerTitle: true,
@@ -442,15 +439,6 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                   ),
                   child: Row(
                     children: [
-                      // IconButton(
-                      //   icon: Icon(
-                      //     isListening ? Icons.mic : Icons.mic_none,
-                      //     color: isListening
-                      //         ? Pallete.primaryColor
-                      //         : Colors.grey,
-                      //   ),
-                      // onPressed: isListening ? stopListening : startListening,
-                      // ),
                       GestureDetector(
                         onTap: () {
                           isListening ? stopListening : startListening();

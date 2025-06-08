@@ -6,6 +6,7 @@ import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/expert_controller.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:dropdownfield2/dropdownfield2.dart';
@@ -108,13 +109,6 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
     }
   }
 
-  // void selectProfImage() async {
-  //   Uint8List im = await pickImage(ImageSource.gallery);
-  //   setState(() {
-  //     profImage = im;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     final List<String> states = [
@@ -214,12 +208,12 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                                 )
                               : CircleAvatar(
                                   radius: 70,
-                                  backgroundColor: Pallete.whiteColor,
+                                  backgroundColor: Pallete.primaryColor,
                                   child: CircleAvatar(
                                     radius: 66,
                                     backgroundColor: Pallete.whiteColor,
-                                    backgroundImage: NetworkImage(
-                                      'https://image.cdn2.seaart.me/2024-09-16/crjon2de878c739kmukg-2/363d4f7dce80aad62b4b1cdc12bb1ec6_high.webp',
+                                    backgroundImage: AssetImage(
+                                      ImageTheme.defaultProfileImage,
                                     ),
                                   ),
                                 ),
@@ -246,6 +240,16 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Center(
+                      child: Text(
+                        'Required',
+                        style: TextStyle(
+                          color: Pallete.whiteColor,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 30),

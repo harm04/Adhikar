@@ -1,6 +1,7 @@
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/models/showcase_model.dart';
 import 'package:adhikar/models/user_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,12 +42,10 @@ class _CommentTextfieldState extends ConsumerState<CommentTextfield> {
                 radius: 20,
                 child: CircleAvatar(
                   radius: 20,
-                  backgroundColor: Pallete.whiteColor,
-                  backgroundImage: NetworkImage(
-                    widget.currentUser.profileImage != ''
-                        ? widget.currentUser.profileImage
-                        : 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                  ),
+                  backgroundColor: Pallete.primaryColor,
+                  backgroundImage: widget.currentUser.profileImage != ''
+                      ? NetworkImage(widget.currentUser.profileImage)
+                      : AssetImage(ImageTheme.defaultProfileImage),
                 ),
               ),
               Expanded(

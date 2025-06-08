@@ -5,6 +5,7 @@ import 'package:adhikar/features/posts/widgets/hashtags.dart';
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/models/showcase_model.dart';
 import 'package:adhikar/models/user_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,9 +55,7 @@ class _CommentsListState extends ConsumerState<CommentsList> {
                                 CircleAvatar(
                                   radius: 25,
                                   backgroundImage: user.profileImage == ''
-                                      ? NetworkImage(
-                                          'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                                        )
+                                      ? AssetImage(ImageTheme.defaultProfileImage)
                                       : NetworkImage(user.profileImage),
                                 ),
                                 SizedBox(width: 10),

@@ -33,6 +33,7 @@ abstract class IShowcaseAPI {
     String showcaseId,
     List<String> commentIds,
   );
+  Future<ShowcaseModel?> getShowcaseById(String showcaseId);
 }
 
 class ShowcaseAPI implements IShowcaseAPI {
@@ -168,5 +169,15 @@ class ShowcaseAPI implements IShowcaseAPI {
           final data = event.payload;
           return ShowcaseModel.fromMap(data);
         });
+  }
+
+  @override
+  Future<ShowcaseModel?> getShowcaseById(String showcaseId) async {
+    final doc = await _db.getDocument(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.showcaseCollectionID,
+      documentId: showcaseId,
+    );
+    return ShowcaseModel.fromMap(doc.data);
   }
 }

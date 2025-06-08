@@ -8,6 +8,7 @@ import 'package:adhikar/features/posts/views/comment.dart';
 import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/posts_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
@@ -82,9 +83,7 @@ class PostCard extends ConsumerWidget {
                           backgroundImage: postmodel.isAnonymous
                               ? AssetImage('assets/icons/anonymous.png')
                               : user.profileImage == ''
-                              ? NetworkImage(
-                                  'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                                )
+                              ? AssetImage(ImageTheme.defaultProfileImage)
                               : NetworkImage(user.profileImage),
                         ),
                       ),
@@ -106,7 +105,9 @@ class PostCard extends ConsumerWidget {
                                       ),
                                     ),
                               child: Text(
-                               postmodel.isAnonymous?'Anonymous': user.firstName + ' ' + user.lastName,
+                                postmodel.isAnonymous
+                                    ? 'Anonymous'
+                                    : user.firstName + ' ' + user.lastName,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
@@ -117,8 +118,10 @@ class PostCard extends ConsumerWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                   postmodel.isAnonymous?'Anonymous User': user.bio == ''
-                                        ? 'Adhikar user defc dddddd eeeeeeee eee wwwwww wwww w'
+                                    postmodel.isAnonymous
+                                        ? 'Anonymous User'
+                                        : user.bio == ''
+                                        ? 'Adhikar user'
                                         : user.bio,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -215,9 +218,18 @@ class PostCard extends ConsumerWidget {
                               itemBuilder: (context, index) {
                                 return ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    postmodel.images[index],
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder: ImageTheme
+                                        .defaultAdhikarLogo, 
+                                    image: postmodel.images[index],
                                     fit: BoxFit.cover,
+                                    imageErrorBuilder:
+                                        (context, error, stackTrace) {
+                                          return Image.asset(
+                                            ImageTheme.defaultAdhikarLogo,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
                                   ),
                                 );
                               },

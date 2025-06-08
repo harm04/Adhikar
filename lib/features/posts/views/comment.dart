@@ -10,6 +10,7 @@ import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
 import 'package:adhikar/features/posts/widgets/hashtags.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/posts_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter_svg/svg.dart';
@@ -88,8 +89,8 @@ class _CommentViewState extends ConsumerState<Comment> {
                                   radius: 20,
                                   backgroundColor: Pallete.whiteColor,
                                   backgroundImage: !isAnonymous
-                                      ? NetworkImage(
-                                          'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
+                                      ? AssetImage(
+                                          ImageTheme.defaultProfileImage,
                                         )
                                       : AssetImage(
                                           'assets/icons/anonymous.png',
@@ -210,9 +211,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                                 backgroundImage: widget.postModel.isAnonymous
                                     ? AssetImage('assets/icons/anonymous.png')
                                     : (user.profileImage == ''
-                                          ? NetworkImage(
-                                              'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                                            )
+                                          ? AssetImage(ImageTheme.defaultProfileImage)
                                           : NetworkImage(user.profileImage)),
                               ),
                             ),
@@ -618,9 +617,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                               )
                                                             : user.profileImage ==
                                                                   ''
-                                                            ? NetworkImage(
-                                                                'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                                                              )
+                                                            ? AssetImage(ImageTheme.defaultProfileImage)
                                                             : NetworkImage(
                                                                 user.profileImage,
                                                               ),

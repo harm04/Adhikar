@@ -1,5 +1,6 @@
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/user_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
@@ -49,9 +50,7 @@ class SearchCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 40,
                   backgroundImage: user.profileImage == ''
-                      ? NetworkImage(
-                          'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                        )
+                      ?AssetImage(ImageTheme.defaultProfileImage)
                       : NetworkImage(user.profileImage),
                 ),
                 const SizedBox(width: 10),

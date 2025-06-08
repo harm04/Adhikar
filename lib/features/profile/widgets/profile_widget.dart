@@ -1,12 +1,17 @@
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/message/views/conversations.dart';
+import 'package:adhikar/features/message/views/messaging.dart';
+import 'package:adhikar/features/message/controller/messaging_controller.dart';
+
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/posts/widgets/post_card.dart';
 import 'package:adhikar/features/profile/views/edit_profile.dart';
 import 'package:adhikar/features/profile/widgets/add_education.dart';
 import 'package:adhikar/features/profile/widgets/add_experience.dart';
 import 'package:adhikar/models/user_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
@@ -58,9 +63,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                       child: CircleAvatar(
                         radius: 42,
                         backgroundImage: widget.userModel.profileImage == ''
-                            ? NetworkImage(
-                                'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                              )
+                            ? AssetImage(ImageTheme.defaultProfileImage)
                             : NetworkImage(widget.userModel.profileImage),
                       ),
                     ),
@@ -207,6 +210,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                 userModel: widget.userModel,
                                 currentUser: currentUser.value!,
                                 context: context,
+                                ref: ref,
                               )
                         : SizedBox();
                   },
@@ -240,34 +244,116 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
               ),
               SizedBox(width: 10),
               Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Pallete.whiteColor),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 7.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/svg/chat.svg',
-                            colorFilter: ColorFilter.mode(
-                              Pallete.whiteColor,
-                              BlendMode.srcIn,
-                            ),
-                            height: 25,
+                child: GestureDetector(
+                  onTap: () async {
+                    final currentUser = ref
+                        .watch(currentUserDataProvider)
+                        .value!;
+                    final peerUser = widget.userModel;
+                    if (currentUser.uid == peerUser.uid) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return ConversationsListScreen(
+                              currentUser: currentUser,
+                            );
+                          },
+                        ),
+                      );
+                      return;
+                    }
+
+                    // If current user is Expert, allow messaging anyone
+                    if (currentUser.userType == 'Expert') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MessagingScreen(
+                            currentUser: currentUser,
+                            peerUser: peerUser,
                           ),
-                          SizedBox(width: 6),
-                          Text(
-                            'Messages',
-                            style: TextStyle(
-                              color: Pallete.whiteColor,
-                              fontSize: 16,
+                        ),
+                      );
+                      return;
+                    }
+
+                    // If both are Users, allow messaging
+                    if (currentUser.userType == 'User' &&
+                        peerUser.userType == 'User') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MessagingScreen(
+                            currentUser: currentUser,
+                            peerUser: peerUser,
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    // If current user is User and peer is Expert
+                    if (currentUser.userType == 'User' &&
+                        peerUser.userType == 'Expert') {
+                      // Check if conversation exists
+                      final conversations = await ref
+                          .read(messagingControllerProvider)
+                          .getUserConversations(currentUser.uid);
+
+                      final exists = conversations.any(
+                        (conv) => conv['peerId'] == peerUser.uid,
+                      );
+
+                      if (exists) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MessagingScreen(
+                              currentUser: currentUser,
+                              peerUser: peerUser,
                             ),
                           ),
-                        ],
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("You cannot message an expert."),
+                          ),
+                        );
+                      }
+                      return;
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Pallete.whiteColor),
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 7.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/svg/chat.svg',
+                              colorFilter: ColorFilter.mode(
+                                Pallete.whiteColor,
+                                BlendMode.srcIn,
+                              ),
+                              height: 25,
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              'Messages',
+                              style: TextStyle(
+                                color: Pallete.whiteColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

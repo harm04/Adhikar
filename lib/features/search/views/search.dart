@@ -339,22 +339,24 @@ class _SearchState extends ConsumerState<Search>
             fontWeight: FontWeight.bold,
           ),
           tabs: const [
-            Tab(text: 'Legal'),
-            Tab(text: 'Posts'),
             Tab(text: 'Users'),
+
+            Tab(text: 'Posts'),
+            Tab(text: 'Legal'),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildLegalResults(),
-          _query.isEmpty
-              ? const Center(child: Text('Type to search posts'))
-              : SearchPost(query: _query),
           _query.isEmpty
               ? const Center(child: Text('Type to search users'))
               : SearchUser(query: _query),
+          _query.isEmpty
+              ? const Center(child: Text('Type to search posts'))
+              : SearchPost(query: _query),
+
+          _buildLegalResults(),
         ],
       ),
     );

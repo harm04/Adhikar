@@ -1,4 +1,3 @@
-
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
@@ -21,20 +20,21 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
   Widget build(BuildContext context) {
     UserModel copyOfUserModel = widget.userModel;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile on Adhikar'),
-        centerTitle: true,
-      ),
-      body: ref.watch(getlatestUserDataProvider).when(
-          data: (user) {
-            if (user.events.contains(
-                'databases.*.collections.${AppwriteConstants.usersCollectionID}.documents.${copyOfUserModel.uid}.update')) {
-              copyOfUserModel = UserModel.fromMap(user.payload);
-            }
-            return ProfileWidget(userModel: copyOfUserModel);
-          },
-          error: (error, st) => ErrorText(error: error.toString()),
-          loading: () => ProfileWidget(userModel: copyOfUserModel)),
+      appBar: AppBar(title: Text('Profile on Adhikar'), centerTitle: true),
+      body: ref
+          .watch(getlatestUserDataProvider)
+          .when(
+            data: (user) {
+              if (user.events.contains(
+                'databases.*.collections.${AppwriteConstants.usersCollectionID}.documents.${copyOfUserModel.uid}.update',
+              )) {
+                copyOfUserModel = UserModel.fromMap(user.payload);
+              }
+              return ProfileWidget(userModel: copyOfUserModel);
+            },
+            error: (error, st) => ErrorText(error: error.toString()),
+            loading: () => ProfileWidget(userModel: copyOfUserModel),
+          ),
       //
     );
   }

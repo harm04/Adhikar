@@ -5,6 +5,8 @@ import 'package:adhikar/apis/storage_api.dart';
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/notification/controller/notification_controller.dart';
+import 'package:adhikar/models/notification_modal.dart';
 import 'package:adhikar/models/posts_model.dart';
 import 'package:adhikar/models/user_model.dart';
 
@@ -59,6 +61,31 @@ final postStreamProvider = StreamProvider.family.autoDispose<PostModel, String>(
     return postAPI.getPostStream(postId);
   },
 );
+final singlePostProvider = FutureProvider.family<PostModel?, String>((
+  ref,
+  postId,
+) async {
+  final postAPI = ref.watch(postAPIProvider);
+  return await postAPI.getPostById(postId);
+});
+
+final bookmarkedPostsProvider = FutureProvider<List<PostModel>>((ref) async {
+  final user = ref.watch(currentUserDataProvider).value;
+  final postAPI = ref.watch(postAPIProvider);
+  if (user == null || user.bookmarked.isEmpty) return [];
+  List<PostModel> posts = [];
+  print('${user.bookmarked.length} bookmarked posts found');
+  for (final id in user.bookmarked) {
+    try {
+      final post = await postAPI.getPostById(id);
+      if (post != null) posts.add(post);
+    } catch (e) {
+      // Skip if not found
+      print('Bookmark post not found: $id');
+    }
+  }
+  return posts;
+});
 
 class PostController extends StateNotifier<bool> {
   final Ref _ref;
@@ -223,11 +250,28 @@ class PostController extends StateNotifier<bool> {
         commentedTo,
         updatedCommentIds,
       );
+
+      if (parentPost.uid != user.uid) {
+        final notification = NotificationModel(
+          id: '',
+          userId: parentPost.uid,
+          senderId: user.uid,
+          type: 'comment',
+          postId: parentPost.id,
+          title: 'New Comment',
+          body: '${user.firstName} commented on your post.',
+          createdAt: DateTime.now(),
+        );
+        _ref
+            .read(notificationControllerProvider.notifier)
+            .createNotification(notification);
+      }
+
       state = false;
       Navigator.pop(context);
       res2.fold(
         (l) => showSnackbar(context, l.message),
-        (r) => showSnackbar(context, 'Post uploaded successfully'),
+        (r) => showSnackbar(context, 'Comment posted successfully'),
       );
     });
   }
@@ -283,9 +327,27 @@ class PostController extends StateNotifier<bool> {
       likes.remove(userModel.uid);
     } else {
       likes.add(userModel.uid);
+
+      // Send notification
+      if (postModel.uid != userModel.uid) {
+        // Don't notify self
+        final notification = NotificationModel(
+          id: '',
+          userId: postModel.uid, // post owner
+          senderId: userModel.uid,
+          type: 'like',
+          postId: postModel.id,
+          title: 'New Like',
+          body: '${userModel.firstName} liked your post.',
+          createdAt: DateTime.now(),
+        );
+        _ref
+            .read(notificationControllerProvider.notifier)
+            .createNotification(notification);
+      }
+      postModel = postModel.copyWith(likes: likes);
+      await _postAPI.likePost(postModel);
     }
-    postModel = postModel.copyWith(likes: likes);
-    await _postAPI.likePost(postModel);
   }
 
   //bookmark post

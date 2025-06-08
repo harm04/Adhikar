@@ -76,6 +76,12 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
         : widget.userModel.location;
   }
 
+  void _onProfileImageChanged(File? image) {
+    setState(() {
+      profileImage = image;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(authControllerProvider);
@@ -94,24 +100,10 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                     onTap: () {
                       if (firstNameController.text.isNotEmpty &&
                           lastNameController.text.isNotEmpty) {
-                        // Create a new UserModel with all updated fields
-                        final updatedUserModel = widget.userModel.copyWith(
-                          firstName: firstNameController.text,
-                          lastName: lastNameController.text,
-                          bio: bioController.text,
-                          location: locationController.text,
-                          linkedin: linkedinController.text,
-                          twitter: twitterController.text,
-                          instagram: instagramController.text,
-                          facebook: facebookController.text,
-                          summary: summaryController.text,
-                          // Add other fields if needed
-                        );
-
                         ref
                             .read(authControllerProvider.notifier)
                             .updateUser(
-                              userModel: updatedUserModel,
+                              userModel: widget.userModel,
                               context: context,
                               profileImage: profileImage,
                               firstName: firstNameController.text,
@@ -154,10 +146,12 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                       summaryController: summaryController,
                       locationController: locationController,
                       instagramController: instagramController,
+                      profileImage: profileImage,
                       facebookController: facebookController,
                       linkedinController: linkedinController,
                       twitterController: twitterController,
                       copyOfUserModel: copyOfUserModel,
+                      onProfileImageChanged: _onProfileImageChanged,
                     );
                   },
                   error: (error, st) => ErrorText(error: error.toString()),
@@ -168,10 +162,12 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                     summaryController: summaryController,
                     locationController: locationController,
                     instagramController: instagramController,
+                    profileImage: profileImage,
                     facebookController: facebookController,
                     linkedinController: linkedinController,
                     twitterController: twitterController,
                     copyOfUserModel: copyOfUserModel,
+                    onProfileImageChanged: _onProfileImageChanged,
                   ),
                 ),
           );
