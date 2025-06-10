@@ -45,7 +45,12 @@ class _PostListState extends ConsumerState<PostList> {
                             final post = posts[index];
                             return post.pod == 'comment'
                                 ? const SizedBox()
-                                : PostCard(postmodel: post);
+                                : PostCard(
+                                    key: ValueKey(
+                                      post.id,
+                                    ), // <-- This is crucial!
+                                    postmodel: post,
+                                  );
                           },
                         );
                       },
@@ -56,7 +61,10 @@ class _PostListState extends ConsumerState<PostList> {
                         itemCount: posts.length,
                         itemBuilder: (BuildContext context, int index) {
                           final post = posts[index];
-                          return PostCard(postmodel: post);
+                          return PostCard(
+                            key: ValueKey(post.id), // <-- This is crucial!
+                            postmodel: post,
+                          );
                         },
                       ),
                     );

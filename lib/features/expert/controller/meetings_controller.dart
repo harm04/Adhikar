@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:adhikar/apis/meetings_api.dart';
 import 'package:adhikar/common/failure.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
@@ -11,7 +12,10 @@ import 'package:fpdart/fpdart.dart';
 
 final meetingsControllerProvider =
     StateNotifierProvider<MeetingsController, bool>((ref) {
-      return MeetingsController(meethingsAPI: ref.watch(meetingsAPIProvider), ref: ref);
+      return MeetingsController(
+        meethingsAPI: ref.watch(meetingsAPIProvider),
+        ref: ref,
+      );
     });
 
 final getUserMeetingsProvider = FutureProvider.family((
@@ -21,6 +25,34 @@ final getUserMeetingsProvider = FutureProvider.family((
   final meetingsController = ref.watch(meetingsControllerProvider.notifier);
   return meetingsController.getUserMeetingsList(userModel);
 });
+
+final getExpertMeetingsProvider =
+    FutureProvider.family<List<MeetingsModel>, String>((ref, expertUid) async {
+      final meetingsController = ref.watch(meetingsControllerProvider.notifier);
+      return meetingsController.getExpertMeetingsList(expertUid);
+    });
+
+final userMeetingsStreamProvider =
+    StreamProvider.family<List<MeetingsModel>, String>((ref, userUid) {
+      final meetingsAPI = ref.watch(meetingsAPIProvider);
+      return meetingsAPI
+          .getUserMeetingsStream(userUid)
+          .map(
+            (docs) =>
+                docs.map((doc) => MeetingsModel.fromMap(doc.data)).toList(),
+          );
+    });
+
+final expertMeetingsStreamProvider =
+    StreamProvider.family<List<MeetingsModel>, String>((ref, expertUid) {
+      final meetingsAPI = ref.watch(meetingsAPIProvider);
+      return meetingsAPI
+          .getExpertMeetingsStream(expertUid)
+          .map(
+            (docs) =>
+                docs.map((doc) => MeetingsModel.fromMap(doc.data)).toList(),
+          );
+    });
 
 class MeetingsController extends StateNotifier<bool> {
   final MeetingsAPI _meetingsAPI;
@@ -40,6 +72,9 @@ class MeetingsController extends StateNotifier<bool> {
   }) async {
     state = true;
 
+    // Generate 6-digit OTP
+    final otp = (Random().nextInt(900000) + 100000).toString();
+
     MeetingsModel meetingsModel = MeetingsModel(
       id: '',
       createdAt: DateTime.now(),
@@ -48,6 +83,7 @@ class MeetingsController extends StateNotifier<bool> {
       expertUid: expertModel.uid,
       transactionID: transactionID,
       meetingStatus: 'pending',
+      otp: otp, // <-- Add this
     );
 
     final res = await _meetingsAPI.createMeeting(meetingsModel);
@@ -55,7 +91,7 @@ class MeetingsController extends StateNotifier<bool> {
     // Update user's phone in UserModel after meeting creation
     if (userModel.phone != phone) {
       final updatedUser = userModel.copyWith(phone: phone);
-       ref
+      ref
           .read(authControllerProvider.notifier)
           .updateUser(
             userModel: updatedUser,
@@ -74,7 +110,7 @@ class MeetingsController extends StateNotifier<bool> {
     }
 
     state = false;
-    return res; // This will be used to get the meeting ID
+    return res;
   }
 
   //get meetings of a user
@@ -84,5 +120,29 @@ class MeetingsController extends StateNotifier<bool> {
     return meetingsList
         .map((meetings) => MeetingsModel.fromMap(meetings.data))
         .toList();
+  }
+
+  Future<List<MeetingsModel>> getExpertMeetingsList(String expertUid) async {
+    final meetingsList = await _meetingsAPI.getExpertMeetings(expertUid);
+    return meetingsList
+        .map((meetings) => MeetingsModel.fromMap(meetings.data))
+        .toList();
+  }
+
+  Future<bool> verifyAndCompleteMeeting(
+    String meetingId,
+    String enteredOtp,
+    String expertUid,
+  ) async {
+    state = true;
+    final result = await _meetingsAPI.verifyAndCompleteMeeting(
+      meetingId,
+      enteredOtp,
+    );
+    if (result) {
+    await _meetingsAPI.addCreditsToExpertEverywhere(expertUid, 130);
+    }
+    state = false;
+    return result;
   }
 }

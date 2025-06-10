@@ -10,12 +10,17 @@ import 'package:appwrite/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 
-//this is showcase provider. do not touch it
 final showcaseAPIProvider = Provider((ref) {
   return ShowcaseAPI(
     db: ref.watch(appwriteDatabaseProvider),
     realtime: ref.watch(appwriteRealTimeProvider),
   );
+});
+//showcase count
+final showcasesCountProvider = FutureProvider<int>((ref) async {
+  final showcaseAPI = ref.watch(showcaseAPIProvider);
+  final showcases = await showcaseAPI.getShowcase();
+  return showcases.length;
 });
 
 abstract class IShowcaseAPI {
@@ -63,7 +68,10 @@ class ShowcaseAPI implements IShowcaseAPI {
     final documents = await _db.listDocuments(
       databaseId: AppwriteConstants.databaseID,
       collectionId: AppwriteConstants.showcaseCollectionID,
-      queries: [Query.orderDesc('createdAt')],
+      queries: [
+        Query.orderDesc('createdAt'),
+        Query.notEqual('tagline', 'comment'), // Exclude comments
+      ],
     );
 
     return documents.documents;

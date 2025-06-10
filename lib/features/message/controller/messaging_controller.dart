@@ -5,7 +5,6 @@ import 'package:adhikar/apis/messaging_api.dart';
 import 'package:adhikar/models/notification_modal.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as ref;
 
 final messagingControllerProvider = Provider((ref) {
   return MessagingController(ref.watch(messagingAPIProvider));

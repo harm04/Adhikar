@@ -1,20 +1,42 @@
-
 import 'package:adhikar/common/widgets/custom_textfield.dart';
+import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 
-class AddExperience extends StatefulWidget {
-  const AddExperience({super.key});
+class AddExperience extends ConsumerStatefulWidget {
+  final UserModel currentUser;
+  const AddExperience({super.key, required this.currentUser});
 
   @override
-  State<AddExperience> createState() => _AddExperienceState();
+  ConsumerState<AddExperience> createState() => _AddExperienceState();
 }
 
-class _AddExperienceState extends State<AddExperience> {
+class _AddExperienceState extends ConsumerState<AddExperience> {
   TextEditingController titleController = TextEditingController();
-  TextEditingController organisationController = TextEditingController();
+  TextEditingController firmOrOrganisationController = TextEditingController();
   TextEditingController summaryController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    titleController.dispose();
+    firmOrOrganisationController.dispose();
+    summaryController.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    titleController.text = widget.currentUser.experienceTitle;
+    firmOrOrganisationController.text =
+        widget.currentUser.experienceOrganization;
+    summaryController.text = widget.currentUser.experienceSummary;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,10 +46,32 @@ class _AddExperienceState extends State<AddExperience> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 18.0),
-            child: Image.asset(
-              'assets/icons/ic_correct.png',
-              height: 25,
-              color: Colors.green,
+            child: GestureDetector(
+              onTap: () {
+                if (titleController.text.isNotEmpty &&
+                    firmOrOrganisationController.text.isNotEmpty &&
+                    summaryController.text.isNotEmpty) {
+                  ref
+                      .read(authControllerProvider.notifier)
+                      .updateUserExperience(
+                        userModel: widget.currentUser,
+                        context: context,
+                        title: titleController.text,
+                        firmOrOrganization: firmOrOrganisationController.text,
+                        summary: summaryController.text,
+                      );
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill all fields')),
+                  );
+                }
+              },
+              child: SvgPicture.asset(
+                'assets/svg/tick.svg',
+                colorFilter: ColorFilter.mode(Colors.green, BlendMode.srcIn),
+                height: 45,
+              ),
             ),
           ),
         ],
@@ -38,54 +82,51 @@ class _AddExperienceState extends State<AddExperience> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Basic info',
-                  style: TextStyle(
-                      color: Pallete.backgroundColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold)),
-              SizedBox(
-                height: 20,
+              Text(
+                'Basic info',
+                style: TextStyle(
+                  color: Pallete.whiteColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              Text('Add Title',
-                  style: TextStyle(
-                    color: Pallete.backgroundColor,
-                    fontSize: 17,
-                  )),
+              SizedBox(height: 20),
+              Text(
+                'Add Title',
+                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
+              ),
               SizedBox(height: 5),
               CustomTextfield(
-                  keyboardType: TextInputType.text,
-                  controller: titleController,
-                  hintText: 'Title',
-                  obsecureText: false),
-              SizedBox(
-                height: 15,
+                keyboardType: TextInputType.text,
+                controller: titleController,
+                hintText: 'Title',
+                obsecureText: false,
               ),
-              Text('Add Organisation',
-                  style: TextStyle(
-                    color: Pallete.backgroundColor,
-                    fontSize: 17,
-                  )),
+              SizedBox(height: 15),
+              Text(
+                'Add Law firm / Organisation',
+                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
+              ),
               SizedBox(height: 5),
               CustomTextfield(
-                  keyboardType: TextInputType.text,
-                  controller: organisationController,
-                  hintText: 'Organisation',
-                  obsecureText: false),
-              SizedBox(
-                height: 15,
+                keyboardType: TextInputType.text,
+                controller: firmOrOrganisationController,
+                hintText: 'Law firm / Organisation',
+                obsecureText: false,
               ),
-              Text('Add Summary',
-                  style: TextStyle(
-                    color: Pallete.backgroundColor,
-                    fontSize: 17,
-                  )),
+              SizedBox(height: 15),
+              Text(
+                'Add Summary',
+                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
+              ),
               SizedBox(height: 5),
               TextField(
+                maxLength: 1000,
                 maxLines: 5,
                 controller: summaryController,
                 obscureText: false,
                 decoration: InputDecoration(
-                  hintText: 'Summary',
+                  hintText: 'Tell us about your experience',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),

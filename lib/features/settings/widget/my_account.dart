@@ -85,7 +85,7 @@ class MyAccount extends ConsumerWidget {
                     ),
                   ),
                   Text(
-                    currentUser.phone ?? 'N/A',
+                    currentUser.phone == '' ? 'N/A' : currentUser.phone,
                     style: TextStyle(
                       color: Pallete.greyColor,
                       fontSize: 16,

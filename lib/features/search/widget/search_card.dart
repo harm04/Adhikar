@@ -4,6 +4,7 @@ import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class SearchCard extends StatelessWidget {
   final UserModel user;
@@ -22,25 +23,7 @@ class SearchCard extends StatelessWidget {
           ),
         );
       },
-      // child: ListTile(
-      //   leading: CircleAvatar(
-      //     radius: 35,
-      //     backgroundImage: user.profileImage == ''
-      //         ? NetworkImage(
-      //             'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-      //           )
-      //         : NetworkImage(user.profileImage),
-      //   ),
-      //   title: Text(
-      //     '${user.firstName} ${user.lastName}',
-      //     style: TextStyle(
-      //       color: Pallete.whiteColor,
-      //       fontSize: 20,
-      //       fontWeight: FontWeight.bold,
-      //     ),
-      //   ),
-      //   subtitle: Text(user.email, style: TextStyle(color: Pallete.greyColor)),
-      // ),
+      
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 3),
         child: Column(
@@ -50,7 +33,7 @@ class SearchCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 40,
                   backgroundImage: user.profileImage == ''
-                      ?AssetImage(ImageTheme.defaultProfileImage)
+                      ? AssetImage(ImageTheme.defaultProfileImage)
                       : NetworkImage(user.profileImage),
                 ),
                 const SizedBox(width: 10),
@@ -58,13 +41,30 @@ class SearchCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '${user.firstName} ${user.lastName}',
-                        style: TextStyle(
-                          color: Pallete.whiteColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            '${user.firstName} ${user.lastName}',
+                            style: TextStyle(
+                              color: Pallete.whiteColor,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          user.userType == 'Expert'
+                              ? Padding(
+                                  padding: const EdgeInsets.only(left: 7.0),
+                                  child: SvgPicture.asset(
+                                    'assets/svg/verified.svg',
+                                    height: 20,
+                                    colorFilter: ColorFilter.mode(
+                                      Pallete.secondaryColor,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                )
+                              : SizedBox(),
+                        ],
                       ),
                       Text(
                         user.bio == '' ? 'Adhikar user' : user.bio,

@@ -24,10 +24,18 @@ abstract class IUserAPI {
     ExpertModel expertModel,
     String meetingId,
   );
+  Future<bool> verifyAndCompleteMeeting(String meetingId, String enteredOtp);
+  Future<List<Document>> getExpertMeetings(String expertUid);
   FutureEitherVoid updateUsermodelWithMeeting(
     UserModel userModel,
     String meetingId,
   );
+   Future<void> addCreditsToExpertEverywhere(
+    String expertUid,
+    int creditsToAdd,
+  );
+  Stream<List<Document>> getUserMeetingsStream(String userUid);
+  Stream<List<Document>> getExpertMeetingsStream(String expertUid);
 }
 
 class MeetingsAPI implements IUserAPI {
@@ -105,5 +113,91 @@ class MeetingsAPI implements IUserAPI {
     );
 
     return documents.documents;
+  }
+
+  Future<List<Document>> getExpertMeetings(String expertUid) async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.meetingsCollectionID,
+      queries: [Query.equal('expertUid', expertUid)],
+    );
+    return documents.documents;
+  }
+
+  Stream<List<Document>> getUserMeetingsStream(String userUid) {
+    return _db
+        .listDocuments(
+          databaseId: AppwriteConstants.databaseID,
+          collectionId: AppwriteConstants.meetingsCollectionID,
+          queries: [Query.equal('clientUid', userUid)],
+        )
+        .asStream()
+        .asyncMap((documents) => documents.documents);
+  }
+
+  Stream<List<Document>> getExpertMeetingsStream(String expertUid) {
+    return _db
+        .listDocuments(
+          databaseId: AppwriteConstants.databaseID,
+          collectionId: AppwriteConstants.meetingsCollectionID,
+          queries: [Query.equal('expertUid', expertUid)],
+        )
+        .asStream()
+        .asyncMap((documents) => documents.documents);
+  }
+
+  Future<bool> verifyAndCompleteMeeting(
+    String meetingId,
+    String enteredOtp,
+  ) async {
+    final doc = await _db.getDocument(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.meetingsCollectionID,
+      documentId: meetingId,
+    );
+    final meetingOtp = doc.data['otp'];
+    if (meetingOtp == enteredOtp) {
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.meetingsCollectionID,
+        documentId: meetingId,
+        data: {'meetingStatus': 'completed'},
+      );
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> addCreditsToExpertEverywhere(
+    String expertUid,
+    int creditsToAdd,
+  ) async {
+    // Update in UserModel collection
+    final userDoc = await _db.getDocument(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.usersCollectionID,
+      documentId: expertUid,
+    );
+    final userCredits = userDoc.data['credits'] ?? 0;
+    await _db.updateDocument(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.usersCollectionID,
+      documentId: expertUid,
+      data: {'credits': userCredits + creditsToAdd},
+    );
+
+    // Update in ExpertModel collection
+    final expertDoc = await _db.getDocument(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.expertCollectionID,
+      documentId: expertUid,
+    );
+    final expertCredits = expertDoc.data['credits'] ?? 0;
+    await _db.updateDocument(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.expertCollectionID,
+      documentId: expertUid,
+      data: {'credits': expertCredits + creditsToAdd},
+    );
   }
 }

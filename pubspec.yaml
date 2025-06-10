@@ -57,6 +57,9 @@ dependencies:
   google_generative_ai: ^0.4.7
   flutter_tts: ^4.2.3
   speech_to_text: ^7.0.0
+  fl_chart: ^1.0.0
+  pie_chart: ^5.4.0
+ 
 dependency_overrides:
   flutter_web_auth_2: 
 dev_dependencies:

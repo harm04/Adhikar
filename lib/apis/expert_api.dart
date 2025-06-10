@@ -16,10 +16,18 @@ final expertApiProvider = Provider((ref) {
   );
 });
 
+//experts count
+final expertsCountProvider = FutureProvider<int>((ref) async {
+  final expertAPI = ref.watch(expertApiProvider);
+  final experts = await expertAPI.getExperts();
+  return experts.length;
+});
+
 abstract class IUserAPI {
   Future<List<Document>> getExperts();
   FutureEitherVoid applyForExpert(UserModel userModel, ExpertModel lawyerModel);
   Future<Document> getExpertData(String uid);
+  FutureEitherVoid approveExpert(String uid);
 }
 
 class ExpertAPI implements IUserAPI {
@@ -71,6 +79,65 @@ class ExpertAPI implements IUserAPI {
       databaseId: AppwriteConstants.databaseID,
       collectionId: AppwriteConstants.expertCollectionID,
       documentId: uid,
+    );
+  }
+
+  //approv expert
+  FutureEitherVoid approveExpert(String uid) async {
+    try {
+      //update usertype in usermodel
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.usersCollectionID,
+        documentId: uid,
+        data: {'userType': 'Expert', 'isVerified': true},
+      );
+
+      //update expert status
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.expertCollectionID,
+        documentId: uid,
+        data: {'approved': 'true'},
+      );
+      return right(null);
+    } catch (err, stackTrace) {
+      return left(Failure(err.toString(), stackTrace));
+    }
+  }
+
+  //reject expert
+  FutureEitherVoid rejectExpert(String uid) async {
+    try {
+      //update usertype in usermodel
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.usersCollectionID,
+        documentId: uid,
+        data: {'userType': 'User'},
+      );
+
+      //delete expert document
+      await _db.deleteDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.expertCollectionID,
+        documentId: uid,
+      );
+      return right(null);
+    } catch (err, stackTrace) {
+      return left(Failure(err.toString(), stackTrace));
+    }
+  }
+
+  Future<void> updateUserProfileImage(
+    String uid,
+    String profileImageUrl,
+  ) async {
+    await _db.updateDocument(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.usersCollectionID,
+      documentId: uid,
+      data: {'profileImage': profileImageUrl},
     );
   }
 }

@@ -1,8 +1,9 @@
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
-import 'package:adhikar/features/bookmarks/bookmarks.dart';
+import 'package:adhikar/features/bookmarks/views/bookmarks.dart';
 import 'package:adhikar/features/expert/views/apply_for_expert.dart';
+import 'package:adhikar/features/admin/views/side_nav.dart';
 import 'package:adhikar/features/home/widgets/following_posts.dart';
 import 'package:adhikar/features/home/widgets/latest_posts.dart';
 import 'package:adhikar/features/home/widgets/trending_posts.dart';
@@ -90,14 +91,38 @@ class _HomePageState extends ConsumerState<HomePage>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              '${currentUser.firstName} ${currentUser.lastName}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  '${currentUser.firstName} ${currentUser.lastName}',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+
+                                                currentUser.userType == 'Expert'
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              left: 7.0,
+                                                            ),
+                                                        child: SvgPicture.asset(
+                                                          'assets/svg/verified.svg',
+                                                          height: 20,
+                                                          colorFilter:
+                                                              ColorFilter.mode(
+                                                                Pallete
+                                                                    .secondaryColor,
+                                                                BlendMode.srcIn,
+                                                              ),
+                                                        ),
+                                                      )
+                                                    : SizedBox(),
+                                              ],
                                             ),
                                             SizedBox(height: 5),
                                             Text(
@@ -225,13 +250,6 @@ class _HomePageState extends ConsumerState<HomePage>
                                     drawerItems(
                                       'Settings',
                                       'assets/svg/settings.svg',
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => signout(),
-                                      child: drawerItems(
-                                        'Logout',
-                                        'assets/svg/logout.svg',
-                                      ),
                                     ),
                                   ],
                                 ),

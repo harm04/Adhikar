@@ -1,19 +1,42 @@
 import 'package:adhikar/common/widgets/custom_textfield.dart';
+import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 
-class AddEducation extends StatefulWidget {
-  const AddEducation({super.key});
+class AddEducation extends ConsumerStatefulWidget {
+  final UserModel currentUser;
+  const AddEducation({super.key,required this.currentUser});
 
   @override
-  State<AddEducation> createState() => _AddEducationState();
+  ConsumerState<AddEducation> createState() => _AddEducationState();
 }
 
-class _AddEducationState extends State<AddEducation> {
+class _AddEducationState extends ConsumerState<AddEducation> {
   TextEditingController degreeController = TextEditingController();
   TextEditingController streamController = TextEditingController();
   TextEditingController universityController = TextEditingController();
+
+@override
+  void dispose() {
+    super.dispose();
+    degreeController.dispose();
+    streamController.dispose();
+    universityController.dispose();
+  }
+
+  @override
+  void initState() {
+   super.initState();
+    degreeController.text = widget.currentUser.eduDegree;
+    streamController.text = widget.currentUser.eduStream;
+    universityController.text = widget.currentUser.eduUniversity;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,10 +46,32 @@ class _AddEducationState extends State<AddEducation> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 18.0),
-            child: Image.asset(
-              'assets/icons/ic_correct.png',
-              height: 25,
-              color: Colors.green,
+            child: GestureDetector(
+              onTap: () {
+                if (degreeController.text.isNotEmpty &&
+                    streamController.text.isNotEmpty &&
+                    universityController.text.isNotEmpty) {
+                  ref
+                      .read(authControllerProvider.notifier)
+                      .updateUserEducation(
+                        userModel: widget.currentUser,
+                        context: context,
+                        degree: degreeController.text,
+                        stream: streamController.text,
+                        university: universityController.text,
+                      );
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill all fields')),
+                  );
+                }
+              },
+              child: SvgPicture.asset(
+                'assets/svg/tick.svg',
+                colorFilter: ColorFilter.mode(Colors.green, BlendMode.srcIn),
+                height: 45,
+              ),
             ),
           ),
         ],
@@ -40,7 +85,7 @@ class _AddEducationState extends State<AddEducation> {
               Text(
                 'Basic info',
                 style: TextStyle(
-                  color: Pallete.backgroundColor,
+                  color: Pallete.whiteColor,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -48,7 +93,7 @@ class _AddEducationState extends State<AddEducation> {
               SizedBox(height: 20),
               Text(
                 'Add Degree',
-                style: TextStyle(color: Pallete.backgroundColor, fontSize: 17),
+                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
               ),
               SizedBox(height: 5),
               CustomTextfield(
@@ -61,7 +106,7 @@ class _AddEducationState extends State<AddEducation> {
               SizedBox(height: 15),
               Text(
                 'Add Stream',
-                style: TextStyle(color: Pallete.backgroundColor, fontSize: 17),
+                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
               ),
               SizedBox(height: 5),
               CustomTextfield(
@@ -73,20 +118,14 @@ class _AddEducationState extends State<AddEducation> {
               SizedBox(height: 15),
               Text(
                 'Add University',
-                style: TextStyle(color: Pallete.backgroundColor, fontSize: 17),
+                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
               ),
               SizedBox(height: 5),
-              TextField(
-                maxLines: 5,
+              CustomTextfield(
+                keyboardType: TextInputType.text,
                 controller: universityController,
-                obscureText: false,
-                decoration: InputDecoration(
-                  hintText: 'University',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                hintText: 'University',
+                obsecureText: false,
               ),
             ],
           ),

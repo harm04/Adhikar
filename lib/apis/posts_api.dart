@@ -17,6 +17,13 @@ final postAPIProvider = Provider((ref) {
   );
 });
 
+// Posts count
+final postsCountProvider = FutureProvider<int>((ref) async {
+  final postAPI = ref.watch(postAPIProvider);
+  final posts = await postAPI.getPosts();
+  return posts.length;
+});
+
 abstract class IPostAPI {
   FutureEither<Document> sharePost(PostModel postModel);
   Future<List<Document>> getPosts();
@@ -42,6 +49,7 @@ class PostAPI implements IPostAPI {
   PostAPI({required Databases db, required Realtime realtime})
     : _db = db,
       _realtime = realtime;
+
   @override
   FutureEither<Document> sharePost(PostModel postModel) async {
     try {
@@ -62,9 +70,11 @@ class PostAPI implements IPostAPI {
     final documents = await _db.listDocuments(
       databaseId: AppwriteConstants.databaseID,
       collectionId: AppwriteConstants.postCollectionID,
-      queries: [Query.orderDesc('createdAt')],
+      queries: [
+        Query.orderDesc('createdAt'),
+        Query.notEqual('pod', 'comment'), // Exclude comments
+      ],
     );
-
     return documents.documents;
   }
 

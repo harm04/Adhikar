@@ -16,6 +16,13 @@ final userAPIProvider = Provider((ref) {
   );
 });
 
+//user count
+final usersCountProvider = FutureProvider<int>((ref) async {
+  final userAPI = ref.watch(userAPIProvider);
+  final users = await userAPI.getUsers();
+  return users.length;
+});
+
 abstract class IUserAPI {
   FutureEitherVoid saveUserData(UserModel userModel);
   Stream<RealtimeMessage> getLatestUserProfileData();
@@ -23,6 +30,7 @@ abstract class IUserAPI {
   FutureEitherVoid addToFollowers(UserModel userModel);
   FutureEitherVoid updateUser(UserModel userModel);
   Future<Document> getUserData(String uid);
+    Future<List<Document>> getUsers();
   Future<List<Document>> searchUser(String name);
 }
 
@@ -32,6 +40,15 @@ class UserAPI implements IUserAPI {
   UserAPI({required Databases db, required Realtime realtime})
     : _db = db,
       _realtime = realtime;
+
+      //getUsers
+      Future<List<Document>> getUsers() async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.usersCollectionID,
+    );
+    return documents.documents;
+  }
 
   @override
   FutureEitherVoid saveUserData(UserModel userModel) async {
@@ -79,6 +96,9 @@ class UserAPI implements IUserAPI {
       return left(Failure(err.toString(), stackTrace));
     }
   }
+
+
+
 
   //search user
   @override

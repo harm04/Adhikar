@@ -86,7 +86,9 @@ class _AddPostViewState extends ConsumerState<CreatePostScreen> {
                                             ? NetworkImage(
                                                 currentUser.profileImage,
                                               )
-                                            : AssetImage(ImageTheme.defaultProfileImage)
+                                            : AssetImage(
+                                                ImageTheme.defaultProfileImage,
+                                              )
                                       : AssetImage(
                                           'assets/icons/anonymous.png',
                                         ),
@@ -117,12 +119,31 @@ class _AddPostViewState extends ConsumerState<CreatePostScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '${currentUser.firstName} ${currentUser.lastName}',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    '${currentUser.firstName} ${currentUser.lastName}',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  currentUser.userType == 'Expert'
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 7.0,
+                                          ),
+                                          child: SvgPicture.asset(
+                                            'assets/svg/verified.svg',
+                                            height: 20,
+                                            colorFilter: ColorFilter.mode(
+                                              Pallete.secondaryColor,
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                ],
                               ),
                               SizedBox(height: 10),
                               Text(
@@ -291,7 +312,7 @@ class _AddPostViewState extends ConsumerState<CreatePostScreen> {
                                             style: TextStyle(
                                               color: Pallete.secondaryColor,
                                               fontSize: 15,
-                                              fontWeight: FontWeight.bold
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
@@ -372,17 +393,23 @@ class _AddPostViewState extends ConsumerState<CreatePostScreen> {
                           child: SvgPicture.asset(
                             'assets/svg/gallery.svg',
                             height: 30,
-                            colorFilter: ColorFilter.mode(Pallete.secondaryColor,  BlendMode.srcIn,),
+                            colorFilter: ColorFilter.mode(
+                              Pallete.secondaryColor,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                       ),
-                      
+
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: SvgPicture.asset(
                           'assets/svg/emoji.svg',
                           height: 30,
-                          colorFilter: ColorFilter.mode(Pallete.secondaryColor,  BlendMode.srcIn,),
+                          colorFilter: ColorFilter.mode(
+                            Pallete.secondaryColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                     ],

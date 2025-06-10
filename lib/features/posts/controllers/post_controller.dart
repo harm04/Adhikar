@@ -322,14 +322,13 @@ class PostController extends StateNotifier<bool> {
 
   //like post
   void likePost(PostModel postModel, UserModel userModel) async {
-    List<String> likes = postModel.likes;
+    final likes = List<String>.from(postModel.likes); // avoid mutating original
     if (likes.contains(userModel.uid)) {
       likes.remove(userModel.uid);
     } else {
       likes.add(userModel.uid);
-
-      // Send notification
-      if (postModel.uid != userModel.uid) {
+      // Optionally send notification here
+        if (postModel.uid != userModel.uid) {
         // Don't notify self
         final notification = NotificationModel(
           id: '',
@@ -344,10 +343,10 @@ class PostController extends StateNotifier<bool> {
         _ref
             .read(notificationControllerProvider.notifier)
             .createNotification(notification);
-      }
-      postModel = postModel.copyWith(likes: likes);
-      await _postAPI.likePost(postModel);
+        }
     }
+    final updatedPost = postModel.copyWith(likes: likes);
+    await _postAPI.likePost(updatedPost);
   }
 
   //bookmark post
@@ -364,12 +363,12 @@ class PostController extends StateNotifier<bool> {
   }
 
   // //fetch posts with more likes
-  Future<List<PostModel>> getPostsWithMoreLikes() async {
-    final posts = await _postAPI.getPosts();
-    return posts
-        .map((doc) => PostModel.fromMap(doc.data))
-        .where((post) => post.pod != 'comment')
-        .toList()
-      ..sort((a, b) => b.likes.length.compareTo(a.likes.length));
-  }
+  // Future<List<PostModel>> getPostsWithMoreLikes() async {
+  //   final posts = await _postAPI.getPosts();
+  //   return posts
+  //       .map((doc) => PostModel.fromMap(doc.data))
+  //       .where((post) => post.pod != 'comment')
+  //       .toList()
+  //     ..sort((a, b) => b.likes.length.compareTo(a.likes.length));
+  // }
 }

@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:adhikar/apis/expert_api.dart';
 import 'package:adhikar/apis/storage_api.dart';
+import 'package:adhikar/apis/user_api.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
+import 'package:adhikar/features/admin/graph/daily_stats.dart';
 import 'package:adhikar/features/expert/views/expert_verification.dart';
 import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/models/user_model.dart';
@@ -115,5 +117,49 @@ class ExpertController extends StateNotifier<bool> {
   Future<ExpertModel> getExpertData(String uid) async {
     final document = await _expertAPI.getExpertData(uid);
     return ExpertModel.fromMap(document.data);
+  }
+
+  //approve expert
+  Future<void> approveExpert(
+    String uid,
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    state = true;
+    final res = await _expertAPI.approveExpert(uid);
+    res.fold((l) => showSnackbar(context, l.message), (r) async {
+      // Fetch the expert data to get the profile image
+      final expertDoc = await _expertAPI.getExpertData(uid);
+      final expertProfileImage = expertDoc.data['profImage'];
+
+      // Update the user's profile image in the users collection
+      await _expertAPI.updateUserProfileImage(uid, expertProfileImage);
+
+      showSnackbar(context, 'Expert approved successfully');
+      ref.invalidate(getExpertsProvider);
+      ref.invalidate(usersCountProvider);
+      ref.invalidate(expertsCountProvider);
+      ref.invalidate(todayStatsProvider);
+      ref.invalidate(expertDataProvider(uid));
+    });
+    state = false;
+  }
+
+  //reject expert
+  Future<void> rejectExpert(
+    String uid,
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    state = true;
+    final res = await _expertAPI.rejectExpert(uid);
+    res.fold((l) => showSnackbar(context, l.message), (r) {
+      showSnackbar(context, 'Expert rejected successfully');
+      ref.invalidate(getExpertsProvider);
+      ref.invalidate(usersCountProvider);
+      ref.invalidate(expertsCountProvider);
+      ref.invalidate(todayStatsProvider); // <-- ADD THIS LINE
+    });
+    state = false;
   }
 }

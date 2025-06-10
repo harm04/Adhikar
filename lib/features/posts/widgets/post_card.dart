@@ -104,14 +104,34 @@ class PostCard extends ConsumerWidget {
                                         },
                                       ),
                                     ),
-                              child: Text(
-                                postmodel.isAnonymous
-                                    ? 'Anonymous'
-                                    : user.firstName + ' ' + user.lastName,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    postmodel.isAnonymous
+                                        ? 'Anonymous'
+                                        : user.firstName + ' ' + user.lastName,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  user.userType == 'Expert' &&
+                                          !postmodel.isAnonymous
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 7.0,
+                                          ),
+                                          child: SvgPicture.asset(
+                                            'assets/svg/verified.svg',
+                                            height: 20,
+                                            colorFilter: ColorFilter.mode(
+                                              Pallete.secondaryColor,
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox(),
+                                ],
                               ),
                             ),
                             Row(
@@ -219,8 +239,7 @@ class PostCard extends ConsumerWidget {
                                 return ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
                                   child: FadeInImage.assetNetwork(
-                                    placeholder: ImageTheme
-                                        .defaultAdhikarLogo, 
+                                    placeholder: ImageTheme.defaultAdhikarLogo,
                                     image: postmodel.images[index],
                                     fit: BoxFit.cover,
                                     imageErrorBuilder:

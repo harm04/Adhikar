@@ -211,7 +211,9 @@ class _CommentViewState extends ConsumerState<Comment> {
                                 backgroundImage: widget.postModel.isAnonymous
                                     ? AssetImage('assets/icons/anonymous.png')
                                     : (user.profileImage == ''
-                                          ? AssetImage(ImageTheme.defaultProfileImage)
+                                          ? AssetImage(
+                                              ImageTheme.defaultProfileImage,
+                                            )
                                           : NetworkImage(user.profileImage)),
                               ),
                             ),
@@ -237,14 +239,39 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                   },
                                                 ),
                                               ),
-                                        child: Text(
-                                          widget.postModel.isAnonymous
-                                              ? 'Anonymous'
-                                              : '${user.firstName} ${user.lastName}',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              widget.postModel.isAnonymous
+                                                  ? 'Anonymous'
+                                                  : '${user.firstName} ${user.lastName}',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            user.userType == 'Expert' &&
+                                                    !widget
+                                                        .postModel
+                                                        .isAnonymous
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          left: 7.0,
+                                                        ),
+                                                    child: SvgPicture.asset(
+                                                      'assets/svg/verified.svg',
+                                                      height: 20,
+                                                      colorFilter:
+                                                          ColorFilter.mode(
+                                                            Pallete
+                                                                .secondaryColor,
+                                                            BlendMode.srcIn,
+                                                          ),
+                                                    ),
+                                                  )
+                                                : SizedBox(),
+                                          ],
                                         ),
                                       ),
                                       SizedBox(width: 5),
@@ -617,7 +644,10 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                               )
                                                             : user.profileImage ==
                                                                   ''
-                                                            ? AssetImage(ImageTheme.defaultProfileImage)
+                                                            ? AssetImage(
+                                                                ImageTheme
+                                                                    .defaultProfileImage,
+                                                              )
                                                             : NetworkImage(
                                                                 user.profileImage,
                                                               ),
@@ -651,18 +681,38 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                                               },
                                                                         ),
                                                                       ),
-                                                                child: Text(
-                                                                  commentPost
-                                                                          .isAnonymous
-                                                                      ? 'Anonymous'
-                                                                      : '${user.firstName} ${user.lastName}',
-                                                                  style: TextStyle(
-                                                                    fontSize:
-                                                                        20,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      commentPost
+                                                                              .isAnonymous
+                                                                          ? 'Anonymous'
+                                                                          : '${user.firstName} ${user.lastName}',
+                                                                      style: TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                    user.userType ==
+                                                                                'Expert' &&
+                                                                            !commentPost.isAnonymous
+                                                                        ? Padding(
+                                                                            padding: const EdgeInsets.only(
+                                                                              left: 7.0,
+                                                                            ),
+                                                                            child: SvgPicture.asset(
+                                                                              'assets/svg/verified.svg',
+                                                                              height: 20,
+                                                                              colorFilter: ColorFilter.mode(
+                                                                                Pallete.secondaryColor,
+                                                                                BlendMode.srcIn,
+                                                                              ),
+                                                                            ),
+                                                                          )
+                                                                        : SizedBox(),
+                                                                  ],
                                                                 ),
                                                               ),
                                                               SizedBox(

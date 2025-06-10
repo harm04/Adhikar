@@ -2,6 +2,7 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/features/showcase/views/showcase.dart';
 import 'package:adhikar/models/showcase_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,11 +56,20 @@ class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
                               height: 70,
                               fit: BoxFit.cover,
                             )
-                          : Image.network(
-                              widget.showcase.logoImage,
+                          : FadeInImage.assetNetwork(
+                              placeholder: ImageTheme.defaultAdhikarLogo,
+                              image: widget.showcase.logoImage,
+                              fit: BoxFit.cover,
                               width: 70,
                               height: 70,
-                              fit: BoxFit.cover,
+                              imageErrorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  ImageTheme.defaultProfileImage,
+                                  fit: BoxFit.cover,
+                                  width: 70,
+                                  height: 70,
+                                );
+                              },
                             ),
                     ),
                     SizedBox(width: 16),

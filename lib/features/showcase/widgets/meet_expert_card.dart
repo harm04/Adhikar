@@ -5,6 +5,7 @@ import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MeetExpertCard extends ConsumerWidget {
   final UserModel user;
@@ -42,9 +43,11 @@ class MeetExpertCard extends ConsumerWidget {
                 ),
               ),
               SizedBox(width: 15),
+              // Wrap the text column in Expanded
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
                       onTap: () => Navigator.push(
@@ -55,62 +58,98 @@ class MeetExpertCard extends ConsumerWidget {
                           },
                         ),
                       ),
-                      child: Text(
-                        user.firstName + ' ' + user.lastName,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Pallete.whiteColor,
-                        ),
+                      child: Row(
+                        children: [
+                          // Wrap name in Flexible to avoid overflow
+                          Flexible(
+                            child: Text(
+                              '${user.firstName} ${user.lastName}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Pallete.whiteColor,
+                              ),
+                            ),
+                          ),
+                          if (user.userType == 'Expert')
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 7.0,
+                                right: 6,
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/svg/verified.svg',
+                                height: 20,
+                                colorFilter: ColorFilter.mode(
+                                  Pallete.secondaryColor,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                    Text(
-                      user.bio == '' ? 'Adhikar user' : user.bio,
-                      style: TextStyle(fontSize: 16, color: Pallete.greyColor),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    // Wrap bio in Flexible to avoid overflow
+                    Flexible(
+                      child: Text(
+                        user.bio == '' ? 'Adhikar user' : user.bio,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Pallete.greyColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
               ),
+              // Button
               Padding(
                 padding: const EdgeInsets.all(6.0),
-                child: GestureDetector(
-                  onTap: () async {
-                    if (user.uid != currentUser.uid) {
-                      ref
-                          .read(authControllerProvider.notifier)
-                          .followUser(
-                            userModel: user,
-                            currentUser: currentUser,
-                            context: context,
-                            ref: ref
-                          );
-                      // Refresh current user data after follow/unfollow
-                      ref.invalidate(currentUserDataProvider);
-                    }
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Pallete.primaryColor,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 15,
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: 110,
+                  ), // Limit button width
+                  child: GestureDetector(
+                    onTap: () async {
+                      if (user.uid != currentUser.uid) {
+                        ref
+                            .read(authControllerProvider.notifier)
+                            .followUser(
+                              userModel: user,
+                              currentUser: currentUser,
+                              context: context,
+                              ref: ref,
+                            );
+                        ref.invalidate(currentUserDataProvider);
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Pallete.primaryColor,
                       ),
-                      child: Center(
-                        child: Text(
-                          user.uid == currentUser.uid
-                              ? 'View Profile'
-                              : currentUser.following.contains(user.uid)
-                              ? 'Unfollow'
-                              : 'Follow',
-                          style: TextStyle(
-                            color: Pallete.whiteColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10,
+                        ),
+                        child: Center(
+                          child: Text(
+                            user.uid == currentUser.uid
+                                ? 'View Profile'
+                                : currentUser.following.contains(user.uid)
+                                ? 'Unfollow'
+                                : 'Follow',
+                            style: TextStyle(
+                              color: Pallete.whiteColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),

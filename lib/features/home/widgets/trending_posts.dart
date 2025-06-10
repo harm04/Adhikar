@@ -29,7 +29,7 @@ class TrendingPosts extends ConsumerWidget {
             itemCount: posts.length,
             itemBuilder: (context, index) {
               final post = posts[index];
-              return PostCard(postmodel: post);
+              return PostCard(key: ValueKey(post.id), postmodel: post);
             },
           ),
         );

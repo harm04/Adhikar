@@ -6,6 +6,7 @@ import 'package:adhikar/features/message/views/messaging.dart';
 import 'package:adhikar/features/message/controller/messaging_controller.dart';
 
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
+import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
 import 'package:adhikar/features/posts/widgets/post_card.dart';
 import 'package:adhikar/features/profile/views/edit_profile.dart';
 import 'package:adhikar/features/profile/widgets/add_education.dart';
@@ -72,14 +73,29 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            widget.userModel.firstName +
-                                ' ' +
-                                widget.userModel.lastName,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                '${widget.userModel.firstName} ${widget.userModel.lastName}',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              widget.userModel.userType == 'Expert'
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(left: 7.0),
+                                      child: SvgPicture.asset(
+                                        'assets/svg/verified.svg',
+                                        height: 20,
+                                        colorFilter: ColorFilter.mode(
+                                          Pallete.secondaryColor,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(),
+                            ],
                           ),
                           SizedBox(height: 5),
                           Text(
@@ -96,27 +112,61 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                   ],
                 ),
               ),
-              widget.userModel.uid == currentUser.value!.uid
-                  ? GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EditProfileView(userModel: widget.userModel),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  widget.userModel.uid == currentUser.value!.uid
+                      ? GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProfileView(
+                                  userModel: widget.userModel,
+                                ),
+                              ),
+                            );
+                          },
+                          child: SvgPicture.asset(
+                            'assets/svg/pencil.svg',
+                            colorFilter: ColorFilter.mode(
+                              Pallete.whiteColor,
+                              BlendMode.srcIn,
+                            ),
+                            height: 25,
                           ),
-                        );
-                      },
-                      child: SvgPicture.asset(
-                        'assets/svg/pencil.svg',
-                        colorFilter: ColorFilter.mode(
-                          Pallete.whiteColor,
-                          BlendMode.srcIn,
-                        ),
-                        height: 25,
-                      ),
-                    )
-                  : SizedBox(),
+                        )
+                      : SizedBox(),
+                  SizedBox(height: 15),
+
+                  widget.userModel.uid == currentUser.value!.uid &&
+                          widget.userModel.userType == 'Expert'
+                      ? GestureDetector(
+                          onTap: () {},
+                          child: Row(
+                            children: [
+                              Text(
+                                widget.userModel.credits.toString(),
+                                style: TextStyle(
+                                  color: Pallete.whiteColor,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              SvgPicture.asset(
+                                'assets/svg/wallet.svg',
+                                colorFilter: ColorFilter.mode(
+                                  Pallete.secondaryColor,
+                                  BlendMode.srcIn,
+                                ),
+                                height: 25,
+                              ),
+                            ],
+                          ),
+                        )
+                      : SizedBox(),
+                ],
+              ),
             ],
           ),
         ),
@@ -380,109 +430,180 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 15),
-                    Text(
-                      'Summary',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 15),
+                      Text(
+                        'Summary',
+                        style: TextStyle(
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      maxLines: 5,
-                      overflow: TextOverflow.ellipsis,
-                      widget.userModel.summary == ''
-                          ? 'Adhikar user'
-                          : widget.userModel.summary,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Experience',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                      SizedBox(height: 10),
+                      widget.userModel.summary != ''
+                          ? ExpandableHashtags(text: widget.userModel.summary)
+                          : Text(
+                              'Adhikar user',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Pallete.secondaryColor,
+                              ),
+                            ),
+                      SizedBox(height: 23),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Experience',
+                            style: TextStyle(
+                              fontSize: 23,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        widget.userModel.uid == currentUser.value!.uid
-                            ? GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddExperience(),
+                          widget.userModel.uid == currentUser.value!.uid
+                              ? GestureDetector(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddExperience(
+                                        currentUser: widget.userModel,
+                                      ),
+                                    ),
+                                  ),
+                                  child: widget.userModel.experienceTitle == ''
+                                      ? SvgPicture.asset(
+                                          'assets/svg/add.svg',
+                                          colorFilter: ColorFilter.mode(
+                                            Pallete.whiteColor,
+                                            BlendMode.srcIn,
+                                          ),
+                                          height: 25,
+                                        )
+                                      : SvgPicture.asset(
+                                          'assets/svg/pencil.svg',
+                                          colorFilter: ColorFilter.mode(
+                                            Pallete.whiteColor,
+                                            BlendMode.srcIn,
+                                          ),
+                                          height: 25,
+                                        ),
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
+                      SizedBox(height: 7),
+                      widget.userModel.experienceTitle != ''
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.userModel.experienceTitle,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Pallete.secondaryColor,
                                   ),
                                 ),
-                                child: widget.userModel.experienceTitle == ''
-                                    ? SvgPicture.asset(
-                                        'assets/svg/add.svg',
-                                        colorFilter: ColorFilter.mode(
-                                          Pallete.whiteColor,
-                                          BlendMode.srcIn,
-                                        ),
-                                        height: 25,
-                                      )
-                                    : SvgPicture.asset(
-                                        'assets/svg/pencil.svg',
-                                        colorFilter: ColorFilter.mode(
-                                          Pallete.whiteColor,
-                                          BlendMode.srcIn,
-                                        ),
-                                        height: 25,
-                                      ),
-                              )
-                            : SizedBox(),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Education',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        widget.userModel.uid == currentUser.value!.uid
-                            ? GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddEducation(),
+
+                                Text(
+                                  widget.userModel.experienceOrganization,
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: Pallete.whiteColor,
                                   ),
                                 ),
-                                child: widget.userModel.eduDegree == ''
-                                    ? SvgPicture.asset(
-                                        'assets/svg/add.svg',
-                                        colorFilter: ColorFilter.mode(
-                                          Pallete.whiteColor,
-                                          BlendMode.srcIn,
-                                        ),
-                                        height: 25,
-                                      )
-                                    : SvgPicture.asset(
-                                        'assets/svg/pencil.svg',
-                                        colorFilter: ColorFilter.mode(
-                                          Pallete.whiteColor,
-                                          BlendMode.srcIn,
-                                        ),
-                                        height: 25,
+                                SizedBox(height: 7),
+                                ExpandableHashtags(
+                                  text: widget.userModel.experienceSummary,
+                                ),
+                              ],
+                            )
+                          : SizedBox(),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Education',
+                            style: TextStyle(
+                              fontSize: 23,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          widget.userModel.uid == currentUser.value!.uid
+                              ? GestureDetector(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddEducation(
+                                        currentUser: widget.userModel,
                                       ),
-                              )
-                            : SizedBox(),
-                      ],
-                    ),
-                  ],
+                                    ),
+                                  ),
+                                  child: widget.userModel.eduDegree == ''
+                                      ? SvgPicture.asset(
+                                          'assets/svg/add.svg',
+                                          colorFilter: ColorFilter.mode(
+                                            Pallete.whiteColor,
+                                            BlendMode.srcIn,
+                                          ),
+                                          height: 25,
+                                        )
+                                      : SvgPicture.asset(
+                                          'assets/svg/pencil.svg',
+                                          colorFilter: ColorFilter.mode(
+                                            Pallete.whiteColor,
+                                            BlendMode.srcIn,
+                                          ),
+                                          height: 25,
+                                        ),
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
+                      SizedBox(height: 7),
+                      widget.userModel.eduDegree != ''
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.userModel.eduDegree,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Pallete.secondaryColor,
+                                  ),
+                                ),
+
+                                Text(
+                                  widget.userModel.eduUniversity,
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: Pallete.whiteColor,
+                                  ),
+                                ),
+                                SizedBox(height: 7),
+                                Text(
+                                  widget.userModel.eduStream,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Pallete.whiteColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 7),
+                              ],
+                            )
+                          : SizedBox(),
+                      SizedBox(height: 70),
+                    ],
+                  ),
                 ),
               ),
+              //posts tab
               ref
                   .watch(getUsersPostProvider(widget.userModel.uid))
                   .when(

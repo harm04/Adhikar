@@ -2,22 +2,23 @@
 
 class MeetingsModel {
   final String id;
-
   final DateTime createdAt;
   final String clientPhone;
   final String clientUid;
   final String expertUid;
-  final String meetingStatus;
   final String transactionID;
+  final String meetingStatus;
+  final String otp;
 
   MeetingsModel({
     required this.id,
-    required this.clientUid,
-    required this.expertUid,
     required this.createdAt,
     required this.clientPhone,
+    required this.clientUid,
+    required this.expertUid,
     required this.transactionID,
     required this.meetingStatus,
+    required this.otp,
   });
 
   MeetingsModel copyWith({
@@ -28,6 +29,7 @@ class MeetingsModel {
     String? id,
     String? transactionID,
     String? meetingStatus,
+    String? otp,
   }) {
     return MeetingsModel(
       id: id ?? this.id,
@@ -37,30 +39,33 @@ class MeetingsModel {
       clientUid: clientUid ?? this.clientUid,
       transactionID: transactionID ?? this.transactionID,
       meetingStatus: meetingStatus ?? this.meetingStatus,
+      otp: otp ?? this.otp,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'transactionID': transactionID,
+    return {
+    
       'createdAt': createdAt.millisecondsSinceEpoch,
       'clientPhone': clientPhone,
-      'expertUid': expertUid,
       'clientUid': clientUid,
-
+      'expertUid': expertUid,
+      'transactionID': transactionID,
       'meetingStatus': meetingStatus,
+      'otp': otp,
     };
   }
 
   factory MeetingsModel.fromMap(Map<String, dynamic> map) {
     return MeetingsModel(
-      id: map['\$id'] as String,
-      createdAt:DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
-      clientPhone: map['clientPhone'] as String,
-      expertUid: map['expertUid'] as String,
-      clientUid: map['clientUid'] as String,
-      transactionID: map['transactionID'] as String,
-      meetingStatus: map['meetingStatus'] as String,
+      id: map['\$id'] ?? map['id'],
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
+      clientPhone: map['clientPhone'],
+      clientUid: map['clientUid'],
+      expertUid: map['expertUid'],
+      transactionID: map['transactionID'],
+      meetingStatus: map['meetingStatus'],
+      otp: map['otp'] ?? '',
     );
   }
 

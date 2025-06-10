@@ -4,10 +4,13 @@ import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/meetings_controller.dart';
 import 'package:adhikar/features/expert/controller/transaction_controller.dart';
+import 'package:adhikar/features/expert/widgets/meetings_list.dart';
 import 'package:adhikar/models/expert_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class ReviewOrder extends ConsumerStatefulWidget {
@@ -70,7 +73,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
         );
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const BottomNavBar()),
+          MaterialPageRoute(builder: (context) => const MeetingsList()),
           (route) => false,
         );
       },
@@ -231,6 +234,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                   children: [
                     ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(20)),
+
                       child: Image.network(
                         widget.expertModel.profImage,
                         fit: BoxFit.cover,
@@ -264,15 +268,30 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                       bottom: 20,
                       left: 20,
                       right: 20,
-                      child: Text(
-                        '${widget.expertModel.firstName} ${widget.expertModel.lastName}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Row(
+                        children: [
+                          Text(
+                            '${widget.expertModel.firstName} ${widget.expertModel.lastName}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 7.0),
+                            child: SvgPicture.asset(
+                              'assets/svg/verified.svg',
+                              height: 30,
+                              colorFilter: ColorFilter.mode(
+                                Pallete.secondaryColor,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

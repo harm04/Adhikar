@@ -20,34 +20,37 @@ class _MeetingsListState extends ConsumerState<MeetingsList> {
     if (currentUser == null) {
       return const SizedBox.shrink();
     }
-    return ref
-        .watch(getUserMeetingsProvider(currentUser))
-        .when(
-          data: (meetings) {
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('My Meetings'),
-                centerTitle: true,
+
+    final meetingsAsync = currentUser.userType == 'User'
+        ? ref.watch(userMeetingsStreamProvider(currentUser.uid))
+        : ref.watch(expertMeetingsStreamProvider(currentUser.uid));
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('My Meetings'), centerTitle: true),
+      body: meetingsAsync.when(
+        data: (meetings) {
+          if (meetings.isEmpty) {
+            return Center(
+              child: Text(
+                currentUser.userType == 'User'
+                    ? 'No meeting with an expert found.'
+                    : 'No appointments with users found.',
+                style: const TextStyle(fontSize: 18, color: Colors.grey),
               ),
-              body: meetings.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No meeting with an expert found.',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(18),
-                      itemCount: meetings.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final meeting = meetings[index];
-                        return MeetingsListCard(meetings: meeting);
-                      },
-                    ),
             );
-          },
-          error: (err, st) => ErrorPage(error: err.toString()),
-          loading: () => LoadingPage(),
-        );
+          }
+          return ListView.builder(
+           
+            itemCount: meetings.length,
+            itemBuilder: (context, index) {
+              final meeting = meetings[index];
+              return MeetingsListCard(meetingsModel: meeting);
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, st) => Center(child: Text('Error: $err')),
+      ),
+    );
   }
 }

@@ -24,77 +24,106 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Let content dictate height
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 1.2, // Keeps image proportional on all screens
-              child: Card(
-                color: Pallete.cardColor,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(3.0),
-                  child: Image.network(
-                    widget.expertModel.profImage,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[300],
-                      child: const Icon(
-                        Icons.person,
-                        size: 60,
-                        color: Colors.grey,
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // Let content dictate height
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1.2, // Keeps image proportional on all screens
+                    child: Card(
+                      color: Pallete.cardColor,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(3.0),
+                        child: Image.network(
+                          widget.expertModel.profImage,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                color: Colors.grey[300],
+                                child: const Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 7),
-            Text(
-              '${widget.expertModel.firstName} ${widget.expertModel.lastName}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SvgPicture.asset(
-                  'assets/svg/location.svg',
-                  width: 18,
-                  height: 18,
-                  colorFilter: ColorFilter.mode(
-                    Pallete.greyColor,
-                    BlendMode.srcIn,
+                  const SizedBox(height: 7),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          '${widget.expertModel.firstName} ${widget.expertModel.lastName}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 7.0, right: 7),
+                        child: SvgPicture.asset(
+                          'assets/svg/verified.svg',
+                          height: 20,
+                          colorFilter: ColorFilter.mode(
+                            Pallete.secondaryColor,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: Text(
-                    widget.expertModel.state,
-                    style: TextStyle(color: Pallete.greyColor),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/svg/location.svg',
+                        width: 18,
+                        height: 18,
+                        colorFilter: ColorFilter.mode(
+                          Pallete.greyColor,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                          widget.expertModel.state,
+                          style: TextStyle(color: Pallete.greyColor),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Flexible(
-              child: Text(
-                widget.expertModel.description,
-                maxLines: widget.expertModel.tags.isEmpty ? 4 : 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 14),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: Text(
+                      widget.expertModel.description,
+                      maxLines: widget.expertModel.tags.isEmpty ? 4 : 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (widget.expertModel.tags.isNotEmpty)
+                    Wrap(
+                      spacing: 6,
+                      children: [
+                        Chip(label: Text(widget.expertModel.tags.first)),
+                      ],
+                    ),
+                  const SizedBox(height: 8),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            if (widget.expertModel.tags.isNotEmpty)
-              Wrap(
-                spacing: 6,
-                children: [Chip(label: Text(widget.expertModel.tags.first))],
-              ),
-            const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
               height: 38,
@@ -125,6 +154,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                 ),
               ),
             ),
+            SizedBox(height: 10),
           ],
         ),
       ),

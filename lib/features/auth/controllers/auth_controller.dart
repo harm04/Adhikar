@@ -77,7 +77,7 @@ class AuthController extends StateNotifier<bool> {
         lastName: lastName,
         phone: '',
         email: email,
-        credits: 50.0,
+        credits: 0.0,
         meetings: [],
         transactions: [],
         password: password,
@@ -158,12 +158,19 @@ class AuthController extends StateNotifier<bool> {
     );
   }
 
+  //user count
+  final usersCountProvider = FutureProvider<int>((ref) async {
+    final userAPI = ref.watch(userAPIProvider);
+    final users = await userAPI.getUsers();
+    return users.length;
+  });
+
   //follow user
   void followUser({
     required UserModel userModel,
     required UserModel currentUser,
     required BuildContext context,
-    required WidgetRef ref, 
+    required WidgetRef ref,
   }) async {
     state = true;
     bool isFollow = false;
@@ -264,6 +271,76 @@ class AuthController extends StateNotifier<bool> {
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) {
       showSnackbar(context, 'Profile updated successfully');
+      // Invalidate the currentUserDataProvider so all listeners get fresh data
+
+      Navigator.pop(context);
+    });
+  }
+
+  //update user experience
+  void updateUserExperience({
+    required UserModel userModel,
+    required BuildContext context,
+
+    required String title,
+    required String firmOrOrganization,
+    required String summary,
+  }) async {
+    state = true;
+
+    // Always start with the latest userModel
+    var updatedUserModel = userModel;
+
+    if (title != updatedUserModel.experienceTitle) {
+      updatedUserModel = updatedUserModel.copyWith(experienceTitle: title);
+    }
+    if (firmOrOrganization != updatedUserModel.experienceOrganization) {
+      updatedUserModel = updatedUserModel.copyWith(
+        experienceOrganization: firmOrOrganization,
+      );
+    }
+    if (summary != updatedUserModel.experienceSummary) {
+      updatedUserModel = updatedUserModel.copyWith(experienceSummary: summary);
+    }
+
+    final res = await _userAPI.updateUser(updatedUserModel);
+    state = false;
+    res.fold((l) => showSnackbar(context, l.message), (r) {
+      showSnackbar(context, 'Experience updated successfully');
+      // Invalidate the currentUserDataProvider so all listeners get fresh data
+
+      Navigator.pop(context);
+    });
+  }
+
+  //update user education
+  void updateUserEducation({
+    required UserModel userModel,
+    required BuildContext context,
+
+    required String degree,
+    required String stream,
+    required String university,
+  }) async {
+    state = true;
+
+    // Always start with the latest userModel
+    var updatedUserModel = userModel;
+
+    if (degree != updatedUserModel.eduDegree) {
+      updatedUserModel = updatedUserModel.copyWith(eduDegree: degree);
+    }
+    if (stream != updatedUserModel.eduStream) {
+      updatedUserModel = updatedUserModel.copyWith(eduStream: stream);
+    }
+    if (university != updatedUserModel.eduUniversity) {
+      updatedUserModel = updatedUserModel.copyWith(eduUniversity: university);
+    }
+
+    final res = await _userAPI.updateUser(updatedUserModel);
+    state = false;
+    res.fold((l) => showSnackbar(context, l.message), (r) {
+      showSnackbar(context, 'Education updated successfully');
       // Invalidate the currentUserDataProvider so all listeners get fresh data
 
       Navigator.pop(context);
