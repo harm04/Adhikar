@@ -1,7 +1,6 @@
 import 'package:adhikar/apis/transaction_api.dart';
 import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
-import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/models/transaction_model.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -29,13 +28,12 @@ class TransactionController extends StateNotifier<bool> {
 
   TransactionController({required TransactionAPI transactionAPI})
     : _transactionAPI = transactionAPI,
-
       super(false);
 
-  //create meeting
+  //create transaction
   void createTransaction({
     required UserModel userModel,
-    required ExpertModel expertModel,
+    required UserModel expertUserModel, // Changed from ExpertModel to UserModel
     required String phone,
     required String paymentID,
     required BuildContext context,
@@ -51,10 +49,10 @@ class TransactionController extends StateNotifier<bool> {
       amount: amount,
       clientUid: userModel.uid,
       paymentStatus: paymentStatus,
-      expertUid: expertModel.uid,
+      expertUid: expertUserModel.uid,
       paymentID: paymentID,
       paymentDescription:
-          'Payment for meeting with ${expertModel.firstName} ${expertModel.lastName}',
+          'Payment for meeting with ${expertUserModel.firstName} ${expertUserModel.lastName}',
     );
 
     final res = await _transactionAPI.createTransaction(transactionModel);
@@ -66,15 +64,15 @@ class TransactionController extends StateNotifier<bool> {
         transactions: [...userModel.transactions, transactionId],
       );
 
-      final res1 = await _transactionAPI.updateUsermodelWithTransaction(
+      final res1 = await _transactionAPI.updateUserWithTransaction(
         updatedUser,
         transactionId,
       );
       res1.fold((l) => showSnackbar(context, l.message), (r) async {
-        final updatedExpert = expertModel.copyWith(
-          transactions: [...expertModel.transactions, transactionId],
+        final updatedExpert = expertUserModel.copyWith(
+          transactions: [...expertUserModel.transactions, transactionId],
         );
-        final res2 = await _transactionAPI.updateExpertmodelWithTransaction(
+        final res2 = await _transactionAPI.updateExpertWithTransaction(
           updatedExpert,
           transactionId,
         );

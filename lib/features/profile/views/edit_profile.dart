@@ -30,6 +30,16 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
   TextEditingController twitterController = TextEditingController();
   TextEditingController linkedinController = TextEditingController();
   TextEditingController locationController = TextEditingController();
+  TextEditingController casesWonController = TextEditingController();
+  TextEditingController experienceController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController address1Controller = TextEditingController();
+  TextEditingController address2Controller = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController tagsController = TextEditingController();
+  List<String> tags = [];
   File? profileImage;
 
   @override
@@ -44,6 +54,15 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
     twitterController.dispose();
     linkedinController.dispose();
     locationController.dispose();
+    casesWonController.dispose();
+    experienceController.dispose();
+    descriptionController.dispose();
+    address1Controller.dispose();
+    address2Controller.dispose();
+    cityController.dispose();
+    stateController.dispose();
+    phoneController.dispose();
+    tagsController.dispose();
   }
 
   //pick profile image
@@ -74,6 +93,15 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
     locationController.text = widget.userModel.location == ''
         ? locationController.text
         : widget.userModel.location;
+    casesWonController.text = widget.userModel.casesWon;
+    experienceController.text = widget.userModel.experience;
+    descriptionController.text = widget.userModel.description;
+    address1Controller.text = widget.userModel.address1;
+    address2Controller.text = widget.userModel.address2;
+    cityController.text = widget.userModel.city;
+    stateController.text = widget.userModel.state;
+    phoneController.text = widget.userModel.phone;
+    tags = List<String>.from(widget.userModel.tags);
   }
 
   void _onProfileImageChanged(File? image) {
@@ -115,6 +143,16 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                               instagram: instagramController.text,
                               facebook: facebookController.text,
                               summary: summaryController.text,
+                             
+                              casesWon: casesWonController.text,
+                              experience: experienceController.text,
+                              description: descriptionController.text,
+                              address1: address1Controller.text,
+                              address2: address2Controller.text,
+                              city: cityController.text,
+                              userState: stateController.text,
+                              phone: phoneController.text,
+                              tags: tags,
                             );
                       }
                     },
@@ -150,6 +188,18 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                       facebookController: facebookController,
                       linkedinController: linkedinController,
                       twitterController: twitterController,
+                      casesWonController: casesWonController,
+                      experienceController: experienceController,
+                      descriptionController: descriptionController,
+                      address1Controller: address1Controller,
+                      address2Controller: address2Controller,
+                      cityController: cityController,
+                      stateController: stateController,
+                      phoneController: phoneController,
+                      tagsController: tagsController,
+                      tags: tags,
+                      onTagsChanged: (newTags) =>
+                          setState(() => tags = newTags),
                       copyOfUserModel: copyOfUserModel,
                       onProfileImageChanged: _onProfileImageChanged,
                     );
@@ -166,6 +216,17 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                     facebookController: facebookController,
                     linkedinController: linkedinController,
                     twitterController: twitterController,
+                    casesWonController: casesWonController,
+                    experienceController: experienceController,
+                    descriptionController: descriptionController,
+                    address1Controller: address1Controller,
+                    address2Controller: address2Controller,
+                    cityController: cityController,
+                    stateController: stateController,
+                    phoneController: phoneController,
+                    tagsController: tagsController,
+                    tags: tags,
+                    onTagsChanged: (newTags) => setState(() => tags = newTags),
                     copyOfUserModel: copyOfUserModel,
                     onProfileImageChanged: _onProfileImageChanged,
                   ),

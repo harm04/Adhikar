@@ -1,5 +1,5 @@
 import 'package:adhikar/common/widgets/error.dart';
-import 'package:adhikar/features/expert/controller/expert_controller.dart';
+import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/models/transaction_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
@@ -13,16 +13,16 @@ class TransactionListCard extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _ShowcaseListCardState();
+      _TransactionListCardState();
 }
 
-class _ShowcaseListCardState extends ConsumerState<TransactionListCard> {
+class _TransactionListCardState extends ConsumerState<TransactionListCard> {
   @override
   Widget build(BuildContext context) {
     return ref
-        .watch(expertDataProvider(widget.transaction.expertUid))
+        .watch(userDataProvider(widget.transaction.expertUid))
         .when(
-          data: (expertData) {
+          data: (expertUser) {
             return Card(
               color: Pallete.cardColor,
               margin: EdgeInsets.symmetric(vertical: 8),
@@ -47,7 +47,6 @@ class _ShowcaseListCardState extends ConsumerState<TransactionListCard> {
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
-
                             SizedBox(height: 5),
                             Text(
                               widget.transaction.paymentStatus == 'Success'
@@ -70,7 +69,6 @@ class _ShowcaseListCardState extends ConsumerState<TransactionListCard> {
                         ),
                       ),
                     ),
-
                     // Right section: Divider and status icon
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -110,7 +108,6 @@ class _ShowcaseListCardState extends ConsumerState<TransactionListCard> {
                                 widget.transaction.paymentStatus == 'Success'
                                     ? Colors.green
                                     : Pallete.redColor,
-
                                 BlendMode.srcIn,
                               ),
                             ),

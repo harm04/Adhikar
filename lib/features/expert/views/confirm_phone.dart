@@ -1,14 +1,14 @@
 import 'package:adhikar/common/widgets/custom_button.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/views/review_order.dart';
-import 'package:adhikar/models/expert_model.dart';
+import 'package:adhikar/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ConfirmPhone extends ConsumerStatefulWidget {
-  final ExpertModel expertModel;
-  const ConfirmPhone({super.key, required this.expertModel});
+  final UserModel expertUserModel; // Changed type to UserModel
+  const ConfirmPhone({super.key, required this.expertUserModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ConfirmPhoneState();
@@ -117,12 +117,14 @@ class _ConfirmPhoneState extends ConsumerState<ConfirmPhone> {
                     return;
                   }
                   // Proceed with booking logic here
-                 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return ReviewOrder(expertModel: widget.expertModel,phone: phoneDigits,);
+                        return ReviewOrder(
+                          expertUserModel: widget.expertUserModel, // Now UserModel
+                          phone: phoneDigits,
+                        );
                       },
                     ),
                   );

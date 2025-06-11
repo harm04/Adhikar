@@ -4,7 +4,7 @@ import 'package:adhikar/apis/showcase_api.dart';
 import 'package:adhikar/apis/user_api.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 
-import 'package:adhikar/features/admin/graph/daily_stats.dart';
+import 'package:adhikar/features/admin/graph/today_stats.dart';
 import 'package:adhikar/features/admin/graph/user_activity_graph.dart';
 
 import 'package:adhikar/features/search/widget/search_user.dart';

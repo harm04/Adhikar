@@ -331,7 +331,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                     ),
                     const SizedBox(height: 20),
                     const Text(
-                      'Address line 3',
+                      'City',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
                     SizedBox(height: 10),
@@ -615,7 +615,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                                 casesWon: casesWonController.text,
                                 experience: experienceController.text,
                                 description: descriptionController.text,
-                                approved: 'false',
+
                                 profImage: profileImage!,
                                 tags: _tags, // <-- Add this line
                               );

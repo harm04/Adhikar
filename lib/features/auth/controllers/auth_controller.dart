@@ -14,9 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-final authControllerProvider = StateNotifierProvider<AuthController, bool>((
-  ref,
-) {
+final authControllerProvider = StateNotifierProvider<AuthController, bool>((ref) {
   return AuthController(
     authAPI: ref.watch(authAPIProvider),
     userAPI: ref.watch(userAPIProvider),
@@ -46,6 +44,13 @@ final getlatestUserDataProvider = StreamProvider((ref) {
   return userApi.getLatestUserProfileData();
 });
 
+//user count
+final usersCountProvider = FutureProvider<int>((ref) async {
+  final userAPI = ref.watch(userAPIProvider);
+  final users = await userAPI.getUsers();
+  return users.length;
+});
+
 class AuthController extends StateNotifier<bool> {
   final AuthAPI _authAPI;
   final UserAPI _userAPI;
@@ -55,11 +60,11 @@ class AuthController extends StateNotifier<bool> {
     required AuthAPI authAPI,
     required UserAPI userAPI,
     required StorageApi storageApi,
-  }) : _authAPI = authAPI,
-       _storageAPI = storageApi,
-       _userAPI = userAPI,
+  })  : _authAPI = authAPI,
+        _storageAPI = storageApi,
+        _userAPI = userAPI,
+        super(false);
 
-       super(false);
   //signup
   void signUp({
     required String email,
@@ -88,7 +93,6 @@ class AuthController extends StateNotifier<bool> {
         following: [],
         followers: [],
         bookmarked: [],
-        isVerified: false,
         uid: r.$id,
         location: '',
         linkedin: '',
@@ -102,6 +106,17 @@ class AuthController extends StateNotifier<bool> {
         eduDegree: '',
         eduUniversity: '',
         userType: 'User',
+        dob: '',
+        address1: '',
+        address2: '',
+        state: '',
+        city: '',
+        proofDoc: '',
+        idDoc: '',
+        casesWon: '',
+        experience: '',
+        description: '',
+        tags: [],
       );
 
       final res2 = await _userAPI.saveUserData(userModel);
@@ -157,13 +172,6 @@ class AuthController extends StateNotifier<bool> {
       },
     );
   }
-
-  //user count
-  final usersCountProvider = FutureProvider<int>((ref) async {
-    final userAPI = ref.watch(userAPIProvider);
-    final users = await userAPI.getUsers();
-    return users.length;
-  });
 
   //follow user
   void followUser({
@@ -225,10 +233,18 @@ class AuthController extends StateNotifier<bool> {
     required String instagram,
     required String facebook,
     required String summary,
+    String? casesWon,
+    String? experience,
+    String? description,
+    String? address1,
+    String? address2,
+    String? city,
+    String? userState, // <-- renamed from state
+    String? phone,
+    List<String>? tags,
   }) async {
     state = true;
 
-    // Always start with the latest userModel
     var updatedUserModel = userModel;
 
     if (profileImage != null) {
@@ -249,16 +265,16 @@ class AuthController extends StateNotifier<bool> {
     if (location.isNotEmpty && location != updatedUserModel.location) {
       updatedUserModel = updatedUserModel.copyWith(location: location);
     }
-    if (linkedin.isNotEmpty && linkedin != updatedUserModel.linkedin) {
+    if (linkedin != updatedUserModel.linkedin) {
       updatedUserModel = updatedUserModel.copyWith(linkedin: linkedin);
     }
-    if (twitter.isNotEmpty && twitter != updatedUserModel.twitter) {
+    if (twitter != updatedUserModel.twitter) {
       updatedUserModel = updatedUserModel.copyWith(twitter: twitter);
     }
-    if (instagram.isNotEmpty && instagram != updatedUserModel.instagram) {
+    if (instagram != updatedUserModel.instagram) {
       updatedUserModel = updatedUserModel.copyWith(instagram: instagram);
     }
-    if (facebook.isNotEmpty && facebook != updatedUserModel.facebook) {
+    if (facebook != updatedUserModel.facebook) {
       updatedUserModel = updatedUserModel.copyWith(facebook: facebook);
     }
     if (summary.isNotEmpty &&
@@ -266,13 +282,38 @@ class AuthController extends StateNotifier<bool> {
         summary != updatedUserModel.summary) {
       updatedUserModel = updatedUserModel.copyWith(summary: summary);
     }
+    if (casesWon != null && casesWon != updatedUserModel.casesWon) {
+      updatedUserModel = updatedUserModel.copyWith(casesWon: casesWon);
+    }
+    if (experience != null && experience != updatedUserModel.experience) {
+      updatedUserModel = updatedUserModel.copyWith(experience: experience);
+    }
+    if (description != null && description != updatedUserModel.description) {
+      updatedUserModel = updatedUserModel.copyWith(description: description);
+    }
+    if (address1 != null && address1 != updatedUserModel.address1) {
+      updatedUserModel = updatedUserModel.copyWith(address1: address1);
+    }
+    if (address2 != null && address2 != updatedUserModel.address2) {
+      updatedUserModel = updatedUserModel.copyWith(address2: address2);
+    }
+    if (city != null && city != updatedUserModel.city) {
+      updatedUserModel = updatedUserModel.copyWith(city: city);
+    }
+    if (userState != null && userState != updatedUserModel.state) {
+      updatedUserModel = updatedUserModel.copyWith(state: userState);
+    }
+    if (phone != null && phone != updatedUserModel.phone) {
+      updatedUserModel = updatedUserModel.copyWith(phone: phone);
+    }
+    if (tags != null && tags != updatedUserModel.tags) {
+      updatedUserModel = updatedUserModel.copyWith(tags: tags);
+    }
 
     final res = await _userAPI.updateUser(updatedUserModel);
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) {
       showSnackbar(context, 'Profile updated successfully');
-      // Invalidate the currentUserDataProvider so all listeners get fresh data
-
       Navigator.pop(context);
     });
   }
@@ -281,7 +322,6 @@ class AuthController extends StateNotifier<bool> {
   void updateUserExperience({
     required UserModel userModel,
     required BuildContext context,
-
     required String title,
     required String firmOrOrganization,
     required String summary,
@@ -307,8 +347,6 @@ class AuthController extends StateNotifier<bool> {
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) {
       showSnackbar(context, 'Experience updated successfully');
-      // Invalidate the currentUserDataProvider so all listeners get fresh data
-
       Navigator.pop(context);
     });
   }
@@ -317,7 +355,6 @@ class AuthController extends StateNotifier<bool> {
   void updateUserEducation({
     required UserModel userModel,
     required BuildContext context,
-
     required String degree,
     required String stream,
     required String university,
@@ -341,8 +378,6 @@ class AuthController extends StateNotifier<bool> {
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) {
       showSnackbar(context, 'Education updated successfully');
-      // Invalidate the currentUserDataProvider so all listeners get fresh data
-
       Navigator.pop(context);
     });
   }

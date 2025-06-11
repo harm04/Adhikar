@@ -17,7 +17,6 @@ class UserModel {
   final List<String> following;
   final List<String> followers;
   final List<String> bookmarked;
-  final bool isVerified;
   final String uid;
   final String location;
   final String linkedin;
@@ -31,6 +30,17 @@ class UserModel {
   final String eduDegree;
   final String eduUniversity;
   final String userType;
+  final String dob;
+  final String state;
+  final String city;
+  final String address1;
+  final String address2;
+  final String proofDoc;
+  final String idDoc;
+  final String casesWon;
+  final String experience;
+  final String description;
+  final List<String> tags;
   const UserModel({
     required this.firstName,
     required this.lastName,
@@ -47,7 +57,6 @@ class UserModel {
     required this.following,
     required this.followers,
     required this.bookmarked,
-    required this.isVerified,
     required this.uid,
     required this.location,
     required this.linkedin,
@@ -61,6 +70,18 @@ class UserModel {
     required this.eduDegree,
     required this.eduUniversity,
     required this.userType,
+    required this.dob,
+    required this.state,
+    required this.city,
+    required this.address1,
+    required this.address2,
+    required this.proofDoc,
+    required this.idDoc,
+    required this.casesWon,
+    required this.experience,
+    required this.description,
+
+    required this.tags,
   });
 
   UserModel copyWith({
@@ -79,7 +100,6 @@ class UserModel {
     List<String>? bookmarked,
     List<String>? meetings,
     double? credits,
-    bool? isVerified,
     String? uid,
     String? location,
     String? linkedin,
@@ -93,6 +113,17 @@ class UserModel {
     String? eduDegree,
     String? eduUniversity,
     String? userType,
+    String? dob,
+    String? state,
+    String? city,
+    String? address1,
+    String? address2,
+    String? proofDoc,
+    String? idDoc,
+    String? casesWon,
+    String? experience,
+    String? description,
+    List<String>? tags,
   }) {
     return UserModel(
       firstName: firstName ?? this.firstName,
@@ -109,7 +140,6 @@ class UserModel {
       transactions: transactions ?? this.transactions,
       credits: credits ?? this.credits,
       bookmarked: bookmarked ?? this.bookmarked,
-      isVerified: isVerified ?? this.isVerified,
       uid: uid ?? this.uid,
       location: location ?? this.location,
       linkedin: linkedin ?? this.linkedin,
@@ -125,6 +155,18 @@ class UserModel {
       eduUniversity: eduUniversity ?? this.eduUniversity,
       userType: userType ?? this.userType,
       phone: phone ?? this.phone,
+      dob: dob ?? this.dob,
+      state: state ?? this.state,
+      city: city ?? this.city,
+      address1: address1 ?? this.address1,
+      address2: address2 ?? this.address2,
+      proofDoc: proofDoc ?? this.proofDoc,
+      idDoc: idDoc ?? this.idDoc,
+      casesWon: casesWon ?? this.casesWon,
+      experience: experience ?? this.experience,
+      description: description ?? this.description,
+
+      tags: tags ?? this.tags,
     );
   }
 
@@ -145,7 +187,6 @@ class UserModel {
       'meetings': meetings,
       'transactions': transactions,
       'credits': credits,
-      'isVerified': isVerified,
       'location': location,
       'linkedin': linkedin,
       'twitter': twitter,
@@ -158,57 +199,80 @@ class UserModel {
       'eduDegree': eduDegree,
       'eduUniversity': eduUniversity,
       'userType': userType,
+      'dob': dob,
+      'state': state,
+      'city': city,
+      'address1': address1,
+      'address2': address2,
+      'proofDoc': proofDoc,
+      'idDoc': idDoc,
+      'casesWon': casesWon,
+      'experience': experience,
+      'description': description,
+
+      'tags': tags,
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      firstName: map['firstName'] as String,
-      lastName: map['lastName'] as String,
-      email: map['email'] as String,
+      firstName: map['firstName'] as String? ?? '',
+      lastName: map['lastName'] as String? ?? '',
+      email: map['email'] as String? ?? '',
+      password: map['password'] as String? ?? '',
+      profileImage: map['profileImage'] as String? ?? '',
+      meetings: List<String>.from(
+        (map['meetings'] ?? []).map((x) => x as String),
+      ),
+      transactions: List<String>.from(
+        (map['transactions'] ?? []).map((x) => x as String),
+      ),
+      credits: (map['credits'] is int)
+          ? (map['credits'] as int).toDouble()
+          : (map['credits'] as double? ?? 0.0),
+      bio: map['bio'] as String? ?? '',
       phone: map['phone'] as String? ?? '',
-      password: map['password'] as String,
-      profileImage: map['profileImage'] as String,
-      bio: map['bio'] as String,
-      createdAt: map['createdAt'] as String,
-      summary: map['summary'] as String,
-      followers:
-          List<String>.from((map['followers'] ?? []).map((x) => x as String)),
-      meetings:
-          List<String>.from((map['meetings'] ?? []).map((x) => x as String)),
-          transactions:
-          List<String>.from((map['transactions'] ?? []).map((x) => x as String)),
-      following:
-          List<String>.from((map['following'] ?? []).map((x) => x as String)),
-      bookmarked:
-          List<String>.from((map['bookmarked'] ?? []).map((x) => x as String)),
-      credits: (map['credits'] is int) ? (map['credits'] as int).toDouble() : map['credits'] as double,
-
-//change this default generated code to above code for list.
-
-      // following: List<String>.from((map['following'] as List<String>)),
-      // followers: List<String>.from((map['followers'] as List<String>)),
-      // bookmarked: List<String>.from((map['bookmarked'] as List<String>)),
-      isVerified: map['isVerified'] as bool,
-      uid: map['\$id'] as String,
-      location: map['location'] as String,
-      linkedin: map['linkedin'] as String,
-      twitter: map['twitter'] as String,
-      instagram: map['instagram'] as String,
-      facebook: map['facebook'] as String,
-      experienceTitle: map['experienceTitle'] as String,
-      experienceSummary: map['experienceSummary'] as String,
-      experienceOrganization: map['experienceOrganization'] as String,
-      eduStream: map['eduStream'] as String,
-      eduDegree: map['eduDegree'] as String,
-      eduUniversity: map['eduUniversity'] as String,
-      userType: map['userType'] as String,
+      createdAt: map['createdAt'] as String? ?? '',
+      summary: map['summary'] as String? ?? '',
+      following: List<String>.from(
+        (map['following'] ?? []).map((x) => x as String),
+      ),
+      followers: List<String>.from(
+        (map['followers'] ?? []).map((x) => x as String),
+      ),
+      bookmarked: List<String>.from(
+        (map['bookmarked'] ?? []).map((x) => x as String),
+      ),
+      uid: map['\$id'] as String? ?? map['uid'] as String? ?? '',
+      location: map['location'] as String? ?? '',
+      linkedin: map['linkedin'] as String? ?? '',
+      twitter: map['twitter'] as String? ?? '',
+      instagram: map['instagram'] as String? ?? '',
+      facebook: map['facebook'] as String? ?? '',
+      experienceTitle: map['experienceTitle'] as String? ?? '',
+      experienceSummary: map['experienceSummary'] as String? ?? '',
+      experienceOrganization: map['experienceOrganization'] as String? ?? '',
+      eduStream: map['eduStream'] as String? ?? '',
+      eduDegree: map['eduDegree'] as String? ?? '',
+      eduUniversity: map['eduUniversity'] as String? ?? '',
+      userType: map['userType'] as String? ?? '',
+      dob: map['dob'] as String? ?? '',
+      state: map['state'] as String? ?? '',
+      city: map['city'] as String? ?? '',
+      address1: map['address1'] as String? ?? '',
+      address2: map['address2'] as String? ?? '',
+      proofDoc: map['proofDoc'] as String? ?? '',
+      idDoc: map['idDoc'] as String? ?? '',
+      casesWon: map['casesWon'] as String? ?? '',
+      experience: map['experience'] as String? ?? '',
+      description: map['description'] as String? ?? '',
+      tags: List<String>.from((map['tags'] ?? []).map((x) => x as String)),
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(firstName: $firstName,phone:$phone, lastName: $lastName, email: $email, password: $password, profileImage: $profileImage, bio: $bio, createdAt: $createdAt, summary: $summary, following: $following, followers: $followers, bookmarked: $bookmarked, isVerified: $isVerified, uid: $uid, location: $location, linkedin: $linkedin, twitter: $twitter, instagram: $instagram, facebook: $facebook, experienceTitle: $experienceTitle, experienceSummary: $experienceSummary, experienceOrganization: $experienceOrganization, eduStream: $eduStream, eduDegree: $eduDegree, eduUniversity: $eduUniversity, userType: $userType, credits: $credits, meetings: $meetings, transactions: $transactions)';
+    return 'UserModel(firstName: $firstName,phone:$phone, lastName: $lastName, email: $email, password: $password, profileImage: $profileImage, bio: $bio, createdAt: $createdAt, summary: $summary, following: $following, followers: $followers, bookmarked: $bookmarked, uid: $uid, location: $location, linkedin: $linkedin, twitter: $twitter, instagram: $instagram, facebook: $facebook, experienceTitle: $experienceTitle, experienceSummary: $experienceSummary, experienceOrganization: $experienceOrganization, eduStream: $eduStream, eduDegree: $eduDegree, eduUniversity: $eduUniversity, userType: $userType, credits: $credits, meetings: $meetings, transactions: $transactions,dob: $dob, state: $state, city: $city, address1: $address1, address2: $address2, proofDoc: $proofDoc, idDoc: $idDoc, casesWon: $casesWon, experience: $experience, description: $description, tags: $tags)';
   }
 
   @override
@@ -230,7 +294,6 @@ class UserModel {
         listEquals(other.transactions, transactions) &&
         listEquals(other.bookmarked, bookmarked) &&
         other.credits == credits &&
-        other.isVerified == isVerified &&
         other.uid == uid &&
         other.location == location &&
         other.linkedin == linkedin &&
@@ -243,7 +306,18 @@ class UserModel {
         other.eduStream == eduStream &&
         other.eduDegree == eduDegree &&
         other.eduUniversity == eduUniversity &&
-        other.userType == userType;
+        other.userType == userType &&
+        other.dob == dob &&
+        other.state == state &&
+        other.city == city &&
+        other.address1 == address1 &&
+        other.address2 == address2 &&
+        other.proofDoc == proofDoc &&
+        other.idDoc == idDoc &&
+        other.casesWon == casesWon &&
+        other.experience == experience &&
+        other.description == description &&
+        listEquals(other.tags, tags);
   }
 
   @override
@@ -263,7 +337,6 @@ class UserModel {
         following.hashCode ^
         followers.hashCode ^
         bookmarked.hashCode ^
-        isVerified.hashCode ^
         uid.hashCode ^
         location.hashCode ^
         linkedin.hashCode ^
@@ -276,6 +349,17 @@ class UserModel {
         eduStream.hashCode ^
         eduDegree.hashCode ^
         eduUniversity.hashCode ^
+        dob.hashCode ^
+        state.hashCode ^
+        city.hashCode ^
+        address1.hashCode ^
+        address2.hashCode ^
+        proofDoc.hashCode ^
+        idDoc.hashCode ^
+        casesWon.hashCode ^
+        experience.hashCode ^
+        description.hashCode ^
+        tags.hashCode ^
         userType.hashCode;
   }
 }

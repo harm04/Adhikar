@@ -4,9 +4,8 @@ import 'package:adhikar/apis/expert_api.dart';
 import 'package:adhikar/apis/storage_api.dart';
 import 'package:adhikar/apis/user_api.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
-import 'package:adhikar/features/admin/graph/daily_stats.dart';
+import 'package:adhikar/features/admin/graph/today_stats.dart';
 import 'package:adhikar/features/expert/views/expert_verification.dart';
-import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -26,14 +25,14 @@ final getExpertsProvider = FutureProvider.autoDispose((ref) async {
   return expertsController.getExpertsList();
 });
 
-//get experts by uid
-final expertDataProvider = FutureProvider.family<ExpertModel, String>((
-  ref,
-  uid,
-) async {
-  final expertController = ref.watch(expertControllerProvider.notifier);
-  return expertController.getExpertData(uid);
-});
+// //get experts by uid
+// final expertDataProvider = FutureProvider.family<UserModel, String>((
+//   ref,
+//   uid,
+// ) async {
+//   final expertController = ref.watch(expertControllerProvider.notifier);
+//   return expertController.getExpertData(uid);
+// });
 
 class ExpertController extends StateNotifier<bool> {
   final ExpertAPI _expertAPI;
@@ -44,6 +43,7 @@ class ExpertController extends StateNotifier<bool> {
   }) : _expertAPI = expertAPI,
        _storageApi = storageApi,
        super(false);
+
   void applyForExpert({
     required UserModel userModel,
     required BuildContext context,
@@ -58,27 +58,17 @@ class ExpertController extends StateNotifier<bool> {
     required String casesWon,
     required String experience,
     required String description,
-    required String approved,
     required File profImage,
-    required List<String> tags, // <-- Add this
+    required List<String> tags,
   }) async {
     state = true;
-    //controller to update usertype in usermodel
-    userModel = userModel.copyWith(userType: 'pending');
-    //controller to create a lawyer model
     final proofDocUrl = await _storageApi.uploadDocFiles([proofDoc]);
     final idDocUrl = await _storageApi.uploadDocFiles([idDoc]);
     final profileImageurl = await _storageApi.uploadFiles([profImage]);
-    ExpertModel expertModel = ExpertModel(
-      email: userModel.email,
-      credits: 50.0,
-      meetings: [],
-      password: userModel.password,
-      firstName: userModel.firstName,
-      lastName: userModel.lastName,
+
+    final updatedUser = userModel.copyWith(
+      userType: 'pending',
       phone: phone,
-      uid: userModel.uid,
-      transactions: [],
       dob: dob,
       state: countryState,
       city: city,
@@ -89,36 +79,29 @@ class ExpertController extends StateNotifier<bool> {
       casesWon: casesWon,
       experience: experience,
       description: description,
-      approved: approved,
-      profImage: profileImageurl[0],
-      tags: tags, // <-- Add this
+    profileImage:  profileImageurl[0],
+      tags: tags,
+      credits: 0.0,
+      meetings: [],
     );
 
-    final res = await _expertAPI.applyForExpert(userModel, expertModel);
+    final res = await _expertAPI.applyForExpert(updatedUser);
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) {
       showSnackbar(context, 'Your profile is sent for verification');
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => ExpertVerification(),
-        ), // or your root widget
+        MaterialPageRoute(builder: (context) => ExpertVerification()),
         (route) => false,
       );
     });
   }
 
-  Future<List<ExpertModel>> getExpertsList() async {
-    final lawyersList = await _expertAPI.getExperts();
-    return lawyersList
-        .map((lawyers) => ExpertModel.fromMap(lawyers.data))
-        .toList();
+  Future<List<UserModel>> getExpertsList() async {
+    final expertsList = await _expertAPI.getExperts();
+    return expertsList.map((doc) => UserModel.fromMap(doc.data)).toList();
   }
 
-  Future<ExpertModel> getExpertData(String uid) async {
-    final document = await _expertAPI.getExpertData(uid);
-    return ExpertModel.fromMap(document.data);
-  }
-
+  
   //approve expert
   Future<void> approveExpert(
     String uid,
@@ -128,19 +111,14 @@ class ExpertController extends StateNotifier<bool> {
     state = true;
     final res = await _expertAPI.approveExpert(uid);
     res.fold((l) => showSnackbar(context, l.message), (r) async {
-      // Fetch the expert data to get the profile image
-      final expertDoc = await _expertAPI.getExpertData(uid);
-      final expertProfileImage = expertDoc.data['profImage'];
-
-      // Update the user's profile image in the users collection
-      await _expertAPI.updateUserProfileImage(uid, expertProfileImage);
+     
 
       showSnackbar(context, 'Expert approved successfully');
       ref.invalidate(getExpertsProvider);
       ref.invalidate(usersCountProvider);
       ref.invalidate(expertsCountProvider);
       ref.invalidate(todayStatsProvider);
-      ref.invalidate(expertDataProvider(uid));
+     
     });
     state = false;
   }
@@ -158,7 +136,7 @@ class ExpertController extends StateNotifier<bool> {
       ref.invalidate(getExpertsProvider);
       ref.invalidate(usersCountProvider);
       ref.invalidate(expertsCountProvider);
-      ref.invalidate(todayStatsProvider); // <-- ADD THIS LINE
+      ref.invalidate(todayStatsProvider);
     });
     state = false;
   }

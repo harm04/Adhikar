@@ -1,7 +1,7 @@
 import 'package:adhikar/common/widgets/custom_button.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/views/confirm_phone.dart';
-import 'package:adhikar/models/expert_model.dart';
+import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ExpertDetails extends ConsumerStatefulWidget {
-  final ExpertModel expertModel;
-  const ExpertDetails({super.key, required this.expertModel});
+  final UserModel expertUserModel;
+  const ExpertDetails({super.key, required this.expertUserModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ExpertDetailsState();
@@ -56,7 +56,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ConfirmPhone(
-                                  expertModel: widget.expertModel,
+                                  expertUserModel: widget.expertUserModel,
                                 ),
                               ),
                             );
@@ -83,13 +83,9 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   color: Colors.grey[200],
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
-                    // child: Image.network(
-                    //   widget.expertModel.profImage,
-                    //   fit: BoxFit.cover,
-                    // ),
                     child: FadeInImage.assetNetwork(
                       placeholder: ImageTheme.defaultAdhikarLogo,
-                      image: widget.expertModel.profImage,
+                      image: widget.expertUserModel.profileImage,
                       fit: BoxFit.cover,
                       imageErrorBuilder: (context, error, stackTrace) {
                         return Image.asset(
@@ -105,7 +101,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
               Row(
                 children: [
                   Text(
-                    '${widget.expertModel.firstName} ${widget.expertModel.lastName}',
+                    '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
                     style: const TextStyle(
                       fontSize: 33,
                       fontWeight: FontWeight.bold,
@@ -139,7 +135,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   ),
                   SizedBox(width: 5),
                   Text(
-                    '${widget.expertModel.state}, ${widget.expertModel.city}',
+                    '${widget.expertUserModel.state}, ${widget.expertUserModel.city}',
                     style: TextStyle(color: Pallete.greyColor, fontSize: 17),
                   ),
                 ],
@@ -149,7 +145,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                 children: [
                   Chip(
                     label: Text(
-                      'Cases won : ${widget.expertModel.casesWon}',
+                      'Cases won : ${widget.expertUserModel.casesWon}',
                       style: TextStyle(
                         color: Pallete.whiteColor,
                         fontSize: 18,
@@ -160,7 +156,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   const SizedBox(width: 15),
                   Chip(
                     label: Text(
-                      '${widget.expertModel.experience} years of experience',
+                      '${widget.expertUserModel.experience} years of experience',
                       style: TextStyle(
                         color: Pallete.whiteColor,
                         fontSize: 18,
@@ -173,7 +169,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
 
               const SizedBox(height: 30),
               Text(
-                'About ${widget.expertModel.firstName}',
+                'About ${widget.expertUserModel.firstName}',
                 style: TextStyle(
                   color: Pallete.whiteColor,
                   fontSize: 23,
@@ -182,7 +178,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
               ),
               const SizedBox(height: 17),
               Text(
-                widget.expertModel.description,
+                widget.expertUserModel.description,
                 style: const TextStyle(fontSize: 18, color: Pallete.greyColor),
               ),
               const SizedBox(height: 30),
@@ -196,10 +192,10 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
               ),
               const SizedBox(height: 17),
 
-              if (widget.expertModel.tags.isNotEmpty)
+              if (widget.expertUserModel.tags.isNotEmpty)
                 Wrap(
                   spacing: 6,
-                  children: widget.expertModel.tags
+                  children: widget.expertUserModel.tags
                       .map(
                         (tag) => Chip(
                           label: Text(

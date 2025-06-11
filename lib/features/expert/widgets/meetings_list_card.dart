@@ -2,7 +2,6 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
-import 'package:adhikar/features/expert/controller/expert_controller.dart';
 import 'package:adhikar/features/expert/controller/meetings_controller.dart';
 import 'package:adhikar/models/meetings_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
@@ -52,7 +51,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
     // USER VIEW
     if (currentUser.userType == 'User') {
       return ref
-          .watch(expertDataProvider(widget.meetingsModel.expertUid))
+          .watch(userDataProvider(widget.meetingsModel.expertUid))
           .when(
             data: (expertdata) {
               return Padding(
@@ -73,7 +72,9 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
                             child: Image.network(
-                              expertdata.profImage,
+                              expertdata.profileImage.isNotEmpty
+                                  ? expertdata.profileImage
+                                  : ImageTheme.defaultProfileImage,
                               height: 120,
                               width: 120,
                               fit: BoxFit.cover,
@@ -445,12 +446,11 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                       ],
                     ),
                   ),
-                ),
-              ),
-            );
-          },
-          error: (error, st) => ErrorText(error: error.toString()),
-          loading: () => const Loader(),
-        );
+                ),)
+              );
+            },
+            error: (error, st) => ErrorText(error: error.toString()),
+            loading: () => const Loader(),
+          );
   }
 }

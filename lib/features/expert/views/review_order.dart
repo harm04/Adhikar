@@ -5,20 +5,19 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/meetings_controller.dart';
 import 'package:adhikar/features/expert/controller/transaction_controller.dart';
 import 'package:adhikar/features/expert/widgets/meetings_list.dart';
-import 'package:adhikar/models/expert_model.dart';
-import 'package:adhikar/theme/image_theme.dart';
+import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class ReviewOrder extends ConsumerStatefulWidget {
-  final ExpertModel expertModel;
+  final UserModel expertUserModel;
   final String phone;
   const ReviewOrder({
     super.key,
-    required this.expertModel,
+    required this.expertUserModel,
     required this.phone,
   });
 
@@ -41,7 +40,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
         .read(meetingsControllerProvider.notifier)
         .createMeeting(
           userModel: currentUser,
-          expertModel: widget.expertModel,
+          expertUserModel: widget.expertUserModel,
           phone: widget.phone,
           transactionID: response.paymentId.toString(),
           context: context,
@@ -58,7 +57,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
             .read(transactionControllerProvider.notifier)
             .createTransaction(
               userModel: currentUser,
-              expertModel: widget.expertModel,
+              expertUserModel: widget.expertUserModel,
               amount: 300, // Fixed amount for consultation
               paymentStatus: 'Success',
               phone: widget.phone,
@@ -91,8 +90,8 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
         .read(transactionControllerProvider.notifier)
         .createTransaction(
           userModel: currentUser,
+          expertUserModel: widget.expertUserModel,
           amount: 300,
-          expertModel: widget.expertModel,
           paymentStatus: 'Failed',
           phone: widget.phone,
           paymentID: response.error.toString(),
@@ -182,7 +181,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
               : () {
                   openCheckout(
                     '${currentUser.firstName} ${currentUser.lastName}',
-                    'Payment for consultation with ${widget.expertModel.firstName} ${widget.expertModel.lastName}',
+                    'Payment for consultation with ${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
                     currentUser.email,
                   );
                 },
@@ -234,9 +233,8 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                   children: [
                     ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(20)),
-
                       child: Image.network(
-                        widget.expertModel.profImage,
+                        widget.expertUserModel.profileImage,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: 300,
@@ -271,7 +269,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                       child: Row(
                         children: [
                           Text(
-                            '${widget.expertModel.firstName} ${widget.expertModel.lastName}',
+                            '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(

@@ -1,7 +1,6 @@
 import 'package:adhikar/common/failure.dart';
 import 'package:adhikar/common/type_def.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
-import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/models/transaction_model.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/providers/provider.dart';
@@ -22,11 +21,10 @@ abstract class IUserAPI {
   Future<Either<Failure, Document>> createTransaction(
     TransactionModel transactionModel,
   );
-  FutureEitherVoid updateExpertmodelWithTransaction(
-    ExpertModel expertModel,
-    String transactionId,
+  FutureEitherVoid updateExpertWithTransaction(
+ UserModel userModel,    String transactionId,
   );
-  FutureEitherVoid updateUsermodelWithTransaction(
+  FutureEitherVoid updateUserWithTransaction(
     UserModel userModel,
     String transactionId,
   );
@@ -52,20 +50,20 @@ class TransactionAPI implements IUserAPI {
         documentId: ID.unique(),
         data: transactionModel.toMap(),
       );
-      return right(doc); // Return the created document
+      return right(doc);
     } catch (err, stackTrace) {
       return left(Failure(err.toString(), stackTrace));
     }
   }
 
-  //update usermodel transaction[] with transactionId
+  //update user transaction[] with transactionId
   @override
-  FutureEitherVoid updateUsermodelWithTransaction(
+  FutureEitherVoid updateUserWithTransaction(
     UserModel userModel,
     String transactionId,
   ) async {
     try {
-      //update usermodel with transactionId
+      //update user with transactionId
       await _db.updateDocument(
         databaseId: AppwriteConstants.databaseID,
         collectionId: AppwriteConstants.usersCollectionID,
@@ -78,19 +76,19 @@ class TransactionAPI implements IUserAPI {
     }
   }
 
-  //update expertmodel meeting[] with same meetingId
+  //update expert transaction[] with same transactionID
   @override
-  FutureEitherVoid updateExpertmodelWithTransaction(
-    ExpertModel expertModel,
+  FutureEitherVoid updateExpertWithTransaction(
+     UserModel userModel,
     String transactionId,
   ) async {
     try {
-      //update expertmodel with transactionId
+      //update expert (as user) with transactionId
       await _db.updateDocument(
         databaseId: AppwriteConstants.databaseID,
-        collectionId: AppwriteConstants.expertCollectionID,
-        documentId: expertModel.uid,
-        data: {'transactions': expertModel.transactions},
+        collectionId: AppwriteConstants.usersCollectionID,
+        documentId: userModel.uid,
+        data: {'transactions': userModel.transactions},
       );
       return right(null);
     } catch (err, stackTrace) {

@@ -1,7 +1,6 @@
 import 'package:adhikar/common/failure.dart';
 import 'package:adhikar/common/type_def.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
-import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/providers/provider.dart';
 import 'package:appwrite/appwrite.dart';
@@ -25,8 +24,8 @@ final expertsCountProvider = FutureProvider<int>((ref) async {
 
 abstract class IUserAPI {
   Future<List<Document>> getExperts();
-  FutureEitherVoid applyForExpert(UserModel userModel, ExpertModel lawyerModel);
-  Future<Document> getExpertData(String uid);
+  FutureEitherVoid applyForExpert(UserModel userModel);
+  // Future<Document> getExpertData(String uid);
   FutureEitherVoid approveExpert(String uid);
 }
 
@@ -37,26 +36,16 @@ class ExpertAPI implements IUserAPI {
   // _realtime = realtime;
 
   @override
-  FutureEitherVoid applyForExpert(
-    UserModel userModel,
-    ExpertModel lawyerModel,
-  ) async {
+  FutureEitherVoid applyForExpert(UserModel userModel) async {
     try {
       //update usertype in usermodel
       await _db.updateDocument(
         databaseId: AppwriteConstants.databaseID,
         collectionId: AppwriteConstants.usersCollectionID,
         documentId: userModel.uid,
-        data: {'userType': userModel.userType},
+        data: userModel.toMap(),
       );
 
-      //create lawyermodel
-      await _db.createDocument(
-        databaseId: AppwriteConstants.databaseID,
-        collectionId: AppwriteConstants.expertCollectionID,
-        documentId: userModel.uid,
-        data: lawyerModel.toMap(),
-      );
       return right(null);
     } catch (err, stackTrace) {
       return left(Failure(err.toString(), stackTrace));
@@ -67,20 +56,22 @@ class ExpertAPI implements IUserAPI {
   Future<List<Document>> getExperts() async {
     final documents = await _db.listDocuments(
       databaseId: AppwriteConstants.databaseID,
-      collectionId: AppwriteConstants.expertCollectionID,
+      collectionId: AppwriteConstants.usersCollectionID,
+      queries: [
+        Query.equal('userType', ['Expert', 'pending']),
+      ],
     );
-
     return documents.documents;
   }
 
-  @override
-  Future<Document> getExpertData(String uid) {
-    return _db.getDocument(
-      databaseId: AppwriteConstants.databaseID,
-      collectionId: AppwriteConstants.expertCollectionID,
-      documentId: uid,
-    );
-  }
+  // @override
+  // Future<Document> getExpertData(String uid) {
+  //   return _db.getDocument(
+  //     databaseId: AppwriteConstants.databaseID,
+  //     collectionId: AppwriteConstants.expertCollectionID,
+  //     documentId: uid,
+  //   );
+  // }
 
   //approv expert
   FutureEitherVoid approveExpert(String uid) async {
@@ -90,16 +81,9 @@ class ExpertAPI implements IUserAPI {
         databaseId: AppwriteConstants.databaseID,
         collectionId: AppwriteConstants.usersCollectionID,
         documentId: uid,
-        data: {'userType': 'Expert', 'isVerified': true},
+        data: {'userType': 'Expert'},
       );
 
-      //update expert status
-      await _db.updateDocument(
-        databaseId: AppwriteConstants.databaseID,
-        collectionId: AppwriteConstants.expertCollectionID,
-        documentId: uid,
-        data: {'approved': 'true'},
-      );
       return right(null);
     } catch (err, stackTrace) {
       return left(Failure(err.toString(), stackTrace));
@@ -117,12 +101,6 @@ class ExpertAPI implements IUserAPI {
         data: {'userType': 'User'},
       );
 
-      //delete expert document
-      await _db.deleteDocument(
-        databaseId: AppwriteConstants.databaseID,
-        collectionId: AppwriteConstants.expertCollectionID,
-        documentId: uid,
-      );
       return right(null);
     } catch (err, stackTrace) {
       return left(Failure(err.toString(), stackTrace));

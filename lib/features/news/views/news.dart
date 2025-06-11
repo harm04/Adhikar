@@ -184,6 +184,7 @@ class _NewsState extends ConsumerState<News> {
 
                 ListView.builder(
                   shrinkWrap: true,
+                  padding: const EdgeInsets.only(top: 0.0),
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: otherNews.length,
                   itemBuilder: (context, index) {

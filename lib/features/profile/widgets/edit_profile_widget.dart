@@ -20,9 +20,20 @@ class EditProfileWidget extends ConsumerStatefulWidget {
   final TextEditingController facebookController;
   final TextEditingController linkedinController;
   final TextEditingController twitterController;
+  final TextEditingController casesWonController;
+  final TextEditingController experienceController;
+  final TextEditingController descriptionController;
+  final TextEditingController address1Controller;
+  final TextEditingController address2Controller;
+  final TextEditingController cityController;
+  final TextEditingController stateController;
+  final TextEditingController phoneController;
+  final TextEditingController tagsController;
   File? profileImage;
   final UserModel copyOfUserModel;
   final void Function(File?)? onProfileImageChanged;
+  final void Function(List<String>)? onTagsChanged;
+  final List<String> tags;
 
   EditProfileWidget({
     super.key,
@@ -35,9 +46,20 @@ class EditProfileWidget extends ConsumerStatefulWidget {
     required this.facebookController,
     required this.linkedinController,
     required this.twitterController,
+    required this.casesWonController,
+    required this.experienceController,
+    required this.descriptionController,
+    required this.address1Controller,
+    required this.address2Controller,
+    required this.cityController,
+    required this.stateController,
+    required this.phoneController,
+    required this.tagsController,
     this.profileImage,
     required this.copyOfUserModel,
     this.onProfileImageChanged,
+    required this.onTagsChanged,
+    required this.tags,
   });
 
   @override
@@ -272,6 +294,119 @@ class _EditWidgetState extends ConsumerState<EditProfileWidget> {
               TextInputType.text,
               'assets/icons/ic_x.png',
             ),
+            SizedBox(height: 25),
+
+            //social links
+            Text(
+              'Expert Info',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            if (widget.copyOfUserModel.userType == 'Expert') ...[
+              customTextfieldForBasicInfo(
+                widget.casesWonController,
+                null,
+                'Cases Won',
+                'Enter cases won',
+                TextInputType.number,
+              ),
+              SizedBox(height: 25),
+              customTextfieldForBasicInfo(
+                widget.experienceController,
+                null,
+                'Experience (years)',
+                'Enter experience',
+                TextInputType.number,
+              ),
+              SizedBox(height: 25),
+              customTextfieldForBasicInfo(
+                widget.descriptionController,
+                300,
+                'Description',
+                'Describe your expertise',
+                TextInputType.text,
+              ),
+              SizedBox(height: 25),
+              customTextfieldForBasicInfo(
+                widget.address1Controller,
+                null,
+                'Address Line 1',
+                'Enter address line 1',
+                TextInputType.text,
+              ),
+              SizedBox(height: 25),
+              customTextfieldForBasicInfo(
+                widget.address2Controller,
+                null,
+                'Address Line 2',
+                'Enter address line 2',
+                TextInputType.text,
+              ),
+              SizedBox(height: 25),
+              customTextfieldForBasicInfo(
+                widget.cityController,
+                null,
+                'City',
+                'Enter city',
+                TextInputType.text,
+              ),
+              SizedBox(height: 25),
+              customTextfieldForBasicInfo(
+                widget.stateController,
+                null,
+                'State',
+                'Enter state',
+                TextInputType.text,
+              ),
+              SizedBox(height: 25),
+              customTextfieldForBasicInfo(
+                widget.phoneController,
+                null,
+                'Phone',
+                'Enter phone',
+                TextInputType.phone,
+              ),
+              SizedBox(height: 25),
+              // Tags input
+              Text('Tags', style: TextStyle(fontWeight: FontWeight.bold)),
+              Wrap(
+                spacing: 8,
+                children: widget.tags
+                    .map(
+                      (tag) => Chip(
+                        label: Text(tag),
+                        onDeleted: () {
+                          final newTags = List<String>.from(widget.tags)
+                            ..remove(tag);
+                          widget.onTagsChanged?.call(newTags);
+                        },
+                      ),
+                    )
+                    .toList(),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: widget.tagsController,
+                      decoration: InputDecoration(hintText: 'Add tag'),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      final tag = widget.tagsController.text.trim();
+                      if (tag.isNotEmpty && !widget.tags.contains(tag)) {
+                        final newTags = List<String>.from(widget.tags)
+                          ..add(tag);
+                        widget.onTagsChanged?.call(newTags);
+                        widget.tagsController.clear();
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: 40),
           ],
         ),

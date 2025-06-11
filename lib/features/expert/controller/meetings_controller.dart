@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:adhikar/apis/meetings_api.dart';
 import 'package:adhikar/common/failure.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
-import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/models/meetings_model.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:appwrite/models.dart';
@@ -65,7 +64,7 @@ class MeetingsController extends StateNotifier<bool> {
   //create meeting
   Future<Either<Failure, Document>> createMeeting({
     required UserModel userModel,
-    required ExpertModel expertModel,
+    required UserModel expertUserModel, 
     required String phone,
     required String transactionID,
     required BuildContext context,
@@ -80,10 +79,10 @@ class MeetingsController extends StateNotifier<bool> {
       createdAt: DateTime.now(),
       clientPhone: phone,
       clientUid: userModel.uid,
-      expertUid: expertModel.uid,
+      expertUid: expertUserModel.uid,
       transactionID: transactionID,
       meetingStatus: 'pending',
-      otp: otp, // <-- Add this
+      otp: otp,
     );
 
     final res = await _meetingsAPI.createMeeting(meetingsModel);
@@ -114,7 +113,6 @@ class MeetingsController extends StateNotifier<bool> {
   }
 
   //get meetings of a user
-
   Future<List<MeetingsModel>> getUserMeetingsList(UserModel userModel) async {
     final meetingsList = await _meetingsAPI.getUserMeetings(userModel);
     return meetingsList
@@ -140,7 +138,7 @@ class MeetingsController extends StateNotifier<bool> {
       enteredOtp,
     );
     if (result) {
-    await _meetingsAPI.addCreditsToExpertEverywhere(expertUid, 130);
+      await _meetingsAPI.addCreditsToExpertEverywhere(expertUid, 130);
     }
     state = false;
     return result;

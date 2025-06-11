@@ -6,6 +6,7 @@ import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/features/showcase/views/create_showcase.dart';
 import 'package:adhikar/features/showcase/widgets/showcase_list_card.dart';
 import 'package:adhikar/models/showcase_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,7 +50,14 @@ class _ShowcaseState extends ConsumerState<ShowcaseList> {
             ),
             appBar: AppBar(
               automaticallyImplyLeading: true,
-              title: Text('Showcase'),
+              title: Text('Nyaysahayak'),
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 18.0),
+                child: CircleAvatar(
+                  radius: 40,
+                  backgroundImage: AssetImage(ImageTheme.defaultAdhikarLogo),
+                ),
+              ),
               centerTitle: true,
               actions: [
                 Padding(

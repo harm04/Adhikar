@@ -15,7 +15,6 @@ import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/views/create_post.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/features/settings/views/settings.dart';
-import 'package:adhikar/features/showcase/views/showcase_list.dart';
 import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
@@ -204,20 +203,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                     'assets/svg/news.svg',
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return const ShowcaseList();
-                                      },
-                                    ),
-                                  ),
-                                  child: drawerItems(
-                                    'Showcase',
-                                    'assets/svg/showcase.svg',
-                                  ),
-                                ),
+
                                 GestureDetector(
                                   onTap: () => Navigator.push(
                                     context,

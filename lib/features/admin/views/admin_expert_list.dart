@@ -24,10 +24,10 @@ class _AdminExpertListState extends ConsumerState<AdminExpertList> {
           .when(
             data: (experts) {
               final approvedCount = experts
-                  .where((e) => e.approved == 'true')
+                  .where((e) => e.userType == 'Expert')
                   .length;
               final pendingCount = experts
-                  .where((e) => e.approved == 'false')
+                  .where((e) => e.userType == 'pending')
                   .length;
 
               final applications = experts;
@@ -35,7 +35,6 @@ class _AdminExpertListState extends ConsumerState<AdminExpertList> {
               final Map<String, double> dataMap = {
                 "Approved": approvedCount.toDouble(),
                 "Pending": pendingCount.toDouble(),
-                // "Rejected": rejectedCount.toDouble(),
                 "Total Applications": applications.length.toDouble(),
               };
 
@@ -61,7 +60,9 @@ class _AdminExpertListState extends ConsumerState<AdminExpertList> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) {
-                                    return ExpertVerification(expert: expert);
+                                    return ExpertVerification(
+                                      expertUser: expert,
+                                    );
                                   },
                                 ),
                               );
@@ -78,7 +79,7 @@ class _AdminExpertListState extends ConsumerState<AdminExpertList> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            trailing: expert.approved == 'true'
+                            trailing: expert.userType == 'Expert'
                                 ? Container(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 12,

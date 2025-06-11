@@ -1,7 +1,8 @@
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
+import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/expert_controller.dart';
-import 'package:adhikar/models/expert_model.dart';
+import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,8 +10,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ExpertVerification extends ConsumerStatefulWidget {
-  final ExpertModel expert;
-  const ExpertVerification({super.key, required this.expert});
+  final UserModel expertUser;
+  const ExpertVerification({super.key, required this.expertUser});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -18,15 +19,18 @@ class ExpertVerification extends ConsumerStatefulWidget {
 }
 
 class _ExpertVerificationState extends ConsumerState<ExpertVerification> {
+  bool isActionLoading = false;
+  String? actionResult;
+
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(expertControllerProvider);
 
     return ref
-        .watch(expertDataProvider(widget.expert.uid))
+        .watch(userDataProvider(widget.expertUser.uid))
         .when(
           data: (expert) {
-            return isLoading
+            return isLoading || isActionLoading
                 ? Loader()
                 : Scaffold(
                     appBar: AppBar(
@@ -36,7 +40,9 @@ class _ExpertVerificationState extends ConsumerState<ExpertVerification> {
                       actions: [
                         Padding(
                           padding: const EdgeInsets.only(right: 25.0),
-                          child: expert.approved == 'true'
+                          child:
+                              expert.userType == 'Expert' ||
+                                  actionResult == 'Approved'
                               ? Container(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 18,
@@ -55,19 +61,47 @@ class _ExpertVerificationState extends ConsumerState<ExpertVerification> {
                                     ),
                                   ),
                                 )
+                              : actionResult == 'Rejected'
+                              ? Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    'Rejected',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                )
                               : Row(
                                   children: [
                                     // Approve button
                                     GestureDetector(
-                                      onTap: () => ref
-                                          .read(
-                                            expertControllerProvider.notifier,
-                                          )
-                                          .approveExpert(
-                                            expert.uid,
-                                            context,
-                                            ref,
-                                          ),
+                                      onTap: () async {
+                                        setState(() {
+                                          isActionLoading = true;
+                                        });
+                                        await ref
+                                            .read(
+                                              expertControllerProvider.notifier,
+                                            )
+                                            .approveExpert(
+                                              expert.uid,
+                                              context,
+                                              ref,
+                                            );
+                                        setState(() {
+                                          isActionLoading = false;
+                                          actionResult = 'Approved';
+                                        });
+                                      },
                                       child: Padding(
                                         padding: const EdgeInsets.only(
                                           top: 8.0,
@@ -103,15 +137,24 @@ class _ExpertVerificationState extends ConsumerState<ExpertVerification> {
                                     SizedBox(width: 15),
                                     // Reject button
                                     GestureDetector(
-                                      onTap: () => ref
-                                          .read(
-                                            expertControllerProvider.notifier,
-                                          )
-                                          .rejectExpert(
-                                            expert.uid,
-                                            context,
-                                            ref,
-                                          ),
+                                      onTap: () async {
+                                        setState(() {
+                                          isActionLoading = true;
+                                        });
+                                        await ref
+                                            .read(
+                                              expertControllerProvider.notifier,
+                                            )
+                                            .rejectExpert(
+                                              expert.uid,
+                                              context,
+                                              ref,
+                                            );
+                                        setState(() {
+                                          isActionLoading = false;
+                                          actionResult = 'Rejected';
+                                        });
+                                      },
                                       child: Padding(
                                         padding: const EdgeInsets.only(
                                           top: 8.0,
@@ -180,7 +223,7 @@ class _ExpertVerificationState extends ConsumerState<ExpertVerification> {
                                                   Radius.circular(20),
                                                 ),
                                             child: Image.network(
-                                              expert.profImage,
+                                              expert.profileImage,
                                               fit: BoxFit.cover,
                                               width: double.infinity,
                                               height: 400,

@@ -1,13 +1,13 @@
 import 'package:adhikar/features/expert/views/expert_details.dart';
-import 'package:adhikar/models/expert_model.dart';
+import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ExpertListCard extends ConsumerStatefulWidget {
-  final ExpertModel expertModel;
-  const ExpertListCard({super.key, required this.expertModel});
+  final UserModel expertUserModel;
+  const ExpertListCard({super.key, required this.expertUserModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ExpertListCardState();
@@ -37,7 +37,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(3.0),
                         child: Image.network(
-                          widget.expertModel.profImage,
+                          widget.expertUserModel.profileImage,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               Container(
@@ -57,7 +57,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                     children: [
                       Flexible(
                         child: Text(
-                          '${widget.expertModel.firstName} ${widget.expertModel.lastName}',
+                          '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -95,7 +95,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                       const SizedBox(width: 5),
                       Expanded(
                         child: Text(
-                          widget.expertModel.state,
+                          widget.expertUserModel.state,
                           style: TextStyle(color: Pallete.greyColor),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -106,18 +106,18 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                   const SizedBox(height: 8),
                   Flexible(
                     child: Text(
-                      widget.expertModel.description,
-                      maxLines: widget.expertModel.tags.isEmpty ? 4 : 2,
+                      widget.expertUserModel.description,
+                      maxLines: widget.expertUserModel.tags.isEmpty ? 4 : 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 14),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  if (widget.expertModel.tags.isNotEmpty)
+                  if (widget.expertUserModel.tags.isNotEmpty)
                     Wrap(
                       spacing: 6,
                       children: [
-                        Chip(label: Text(widget.expertModel.tags.first)),
+                        Chip(label: Text(widget.expertUserModel.tags.first)),
                       ],
                     ),
                   const SizedBox(height: 8),
@@ -139,7 +139,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return ExpertDetails(expertModel: widget.expertModel);
+                        return ExpertDetails(expertUserModel: widget.expertUserModel);
                       },
                     ),
                   );

@@ -1,7 +1,7 @@
 import 'package:adhikar/common/failure.dart';
 import 'package:adhikar/common/type_def.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
-import 'package:adhikar/models/expert_model.dart';
+// Remove: import 'package:adhikar/models/expert_model.dart';
 import 'package:adhikar/models/meetings_model.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/providers/provider.dart';
@@ -20,17 +20,17 @@ final meetingsAPIProvider = Provider((ref) {
 abstract class IUserAPI {
   Future<List<Document>> getUserMeetings(UserModel userModel);
   Future<Either<Failure, Document>> createMeeting(MeetingsModel meetingsModel);
-  FutureEitherVoid updateExpertmodelWithMeeting(
-    ExpertModel expertModel,
+  FutureEitherVoid updateExpertWithMeeting(
+    UserModel userModel,
     String meetingId,
   );
   Future<bool> verifyAndCompleteMeeting(String meetingId, String enteredOtp);
   Future<List<Document>> getExpertMeetings(String expertUid);
-  FutureEitherVoid updateUsermodelWithMeeting(
+  FutureEitherVoid updateUserWithMeeting(
     UserModel userModel,
     String meetingId,
   );
-   Future<void> addCreditsToExpertEverywhere(
+  Future<void> addCreditsToExpertEverywhere(
     String expertUid,
     int creditsToAdd,
   );
@@ -64,14 +64,14 @@ class MeetingsAPI implements IUserAPI {
     }
   }
 
-  //update usermodel meetings[] with meetingId
+  //update user meetings[] with meetingId
   @override
-  FutureEitherVoid updateUsermodelWithMeeting(
+  FutureEitherVoid updateUserWithMeeting(
     UserModel userModel,
     String meetingId,
   ) async {
     try {
-      //update usermodel with meetingId
+      //update user with meetingId
       await _db.updateDocument(
         databaseId: AppwriteConstants.databaseID,
         collectionId: AppwriteConstants.usersCollectionID,
@@ -84,19 +84,19 @@ class MeetingsAPI implements IUserAPI {
     }
   }
 
-  //update expertmodel meeting[] with same meetingId
+  //update expert meeting[] with same meetingId
   @override
-  FutureEitherVoid updateExpertmodelWithMeeting(
-    ExpertModel expertModel,
+  FutureEitherVoid updateExpertWithMeeting(
+    UserModel userModel,
     String meetingId,
   ) async {
     try {
-      //update expertmodel with meetingId
+      //update expert with meetingId
       await _db.updateDocument(
         databaseId: AppwriteConstants.databaseID,
-        collectionId: AppwriteConstants.expertCollectionID,
-        documentId: expertModel.uid,
-        data: {'meetings': expertModel.meetings},
+        collectionId: AppwriteConstants.usersCollectionID,
+        documentId: userModel.uid,
+        data: {'meetings': userModel.meetings},
       );
       return right(null);
     } catch (err, stackTrace) {
@@ -115,6 +115,7 @@ class MeetingsAPI implements IUserAPI {
     return documents.documents;
   }
 
+  @override
   Future<List<Document>> getExpertMeetings(String expertUid) async {
     final documents = await _db.listDocuments(
       databaseId: AppwriteConstants.databaseID,
@@ -124,6 +125,7 @@ class MeetingsAPI implements IUserAPI {
     return documents.documents;
   }
 
+  @override
   Stream<List<Document>> getUserMeetingsStream(String userUid) {
     return _db
         .listDocuments(
@@ -135,6 +137,7 @@ class MeetingsAPI implements IUserAPI {
         .asyncMap((documents) => documents.documents);
   }
 
+  @override
   Stream<List<Document>> getExpertMeetingsStream(String expertUid) {
     return _db
         .listDocuments(
@@ -146,6 +149,7 @@ class MeetingsAPI implements IUserAPI {
         .asyncMap((documents) => documents.documents);
   }
 
+  @override
   Future<bool> verifyAndCompleteMeeting(
     String meetingId,
     String enteredOtp,
@@ -168,6 +172,7 @@ class MeetingsAPI implements IUserAPI {
     return false;
   }
 
+  @override
   Future<void> addCreditsToExpertEverywhere(
     String expertUid,
     int creditsToAdd,
@@ -184,20 +189,6 @@ class MeetingsAPI implements IUserAPI {
       collectionId: AppwriteConstants.usersCollectionID,
       documentId: expertUid,
       data: {'credits': userCredits + creditsToAdd},
-    );
-
-    // Update in ExpertModel collection
-    final expertDoc = await _db.getDocument(
-      databaseId: AppwriteConstants.databaseID,
-      collectionId: AppwriteConstants.expertCollectionID,
-      documentId: expertUid,
-    );
-    final expertCredits = expertDoc.data['credits'] ?? 0;
-    await _db.updateDocument(
-      databaseId: AppwriteConstants.databaseID,
-      collectionId: AppwriteConstants.expertCollectionID,
-      documentId: expertUid,
-      data: {'credits': expertCredits + creditsToAdd},
     );
   }
 }

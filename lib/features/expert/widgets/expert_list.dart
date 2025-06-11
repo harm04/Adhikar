@@ -105,7 +105,7 @@ class _ExpertListState extends ConsumerState<ExpertList> {
                   itemCount: experts.length,
                   itemBuilder: (context, index) {
                     final expert = experts[index];
-                    return ExpertListCard(expertModel: expert);
+                    return ExpertListCard(expertUserModel: expert);
                   },
                 ),
               );

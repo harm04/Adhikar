@@ -2,6 +2,7 @@ import 'package:adhikar/features/expert/widgets/expert_list.dart';
 import 'package:adhikar/features/home/views/home.dart';
 import 'package:adhikar/features/nyaysahayak/views/nyaysahayak.dart';
 import 'package:adhikar/features/search/views/search.dart';
+import 'package:adhikar/features/showcase/views/showcase_list.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -24,7 +25,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     const ExpertList(),
     const Nyaysahayak(),
     const Search(),
-    const Center(child: Text("Jobs")),
+    ShowcaseList(),
   ];
 
   @override
@@ -135,12 +136,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
               ),
             ),
             BottomNavigationBarItem(
-              label: 'Jobs',
+              label: 'Showcase',
               icon: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SvgPicture.asset(
-                    'assets/svg/job.svg',
+                    'assets/svg/showcase.svg',
                     colorFilter: ColorFilter.mode(
                       _page != 4 ? Pallete.greyColor : Pallete.whiteColor,
                       BlendMode.srcIn,
