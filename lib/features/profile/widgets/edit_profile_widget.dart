@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:adhikar/common/pick_image.dart';
 import 'package:adhikar/models/user_model.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
@@ -152,9 +153,7 @@ class _EditWidgetState extends ConsumerState<EditProfileWidget> {
                       backgroundImage: widget.profileImage != null
                           ? FileImage(widget.profileImage!)
                           : widget.copyOfUserModel.profileImage == ''
-                          ? NetworkImage(
-                              'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600',
-                            )
+                          ? AssetImage(ImageTheme.defaultProfileImage)
                           : NetworkImage(widget.copyOfUserModel.profileImage),
                     ),
                   ),
@@ -297,12 +296,12 @@ class _EditWidgetState extends ConsumerState<EditProfileWidget> {
             SizedBox(height: 25),
 
             //social links
-            Text(
-              'Expert Info',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
             if (widget.copyOfUserModel.userType == 'Expert') ...[
+              Text(
+                'Expert Info',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
               customTextfieldForBasicInfo(
                 widget.casesWonController,
                 null,

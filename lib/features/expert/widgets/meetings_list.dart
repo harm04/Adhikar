@@ -26,7 +26,11 @@ class _MeetingsListState extends ConsumerState<MeetingsList> {
         : ref.watch(expertMeetingsStreamProvider(currentUser.uid));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('My Meetings'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('My Meetings'),
+        centerTitle: true,
+        automaticallyImplyLeading: true,
+      ),
       body: meetingsAsync.when(
         data: (meetings) {
           if (meetings.isEmpty) {
@@ -39,16 +43,24 @@ class _MeetingsListState extends ConsumerState<MeetingsList> {
               ),
             );
           }
-          return ListView.builder(
-           
-            itemCount: meetings.length,
-            itemBuilder: (context, index) {
-              final meeting = meetings[index];
-              return MeetingsListCard(meetingsModel: meeting);
+          return RefreshIndicator(
+            onRefresh: () async {
+              if (currentUser.userType == 'User') {
+                ref.invalidate(userMeetingsStreamProvider(currentUser.uid));
+              } else {
+                ref.invalidate(expertMeetingsStreamProvider(currentUser.uid));
+              }
             },
+            child: ListView.builder(
+              itemCount: meetings.length,
+              itemBuilder: (context, index) {
+                final meeting = meetings[meetings.length - 1 - index];
+                return MeetingsListCard(meetingsModel: meeting);
+              },
+            ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Loader(),
         error: (err, st) => Center(child: Text('Error: $err')),
       ),
     );

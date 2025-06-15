@@ -327,7 +327,7 @@ class PostCard extends ConsumerWidget {
                                     ?.bookmarked
                                     .contains(postmodel.id) ??
                                 false,
-                            size: 32,
+                            size: 28,
                             onTap: (isLiked) async {
                               ref
                                   .read(postControllerProvider.notifier)
@@ -360,7 +360,7 @@ class PostCard extends ConsumerWidget {
                           SizedBox(width: 20),
                           LikeButton(
                             isLiked: postmodel.likes.contains(currentUser.uid),
-                            size: 32,
+                            size: 28,
                             onTap: (isLiked) async {
                               ref
                                   .read(postControllerProvider.notifier)
@@ -382,6 +382,7 @@ class PostCard extends ConsumerWidget {
                                         Pallete.greyColor,
                                         BlendMode.srcIn,
                                       ),
+                                     
                                     );
                             },
                           ),

@@ -218,7 +218,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
               );
             },
             error: (error, st) => ErrorText(error: error.toString()),
-            loading: () => const Loader(),
+            loading: () => SizedBox(),
           );
     }
 
@@ -450,7 +450,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
               );
             },
             error: (error, st) => ErrorText(error: error.toString()),
-            loading: () => const Loader(),
+            loading: () => SizedBox(),
           );
   }
 }

@@ -45,8 +45,11 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserDataProvider);
+    final currentUser = ref.watch(currentUserDataProvider).value;
     bool isLoading = ref.watch(authControllerProvider);
+    if (currentUser == null) {
+      return Loader(); // or any loading widget
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -115,10 +118,10 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  widget.userModel.uid == currentUser.value!.uid
+                  widget.userModel.uid == currentUser.uid
                       ? GestureDetector(
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => EditProfileView(
@@ -126,6 +129,11 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                 ),
                               ),
                             );
+                            if (result == true) {
+                              ref.invalidate(
+                                currentUserDataProvider,
+                              ); // Refetch user data
+                            }
                           },
                           child: SvgPicture.asset(
                             'assets/svg/pencil.svg',
@@ -139,7 +147,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                       : SizedBox(),
                   SizedBox(height: 15),
 
-                  widget.userModel.uid == currentUser.value!.uid &&
+                  widget.userModel.uid == currentUser.uid &&
                           widget.userModel.userType == 'Expert'
                       ? GestureDetector(
                           onTap: () {},
@@ -253,12 +261,12 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    widget.userModel.uid != currentUser.value!.uid
+                    widget.userModel.uid != currentUser.uid
                         ? ref
                               .read(authControllerProvider.notifier)
                               .followUser(
                                 userModel: widget.userModel,
-                                currentUser: currentUser.value!,
+                                currentUser: currentUser,
                                 context: context,
                                 ref: ref,
                               )
@@ -275,9 +283,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                         child: isLoading
                             ? Loader()
                             : Text(
-                                widget.userModel.uid == currentUser.value!.uid
+                                widget.userModel.uid == currentUser.uid
                                     ? '${widget.userModel.followers.length} Followers'
-                                    : currentUser.value!.following.contains(
+                                    : currentUser.following.contains(
                                         widget.userModel.uid,
                                       )
                                     ? 'Unfollow'
@@ -463,7 +471,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          widget.userModel.uid == currentUser.value!.uid
+                          widget.userModel.uid == currentUser.uid
                               ? GestureDetector(
                                   onTap: () => Navigator.push(
                                     context,
@@ -533,7 +541,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          widget.userModel.uid == currentUser.value!.uid
+                          widget.userModel.uid == currentUser.uid
                               ? GestureDetector(
                                   onTap: () => Navigator.push(
                                     context,

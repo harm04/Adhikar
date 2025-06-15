@@ -16,7 +16,7 @@ class Settings extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     void signout() {
-      ref.read(authControllerProvider.notifier).signout(context);
+      ref.read(authControllerProvider.notifier).signout(context,ref);
     }
 
     return Scaffold(

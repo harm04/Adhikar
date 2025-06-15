@@ -298,36 +298,46 @@ class _SearchState extends ConsumerState<Search>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          cursorColor: Colors.white,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-          ),
-          decoration: InputDecoration(
-            prefixIcon: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SvgPicture.asset(
-                'assets/svg/search.svg',
-                color: Colors.white,
-                width: 20,
-                height: 20,
+        title: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                cursorColor: Colors.white,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
+                ),
+                decoration: InputDecoration(
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SvgPicture.asset(
+                      'assets/svg/search.svg',
+                      color: Colors.white,
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: const BorderSide(color: Colors.white),
+                  ),
+                  hintText: 'Search for people, posts, or legal documents...',
+                  hintStyle: const TextStyle(color: Pallete.whiteColor),
+                  hintMaxLines: 1,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 0,
+                    horizontal: 0,
+                  ),
+                ),
               ),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: const BorderSide(color: Colors.white),
-            ),
-            hintText: 'Search for people, posts, or legal documents...',
-            hintStyle: const TextStyle(color: Pallete.whiteColor),
-            hintMaxLines: 1,
-          ),
+          ],
         ),
         bottom: TabBar(
           controller: _tabController,
@@ -340,7 +350,6 @@ class _SearchState extends ConsumerState<Search>
           ),
           tabs: const [
             Tab(text: 'Users'),
-
             Tab(text: 'Posts'),
             Tab(text: 'Legal'),
           ],

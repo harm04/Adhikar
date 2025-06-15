@@ -72,7 +72,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
         );
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const MeetingsList()),
+          MaterialPageRoute(builder: (context) => const BottomNavBar()),
           (route) => false,
         );
       },

@@ -1,3 +1,4 @@
+import 'package:adhikar/common/widgets/check_internet.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/expert_controller.dart';
 import 'package:adhikar/features/expert/widgets/expert_list_card.dart';
@@ -87,32 +88,34 @@ class _ExpertListState extends ConsumerState<ExpertList> {
         title: const Text('Book an Expert'),
         centerTitle: true,
       ),
-      body: ref
-          .watch(getExpertsProvider)
-          .when(
-            data: (experts) {
-              if (experts.isEmpty) {
-                return const Center(child: Text('No experts available'));
-              }
+      body: CheckInternet(
+        child: ref
+            .watch(getExpertsProvider)
+            .when(
+              data: (experts) {
+                if (experts.isEmpty) {
+                  return const Center(child: Text('No experts available'));
+                }
 
-              return Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.49,
+                return Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.49,
+                    ),
+                    itemCount: experts.length,
+                    itemBuilder: (context, index) {
+                      final expert = experts[index];
+                      return ExpertListCard(expertUserModel: expert);
+                    },
                   ),
-                  itemCount: experts.length,
-                  itemBuilder: (context, index) {
-                    final expert = experts[index];
-                    return ExpertListCard(expertUserModel: expert);
-                  },
-                ),
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, st) => Center(child: Text('Error: $err')),
-          ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (err, st) => Center(child: Text('Error: $err')),
+            ),
+      ),
     );
   }
 }

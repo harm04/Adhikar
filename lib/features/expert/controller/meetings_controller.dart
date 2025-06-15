@@ -105,6 +105,7 @@ class MeetingsController extends StateNotifier<bool> {
             instagram: updatedUser.instagram,
             facebook: updatedUser.facebook,
             summary: updatedUser.summary,
+            
           );
     }
 

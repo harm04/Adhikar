@@ -160,7 +160,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
           'Sorry, I didn’t understand that.';
 
       //suggest Expert if query is complex
-      if (aiResponse.length > 400 ||
+      if (aiResponse.length > 700 ||
           aiResponse.contains('legal advice') ||
           aiResponse.contains('consult')) {
         aiResponse +=
@@ -496,62 +496,73 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                 padding: const EdgeInsets.all(18.0),
                 child: Column(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Pallete.secondaryColor),
-                        color: Pallete.searchBarColor,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: DropDownField(
-                          enabled: true,
-                          textStyle: const TextStyle(
-                            color: Pallete.whiteColor,
-                            fontSize: 16,
-                          ),
-                          controller: languageController,
-                          hintText: 'Select your language',
-                          hintStyle: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                          items: languages,
-                          itemsVisibleInDropdown: 4,
-                          onValueChanged: (value) {
-                            setState(() {
-                              languageController.text = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () => getImage(ImageSource.gallery),
-                      child: SizedBox(
-                        height: 70,
-                        width: MediaQuery.of(context).size.width,
-                        child: Card(
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 8,
-                          ),
-                          elevation: 4,
-                          color: Pallete.primaryColor,
-                          child: const Center(
-                            child: Text(
-                              'Upload Document',
-                              style: TextStyle(
-                                color: Pallete.whiteColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Pallete.secondaryColor,
+                                ),
+                                color: Pallete.searchBarColor,
+                              ),
+                              alignment: Alignment.centerLeft,
+                              child: DropDownField(
+                                enabled: true,
+                                textStyle: const TextStyle(
+                                  color: Pallete.whiteColor,
+                                  fontSize: 16,
+                                ),
+                                controller: languageController,
+                                hintText: 'Select your language',
+                                hintStyle: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                                items: languages,
+                                itemsVisibleInDropdown: 4,
+                                onValueChanged: (value) {
+                                  setState(() {
+                                    languageController.text = value;
+                                  });
+                                },
                               ),
                             ),
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: SizedBox(
+                            height: 55,
+                            child: GestureDetector(
+                              onTap: () => getImage(ImageSource.gallery),
+                              child: Card(
+                                elevation: 4,
+                                color: Pallete.primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'Upload Document',
+                                    style: TextStyle(
+                                      color: Pallete.whiteColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 10),
+
                     scanning
                         ? const Expanded(
                             child: Center(

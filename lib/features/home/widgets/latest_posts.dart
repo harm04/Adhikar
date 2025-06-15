@@ -1,4 +1,5 @@
 import 'package:adhikar/apis/posts_api.dart';
+import 'package:adhikar/common/widgets/check_internet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:adhikar/models/posts_model.dart';
@@ -17,25 +18,28 @@ class LatestPosts extends ConsumerWidget {
       ref.invalidate(latestPostsProvider);
     }
 
-    return latestAsync.when(
-      data: (posts) {
-        if (posts.isEmpty) {
-          return const Center(child: Text('No latest posts found'));
-        }
-        return RefreshIndicator(
-          onRefresh: _refresh,
-          child: ListView.builder(
-            padding: const EdgeInsets.only(top: 10.0),
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              final post = posts[index];
-              return PostCard(postmodel: post);
-            },
-          ),
-        );
-      },
-      loading: () => const Loader(),
-      error: (err, st) => ErrorText(error: err.toString()),
+    return CheckInternet(
+      onTryAgain: _refresh,
+      child: latestAsync.when(
+        data: (posts) {
+          if (posts.isEmpty) {
+            return const Center(child: Text('No latest posts found'));
+          }
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top: 10.0),
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                final post = posts[index];
+                return PostCard(postmodel: post);
+              },
+            ),
+          );
+        },
+        loading: () => const Loader(),
+        error: (err, st) => ErrorText(error: err.toString()),
+      ),
     );
   }
 }

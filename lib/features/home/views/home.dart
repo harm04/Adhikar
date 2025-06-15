@@ -31,8 +31,9 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   void signout() {
-    ref.read(authControllerProvider.notifier).signout(context);
+    ref.read(authControllerProvider.notifier).signout(context, ref);
   }
 
   @override
@@ -41,6 +42,9 @@ class _HomePageState extends ConsumerState<HomePage>
         .watch(currentUserDataProvider)
         .when(
           data: (currentUser) {
+            if (currentUser == null) {
+              return const LoadingPage();
+            }
             return DefaultTabController(
               length: 3,
               child: Scaffold(
@@ -61,28 +65,39 @@ class _HomePageState extends ConsumerState<HomePage>
                               children: [
                                 //profile section
                                 GestureDetector(
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return ProfileView(
-                                          userModel: currentUser,
-                                        );
-                                      },
-                                    ),
-                                  ),
+                                  onTap: () async {
+                                    final updated = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return ProfileView(
+                                            userModel: currentUser,
+                                          );
+                                        },
+                                      ),
+                                    );
+
+                                    if (updated == true) {
+                                      ref.invalidate(currentUserDataProvider);
+                                    }
+                                  },
                                   child: Row(
                                     children: [
                                       CircleAvatar(
+                                        key: ValueKey(
+                                          currentUser.profileImage,
+                                        ), // <-- Add this line
+
                                         radius: 50,
                                         backgroundImage:
-                                            currentUser!.profileImage == ''
+                                            currentUser.profileImage == ''
                                             ? AssetImage(
                                                 ImageTheme.defaultProfileImage,
                                               )
                                             : NetworkImage(
-                                                currentUser.profileImage,
-                                              ),
+                                                    "${currentUser.profileImage}?timestamp=${DateTime.now().millisecondsSinceEpoch}",
+                                                  )
+                                                  as ImageProvider,
                                       ),
                                       SizedBox(width: 20),
                                       Expanded(
@@ -286,10 +301,16 @@ class _HomePageState extends ConsumerState<HomePage>
                             scaffoldKey.currentState?.openDrawer();
                           },
                           child: CircleAvatar(
+                            key: ValueKey(
+                              currentUser.profileImage,
+                            ),
+
                             radius: 20,
                             backgroundImage: currentUser.profileImage == ''
                                 ? AssetImage(ImageTheme.defaultProfileImage)
-                                : NetworkImage(currentUser.profileImage),
+                                : NetworkImage(
+                                    "${currentUser.profileImage}?timestamp=${DateTime.now().millisecondsSinceEpoch}",
+                                  ),
                           ),
                         ),
                       ),

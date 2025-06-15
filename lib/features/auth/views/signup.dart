@@ -38,6 +38,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         password: passwordController.text,
         firstName: firstnameController.text,
         lastName: lastnameController.text,
+        ref: ref,
         context: context);
   }
 

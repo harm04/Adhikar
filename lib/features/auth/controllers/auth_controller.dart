@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:adhikar/apis/auth_api.dart';
@@ -13,8 +14,11 @@ import 'package:appwrite/models.dart' as models;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-final authControllerProvider = StateNotifierProvider<AuthController, bool>((ref) {
+final authControllerProvider = StateNotifierProvider<AuthController, bool>((
+  ref,
+) {
   return AuthController(
     authAPI: ref.watch(authAPIProvider),
     userAPI: ref.watch(userAPIProvider),
@@ -22,30 +26,46 @@ final authControllerProvider = StateNotifierProvider<AuthController, bool>((ref)
   );
 });
 
-final currentUserDataProvider = FutureProvider((ref) async {
+final currentUserDataProvider = FutureProvider.autoDispose((ref) async {
   final currentUserId = ref.watch(currentUserAccountProvider).value?.$id;
   if (currentUserId == null) return null;
   final userData = await ref.watch(userDataProvider(currentUserId).future);
   return userData;
 });
 
-final userDataProvider = FutureProvider.family((ref, String uid) async {
+final userDataProvider = FutureProvider.family.autoDispose((
+  ref,
+  String uid,
+) async {
   final authController = ref.watch(authControllerProvider.notifier);
   return authController.getUserData(uid);
 });
 
-final currentUserAccountProvider = FutureProvider((ref) {
+// final currentUserAccountProvider = FutureProvider.autoDispose((ref) {
+//   final authController = ref.watch(authControllerProvider.notifier);
+//   return authController.currentUser();
+// });
+
+final currentUserAccountProvider = FutureProvider.autoDispose((ref) async {
   final authController = ref.watch(authControllerProvider.notifier);
-  return authController.currentUser();
+  try {
+    final user = await authController.currentUser();
+    print("✅ currentUser: ${user?.$id}");
+    return user;
+  } catch (e) {
+    print("⚠️ Appwrite currentUser() failed: $e");
+    // If offline, return a dummy user or null with a tag
+    return null; // or handle this more gracefully with an OfflineUser instance
+  }
 });
 
-final getlatestUserDataProvider = StreamProvider((ref) {
+final getlatestUserDataProvider = StreamProvider.autoDispose((ref) {
   final userApi = ref.watch(userAPIProvider);
   return userApi.getLatestUserProfileData();
 });
 
 //user count
-final usersCountProvider = FutureProvider<int>((ref) async {
+final usersCountProvider = FutureProvider.autoDispose<int>((ref) async {
   final userAPI = ref.watch(userAPIProvider);
   final users = await userAPI.getUsers();
   return users.length;
@@ -60,10 +80,10 @@ class AuthController extends StateNotifier<bool> {
     required AuthAPI authAPI,
     required UserAPI userAPI,
     required StorageApi storageApi,
-  })  : _authAPI = authAPI,
-        _storageAPI = storageApi,
-        _userAPI = userAPI,
-        super(false);
+  }) : _authAPI = authAPI,
+       _storageAPI = storageApi,
+       _userAPI = userAPI,
+       super(false);
 
   //signup
   void signUp({
@@ -72,6 +92,7 @@ class AuthController extends StateNotifier<bool> {
     required String lastName,
     required String password,
     required BuildContext context,
+    required WidgetRef ref, // <-- Add this
   }) async {
     state = true;
     final res = await _authAPI.signUp(email: email, password: password);
@@ -121,7 +142,11 @@ class AuthController extends StateNotifier<bool> {
 
       final res2 = await _userAPI.saveUserData(userModel);
       res2.fold((l) => showSnackbar(context, l.message), (r) {
-        // Only navigate after user data is saved
+        // Invalidate user data providers
+        ref.invalidate(currentUserAccountProvider);
+        ref.invalidate(currentUserDataProvider);
+        ref.invalidate(userDataProvider(userModel.uid));
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => SignInScreen()),
@@ -138,14 +163,29 @@ class AuthController extends StateNotifier<bool> {
     required String email,
     required String password,
     required BuildContext context,
+    required WidgetRef ref,
   }) async {
     state = true;
     final res = await _authAPI.signIn(email: email, password: password);
     state = false;
-    res.fold((l) => showSnackbar(context, l.message), (r) {
+
+    res.fold((l) => showSnackbar(context, l.message), (r) async {
+      final user = await _authAPI.currentUserAccount();
+
+      if (user == null) {
+        showSnackbar(context, "Login failed. Please try again.");
+        return;
+      }
+      final userModel = await getUserData(user.$id);
+      // await cacheUserModel(userModel);
+
+      ref.invalidate(currentUserAccountProvider);
+      ref.invalidate(currentUserDataProvider);
+      ref.invalidate(userDataProvider(user.$id));
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => BottomNavBar()),
+        MaterialPageRoute(builder: (context) => const BottomNavBar()),
       );
       showSnackbar(context, 'Welcome $email. You are successfully logged in');
     });
@@ -153,24 +193,20 @@ class AuthController extends StateNotifier<bool> {
 
   Future<models.User?> currentUser() => _authAPI.currentUserAccount();
 
-  void signout(BuildContext context) async {
+  void signout(BuildContext context, WidgetRef ref) async {
     state = true;
     final res = await _authAPI.signout();
     state = false;
-    res.fold(
-      (l) => showSnackbar(context, l.message), // Show error if signout fails
-      (r) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return SignInScreen();
-            },
-          ),
-          (Route) => false,
-        );
-      },
-    );
+    res.fold((l) => showSnackbar(context, l.message), (r) {
+      ref.invalidate(currentUserAccountProvider);
+      ref.invalidate(currentUserDataProvider);
+      // removeCachedUserModel();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const SignInScreen()),
+        (route) => false,
+      );
+    });
   }
 
   //follow user
@@ -239,7 +275,7 @@ class AuthController extends StateNotifier<bool> {
     String? address1,
     String? address2,
     String? city,
-    String? userState, // <-- renamed from state
+    String? userState,
     String? phone,
     List<String>? tags,
   }) async {
@@ -314,7 +350,7 @@ class AuthController extends StateNotifier<bool> {
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) {
       showSnackbar(context, 'Profile updated successfully');
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     });
   }
 
@@ -387,4 +423,21 @@ class AuthController extends StateNotifier<bool> {
     final updatedUser = UserModel.fromMap(document.data);
     return updatedUser;
   }
+
+  // Future<void> cacheUserModel(UserModel user) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   prefs.setString('cached_user', jsonEncode(user.toMap()));
+  // }
+
+  // Future<UserModel?> getCachedUserModel() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final userStr = prefs.getString('cached_user');
+  //   if (userStr == null) return null;
+  //   return UserModel.fromMap(jsonDecode(userStr));
+  // }
+
+  // Future<void> removeCachedUserModel() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   prefs.remove('cached_user');
+  // }
 }

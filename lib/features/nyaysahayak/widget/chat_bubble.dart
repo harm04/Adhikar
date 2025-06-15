@@ -38,14 +38,14 @@ class ChatBubble extends StatelessWidget {
           margin: EdgeInsets.symmetric(vertical: 4),
           decoration: BoxDecoration(
             borderRadius: _borderRadius(direction, type),
-            color: isOnLeft ? Pallete.secondaryColor : Pallete.primaryColor,
+            color: isOnLeft ? Pallete.cardColor : Pallete.primaryColor,
           ),
           child: Text(
             message,
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 15,
-              color: isOnLeft ? Pallete.primaryColor : Pallete.secondaryColor,
+              color: isOnLeft ? Pallete.whiteColor : Pallete.secondaryColor,
             ),
           ),
         ),

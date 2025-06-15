@@ -478,7 +478,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                                           ?.bookmarked
                                           .contains(widget.postModel.id) ??
                                       false,
-                                  size: 32,
+                                  size: 28,
                                   onTap: (isLiked) async {
                                     ref
                                         .read(postControllerProvider.notifier)
@@ -515,7 +515,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                                   isLiked: widget.postModel.likes.contains(
                                     currentUser.uid,
                                   ),
-                                  size: 32,
+                                  size: 28,
                                   onTap: (isLiked) async {
                                     ref
                                         .read(postControllerProvider.notifier)

@@ -36,13 +36,18 @@ class _MeetingsListState extends ConsumerState<TransactionList> {
                         style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),
                     )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(18),
-                      itemCount: transaction.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final transactions = transaction[index];
-                        return TransactionListCard(transaction: transactions);
+                  : RefreshIndicator(
+                      onRefresh: () async {
+                        ref.invalidate(getUserTransactionProvider(currentUser));
                       },
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(18),
+                        itemCount: transaction.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final transactions = transaction[transaction.length - 1 - index];
+                          return TransactionListCard(transaction: transactions);
+                        },
+                      ),
                     ),
             );
           },

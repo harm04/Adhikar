@@ -1,3 +1,4 @@
+import 'package:adhikar/common/widgets/check_internet.dart';
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
@@ -50,7 +51,7 @@ class _ShowcaseState extends ConsumerState<ShowcaseList> {
             ),
             appBar: AppBar(
               automaticallyImplyLeading: true,
-              title: Text('Nyaysahayak'),
+              title: Text('Showcase'),
               leading: Padding(
                 padding: const EdgeInsets.only(left: 18.0),
                 child: CircleAvatar(
@@ -73,166 +74,175 @@ class _ShowcaseState extends ConsumerState<ShowcaseList> {
                 ),
               ],
             ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20),
-                    //image
-                    Container(
-                      height: 210,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/showcase.png'),
-                          fit: BoxFit.cover,
+            body: CheckInternet(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 20),
+                      //image
+                      Container(
+                        height: 210,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/showcase.png'),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 30),
+                      SizedBox(height: 30),
 
-                    Consumer(
-                      builder: (context, ref, _) {
-                        final showcaseAsync = ref.watch(getShowcaseProvider);
-                        return _KeepAliveWrapper(
-                          child: ref
-                              .watch(getShowcaseProvider)
-                              .when(
-                                data: (showcases) {
-                                  return ref
-                                      .watch(getLatestShowcaseProvider)
-                                      .when(
-                                        data: (data) {
-                                          if (data.events.contains(
-                                            'databases.*.collections.${AppwriteConstants.showcaseCollectionID}.documents.*.create',
-                                          )) {
-                                            final newShowcase =
-                                                ShowcaseModel.fromMap(
-                                                  data.payload,
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final showcaseAsync = ref.watch(getShowcaseProvider);
+                          return _KeepAliveWrapper(
+                            child: ref
+                                .watch(getShowcaseProvider)
+                                .when(
+                                  data: (showcases) {
+                                    return ref
+                                        .watch(getLatestShowcaseProvider)
+                                        .when(
+                                          data: (data) {
+                                            if (data.events.contains(
+                                              'databases.*.collections.${AppwriteConstants.showcaseCollectionID}.documents.*.create',
+                                            )) {
+                                              final newShowcase =
+                                                  ShowcaseModel.fromMap(
+                                                    data.payload,
+                                                  );
+                                              final alreadyExists = showcases
+                                                  .any(
+                                                    (s) =>
+                                                        s.id == newShowcase.id,
+                                                  );
+                                              if (!alreadyExists) {
+                                                showcases.insert(
+                                                  0,
+                                                  newShowcase,
                                                 );
-                                            final alreadyExists = showcases.any(
-                                              (s) => s.id == newShowcase.id,
-                                            );
-                                            if (!alreadyExists) {
-                                              showcases.insert(0, newShowcase);
+                                              }
                                             }
-                                          }
-                                          //else write code to update the post
-                                          return showcaseAsync.when(
-                                            data: (showcases) {
-                                              if (showcases.isEmpty) {
-                                                return Center(
-                                                  child: Text(
-                                                    'No showcases yet.',
-                                                  ),
-                                                );
-                                              }
-                                              return Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  //showcase length
-                                                  Text(
-                                                    '${showcases.length} Entries',
-                                                    style: TextStyle(
-                                                      fontSize: 23,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                            //else write code to update the post
+                                            return showcaseAsync.when(
+                                              data: (showcases) {
+                                                if (showcases.isEmpty) {
+                                                  return Center(
+                                                    child: Text(
+                                                      'No showcases yet.',
                                                     ),
-                                                  ),
-                                                  SizedBox(height: 20),
-                                                  //showcase list
-                                                  ListView.builder(
-                                                    shrinkWrap: true,
-                                                    physics:
-                                                        NeverScrollableScrollPhysics(),
-                                                    itemCount: showcases.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                          final showcase =
-                                                              showcases[index];
-                                                          return ShowcaseListCard(
-                                                            showcase: showcase,
-                                                          );
-                                                        },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                            loading: () => Loader(),
-                                            error: (e, st) => Center(
-                                              child: Text(
-                                                'Error loading showcases',
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        error: (error, StackTrace) =>
-                                            ErrorText(error: error.toString()),
-                                        loading: () {
-                                          return showcaseAsync.when(
-                                            data: (showcases) {
-                                              if (showcases.isEmpty) {
-                                                return Center(
-                                                  child: Text(
-                                                    'No showcases yet.',
-                                                  ),
-                                                );
-                                              }
-                                              return Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  //showcase length
-                                                  Text(
-                                                    '${showcases.length} Entries',
-                                                    style: TextStyle(
-                                                      fontSize: 23,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                  );
+                                                }
+                                                return Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    //showcase length
+                                                    Text(
+                                                      '${showcases.length} Entries',
+                                                      style: TextStyle(
+                                                        fontSize: 23,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(height: 20),
-                                                  //showcase list
-                                                  ListView.builder(
-                                                    shrinkWrap: true,
-                                                    physics:
-                                                        NeverScrollableScrollPhysics(),
-                                                    itemCount: showcases.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                          final showcase =
-                                                              showcases[index];
-                                                          return ShowcaseListCard(
-                                                            showcase: showcase,
-                                                          );
-                                                        },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                            loading: () => Loader(),
-                                            error: (e, st) => Center(
-                                              child: Text(
-                                                'Error loading showcases',
+                                                    SizedBox(height: 20),
+                                                    //showcase list
+                                                    ListView.builder(
+                                                      shrinkWrap: true,
+                                                      physics:
+                                                          NeverScrollableScrollPhysics(),
+                                                      itemCount:
+                                                          showcases.length,
+                                                      itemBuilder: (context, index) {
+                                                        final showcase =
+                                                            showcases[index];
+                                                        return ShowcaseListCard(
+                                                          showcase: showcase,
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                              loading: () => Loader(),
+                                              error: (e, st) => Center(
+                                                child: Text(
+                                                  'Error loading showcases',
+                                                ),
                                               ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                },
-                                error: (err, st) {
-                                  return ErrorText(error: err.toString());
-                                },
-                                loading: () => Loader(),
-                              ),
-                        );
-                      },
-                    ),
-                  ],
+                                            );
+                                          },
+                                          error: (error, StackTrace) =>
+                                              ErrorText(
+                                                error: error.toString(),
+                                              ),
+                                          loading: () {
+                                            return showcaseAsync.when(
+                                              data: (showcases) {
+                                                if (showcases.isEmpty) {
+                                                  return Center(
+                                                    child: Text(
+                                                      'No showcases yet.',
+                                                    ),
+                                                  );
+                                                }
+                                                return Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    //showcase length
+                                                    Text(
+                                                      '${showcases.length} Entries',
+                                                      style: TextStyle(
+                                                        fontSize: 23,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 20),
+                                                    //showcase list
+                                                    ListView.builder(
+                                                      shrinkWrap: true,
+                                                      physics:
+                                                          NeverScrollableScrollPhysics(),
+                                                      itemCount:
+                                                          showcases.length,
+                                                      itemBuilder: (context, index) {
+                                                        final showcase =
+                                                            showcases[index];
+                                                        return ShowcaseListCard(
+                                                          showcase: showcase,
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                              loading: () => Loader(),
+                                              error: (e, st) => Center(
+                                                child: Text(
+                                                  'Error loading showcases',
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                  },
+                                  error: (err, st) {
+                                    return ErrorText(error: err.toString());
+                                  },
+                                  loading: () => Loader(),
+                                ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:adhikar/models/posts_model.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/features/posts/widgets/post_card.dart';
+import 'package:adhikar/common/widgets/check_internet.dart';
 
 class TrendingPosts extends ConsumerWidget {
   const TrendingPosts({super.key});
@@ -17,25 +18,28 @@ class TrendingPosts extends ConsumerWidget {
       ref.invalidate(trendingPostsProvider);
     }
 
-    return trendingAsync.when(
-      data: (posts) {
-        if (posts.isEmpty) {
-          return const Center(child: Text('No trending posts found'));
-        }
-        return RefreshIndicator(
-          onRefresh: _refresh,
-          child: ListView.builder(
-            padding: const EdgeInsets.only(top: 10.0),
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              final post = posts[index];
-              return PostCard(key: ValueKey(post.id), postmodel: post);
-            },
-          ),
-        );
-      },
-      loading: () => const Loader(),
-      error: (err, st) => ErrorText(error: err.toString()),
+    return CheckInternet(
+      onTryAgain: _refresh,
+      child: trendingAsync.when(
+        data: (posts) {
+          if (posts.isEmpty) {
+            return const Center(child: Text('No trending posts found'));
+          }
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top: 10.0),
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                final post = posts[index];
+                return PostCard(key: ValueKey(post.id), postmodel: post);
+              },
+            ),
+          );
+        },
+        loading: () => const Loader(),
+        error: (err, st) => ErrorText(error: err.toString()),
+      ),
     );
   }
 }
