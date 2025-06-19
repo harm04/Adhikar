@@ -71,6 +71,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                             : NetworkImage(widget.userModel.profileImage),
                       ),
                     ),
+                    
                     SizedBox(width: 20),
                     Expanded(
                       child: Column(

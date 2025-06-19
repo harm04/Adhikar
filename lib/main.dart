@@ -158,25 +158,23 @@
 //   BuildContext context,
 //   Future<void> Function() onTryAgain,
 // ) {
-  // showDialog(
-  //   context: context,
-  //   barrierDismissible: false,
-  //   builder: (_) => AlertDialog(
-  //     title: Text('No Internet'),
-  //     content: Text('Please connect to the internet.'),
-  //     actions: [
-  //       TextButton(
-  //         onPressed: () async {
-  //           await onTryAgain();
-  //         },
-  //         child: Text('Try Again'),
-  //       ),
-  //     ],
-  //   ),
-  // );
+// showDialog(
+//   context: context,
+//   barrierDismissible: false,
+//   builder: (_) => AlertDialog(
+//     title: Text('No Internet'),
+//     content: Text('Please connect to the internet.'),
+//     actions: [
+//       TextButton(
+//         onPressed: () async {
+//           await onTryAgain();
+//         },
+//         child: Text('Try Again'),
+//       ),
+//     ],
+//   ),
+// );
 // }
-
-
 
 import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
 import 'package:adhikar/common/widgets/error.dart';
@@ -185,11 +183,23 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/auth/views/signin.dart';
 import 'package:adhikar/features/expert/views/expert_verification.dart';
 import 'package:adhikar/features/admin/views/side_nav.dart';
+import 'package:adhikar/firebase_options.dart';
 import 'package:adhikar/theme/app_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
+@pragma('vm:entry-point')
+Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // PushNotificationController().initializeNotifications();
+  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
   runApp(ProviderScope(child: const MyApp()));
 }
 
@@ -213,9 +223,8 @@ class MyApp extends ConsumerWidget {
                 return currentUserAsyncValue.when(
                   data: (currentUser) {
                     if (currentUser != null) {
-                      
-                      if (currentUser.email == 'admin@gmail.com' &&
-                          currentUser.password == 'asdfghjkl') {
+                      if (currentUser.email == 't2@gmail.com' &&
+                          currentUser.password == 'harshmali') {
                         return SideNav();
                       }
                       return currentUser.userType == 'User' ||

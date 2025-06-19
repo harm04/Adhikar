@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "608838341156",
+    "project_id": "adhikarnotification",
+    "storage_bucket": "adhikarnotification.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608838341156:android:b4b823d83a47c9532bfeb1",
+        "android_client_info": {
+          "package_name": "com.harsh.adhikar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGr8HWUO2BSr-4E7f5slfh76Y6CuaYSr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

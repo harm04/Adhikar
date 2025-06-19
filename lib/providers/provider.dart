@@ -11,6 +11,17 @@ final appwriteClientProvider = Provider((ref) {
       .setSelfSigned(status: true);
 });
 
+final appwriteMessagingProvider = Provider((ref) {
+  final client = ref.watch(appwriteClientProvider);
+  return Messaging(client);
+});
+
+final appwriteFunctionsProvider = Provider((ref) {
+  final client = ref.watch(appwriteClientProvider);
+  return Functions(client);
+});
+
+
 final appwriteAccountProvider = Provider((ref) {
   final client = ref.watch(appwriteClientProvider);
   return Account(client);

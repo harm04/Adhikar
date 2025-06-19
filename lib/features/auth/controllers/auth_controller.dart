@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:adhikar/apis/auth_api.dart';
@@ -6,15 +5,16 @@ import 'package:adhikar/apis/storage_api.dart';
 import 'package:adhikar/apis/user_api.dart';
 import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
+import 'package:adhikar/features/admin/services/notification_service.dart';
 import 'package:adhikar/features/auth/views/signin.dart';
 import 'package:adhikar/features/notification/controller/notification_controller.dart';
 import 'package:adhikar/models/notification_modal.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:appwrite/models.dart' as models;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final authControllerProvider = StateNotifierProvider<AuthController, bool>((
   ref,
@@ -23,6 +23,7 @@ final authControllerProvider = StateNotifierProvider<AuthController, bool>((
     authAPI: ref.watch(authAPIProvider),
     userAPI: ref.watch(userAPIProvider),
     storageApi: ref.watch(storageAPIProvider),
+    ref: ref,
   );
 });
 
@@ -41,11 +42,6 @@ final userDataProvider = FutureProvider.family.autoDispose((
   return authController.getUserData(uid);
 });
 
-// final currentUserAccountProvider = FutureProvider.autoDispose((ref) {
-//   final authController = ref.watch(authControllerProvider.notifier);
-//   return authController.currentUser();
-// });
-
 final currentUserAccountProvider = FutureProvider.autoDispose((ref) async {
   final authController = ref.watch(authControllerProvider.notifier);
   try {
@@ -54,8 +50,7 @@ final currentUserAccountProvider = FutureProvider.autoDispose((ref) async {
     return user;
   } catch (e) {
     print("⚠️ Appwrite currentUser() failed: $e");
-    // If offline, return a dummy user or null with a tag
-    return null; // or handle this more gracefully with an OfflineUser instance
+    return null;
   }
 });
 
@@ -64,27 +59,44 @@ final getlatestUserDataProvider = StreamProvider.autoDispose((ref) {
   return userApi.getLatestUserProfileData();
 });
 
-//user count
 final usersCountProvider = FutureProvider.autoDispose<int>((ref) async {
   final userAPI = ref.watch(userAPIProvider);
   final users = await userAPI.getUsers();
   return users.length;
 });
 
+final allUsersProvider = FutureProvider.autoDispose<List<UserModel>>((ref) async {
+  final userAPI = ref.watch(userAPIProvider);
+  final users = await userAPI.getUsers(); // List<Document>
+  return users.map((doc) => UserModel.fromMap(doc.data)).toList();
+});
+
 class AuthController extends StateNotifier<bool> {
   final AuthAPI _authAPI;
   final UserAPI _userAPI;
   final StorageApi _storageAPI;
+  final Ref _ref;
 
   AuthController({
     required AuthAPI authAPI,
     required UserAPI userAPI,
     required StorageApi storageApi,
+    required Ref ref,
   }) : _authAPI = authAPI,
        _storageAPI = storageApi,
        _userAPI = userAPI,
+       _ref = ref,
        super(false);
 
+  // Subscribe to topics based on user type
+void _subscribeToTopics(String userType) {
+  if (userType == 'User') {
+    FirebaseMessaging.instance.subscribeToTopic('all_users');
+  } else if (userType == 'Expert') {
+    FirebaseMessaging.instance.subscribeToTopic('all_experts');
+    FirebaseMessaging.instance.subscribeToTopic('all_users');
+  }
+}
   //signup
   void signUp({
     required String email,
@@ -92,12 +104,14 @@ class AuthController extends StateNotifier<bool> {
     required String lastName,
     required String password,
     required BuildContext context,
-    required WidgetRef ref, // <-- Add this
+    required WidgetRef ref,
   }) async {
     state = true;
     final res = await _authAPI.signUp(email: email, password: password);
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) async {
+      NotificationService notificationService = NotificationService();
+      String? userDeviceToken = await notificationService.getToken();
       UserModel userModel = UserModel(
         firstName: firstName,
         lastName: lastName,
@@ -138,11 +152,12 @@ class AuthController extends StateNotifier<bool> {
         experience: '',
         description: '',
         tags: [],
+        fcmToken: userDeviceToken ?? '',
       );
 
       final res2 = await _userAPI.saveUserData(userModel);
-      res2.fold((l) => showSnackbar(context, l.message), (r) {
-        // Invalidate user data providers
+      res2.fold((l) => showSnackbar(context, l.message), (r) async {
+         _subscribeToTopics(userModel.userType);
         ref.invalidate(currentUserAccountProvider);
         ref.invalidate(currentUserDataProvider);
         ref.invalidate(userDataProvider(userModel.uid));
@@ -177,7 +192,7 @@ class AuthController extends StateNotifier<bool> {
         return;
       }
       final userModel = await getUserData(user.$id);
-      // await cacheUserModel(userModel);
+       _subscribeToTopics(userModel.userType);
 
       ref.invalidate(currentUserAccountProvider);
       ref.invalidate(currentUserDataProvider);
@@ -200,7 +215,6 @@ class AuthController extends StateNotifier<bool> {
     res.fold((l) => showSnackbar(context, l.message), (r) {
       ref.invalidate(currentUserAccountProvider);
       ref.invalidate(currentUserDataProvider);
-      // removeCachedUserModel();
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const SignInScreen()),
@@ -364,7 +378,6 @@ class AuthController extends StateNotifier<bool> {
   }) async {
     state = true;
 
-    // Always start with the latest userModel
     var updatedUserModel = userModel;
 
     if (title != updatedUserModel.experienceTitle) {
@@ -397,7 +410,6 @@ class AuthController extends StateNotifier<bool> {
   }) async {
     state = true;
 
-    // Always start with the latest userModel
     var updatedUserModel = userModel;
 
     if (degree != updatedUserModel.eduDegree) {
@@ -420,24 +432,9 @@ class AuthController extends StateNotifier<bool> {
 
   Future<UserModel> getUserData(String uid) async {
     final document = await _userAPI.getUserData(uid);
-    final updatedUser = UserModel.fromMap(document.data);
-    return updatedUser;
+    final user = UserModel.fromMap(
+      document.data,
+    ); // Convert Document to UserModel
+    return user;
   }
-
-  // Future<void> cacheUserModel(UserModel user) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   prefs.setString('cached_user', jsonEncode(user.toMap()));
-  // }
-
-  // Future<UserModel?> getCachedUserModel() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final userStr = prefs.getString('cached_user');
-  //   if (userStr == null) return null;
-  //   return UserModel.fromMap(jsonDecode(userStr));
-  // }
-
-  // Future<void> removeCachedUserModel() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   prefs.remove('cached_user');
-  // }
 }

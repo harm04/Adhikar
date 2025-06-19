@@ -41,6 +41,7 @@ class UserModel {
   final String experience;
   final String description;
   final List<String> tags;
+  final String fcmToken;
   const UserModel({
     required this.firstName,
     required this.lastName,
@@ -82,6 +83,7 @@ class UserModel {
     required this.description,
 
     required this.tags,
+    required this.fcmToken,
   });
 
   UserModel copyWith({
@@ -124,6 +126,7 @@ class UserModel {
     String? experience,
     String? description,
     List<String>? tags,
+    String? fcmToken,
   }) {
     return UserModel(
       firstName: firstName ?? this.firstName,
@@ -167,6 +170,7 @@ class UserModel {
       description: description ?? this.description,
 
       tags: tags ?? this.tags,
+      fcmToken: fcmToken ?? this.fcmToken,
     );
   }
 
@@ -211,6 +215,7 @@ class UserModel {
       'description': description,
 
       'tags': tags,
+      'fcmToken': fcmToken,
     };
   }
 
@@ -267,12 +272,14 @@ class UserModel {
       experience: map['experience'] as String? ?? '',
       description: map['description'] as String? ?? '',
       tags: List<String>.from((map['tags'] ?? []).map((x) => x as String)),
+      fcmToken: map['fcmToken'] as String? ?? '',
+      
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(firstName: $firstName,phone:$phone, lastName: $lastName, email: $email, password: $password, profileImage: $profileImage, bio: $bio, createdAt: $createdAt, summary: $summary, following: $following, followers: $followers, bookmarked: $bookmarked, uid: $uid, location: $location, linkedin: $linkedin, twitter: $twitter, instagram: $instagram, facebook: $facebook, experienceTitle: $experienceTitle, experienceSummary: $experienceSummary, experienceOrganization: $experienceOrganization, eduStream: $eduStream, eduDegree: $eduDegree, eduUniversity: $eduUniversity, userType: $userType, credits: $credits, meetings: $meetings, transactions: $transactions,dob: $dob, state: $state, city: $city, address1: $address1, address2: $address2, proofDoc: $proofDoc, idDoc: $idDoc, casesWon: $casesWon, experience: $experience, description: $description, tags: $tags)';
+    return 'UserModel(firstName: $firstName,phone:$phone, lastName: $lastName, email: $email, password: $password, profileImage: $profileImage, bio: $bio, createdAt: $createdAt, summary: $summary, following: $following, followers: $followers, bookmarked: $bookmarked, uid: $uid, location: $location, linkedin: $linkedin, twitter: $twitter, instagram: $instagram, facebook: $facebook, experienceTitle: $experienceTitle, experienceSummary: $experienceSummary, experienceOrganization: $experienceOrganization, eduStream: $eduStream, eduDegree: $eduDegree, eduUniversity: $eduUniversity, userType: $userType, credits: $credits, meetings: $meetings, transactions: $transactions,dob: $dob, state: $state, city: $city, address1: $address1, address2: $address2, proofDoc: $proofDoc, idDoc: $idDoc, casesWon: $casesWon, experience: $experience, description: $description, tags: $tags), fcmToken: $fcmToken)';
   }
 
   @override
@@ -317,6 +324,7 @@ class UserModel {
         other.casesWon == casesWon &&
         other.experience == experience &&
         other.description == description &&
+        other.fcmToken == fcmToken &&
         listEquals(other.tags, tags);
   }
 
@@ -360,6 +368,7 @@ class UserModel {
         experience.hashCode ^
         description.hashCode ^
         tags.hashCode ^
+        fcmToken.hashCode ^
         userType.hashCode;
   }
 }

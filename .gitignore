@@ -12,6 +12,9 @@
 .swiftpm/
 migrate_working_dir/
 lib/constants
+lib/firebase_options.dart
+firebase.json
+lib/features/admin/services/get_server_key.dart
 
 # IntelliJ related
 *.iml

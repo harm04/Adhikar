@@ -1,9 +1,10 @@
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
+import 'package:adhikar/features/admin/services/fcm_service.dart';
+import 'package:adhikar/features/admin/services/notification_service.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/bookmarks/views/bookmarks.dart';
 import 'package:adhikar/features/expert/views/apply_for_expert.dart';
-import 'package:adhikar/features/admin/views/side_nav.dart';
 import 'package:adhikar/features/home/widgets/following_posts.dart';
 import 'package:adhikar/features/home/widgets/latest_posts.dart';
 import 'package:adhikar/features/home/widgets/trending_posts.dart';
@@ -31,6 +32,16 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  NotificationService notificationService = NotificationService();
+  @override
+  void initState() {
+    super.initState();
+    notificationService.requestNotificationPermission();
+    notificationService.getToken();
+    notificationService.firebaseInit(context);
+    notificationService.backgroundNotification(context);
+   
+  }
 
   void signout() {
     ref.read(authControllerProvider.notifier).signout(context, ref);
@@ -301,9 +312,7 @@ class _HomePageState extends ConsumerState<HomePage>
                             scaffoldKey.currentState?.openDrawer();
                           },
                           child: CircleAvatar(
-                            key: ValueKey(
-                              currentUser.profileImage,
-                            ),
+                            key: ValueKey(currentUser.profileImage),
 
                             radius: 20,
                             backgroundImage: currentUser.profileImage == ''

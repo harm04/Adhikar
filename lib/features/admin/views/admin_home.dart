@@ -33,144 +33,146 @@ class _AdminHomeState extends ConsumerState<AdminHome> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //total stats
-            Text(
-              "Total Stats",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Pallete.whiteColor,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //total stats
+              Text(
+                "Total Stats",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Pallete.whiteColor,
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Users
-                Expanded(
-                  child: _AdminStatCard(
-                    asset: 'assets/svg/profile.svg',
-                    color: Color(0xFFE3F2FD),
-                    title: "Users",
-                    countAsync: ref.watch(usersCountProvider),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Users
+                  Expanded(
+                    child: _AdminStatCard(
+                      asset: 'assets/svg/profile.svg',
+                      color: Color(0xFFE3F2FD),
+                      title: "Users",
+                      countAsync: ref.watch(usersCountProvider),
+                    ),
                   ),
-                ),
-                SizedBox(width: 20),
-                // Experts
-                Expanded(
-                  child: _AdminStatCard(
-                    asset: 'assets/svg/apply_for_lawyer.svg',
-                    color: Color(0xFFFFF9C4),
-                    title: "Experts",
-                    countAsync: ref.watch(expertsCountProvider),
+                  SizedBox(width: 20),
+                  // Experts
+                  Expanded(
+                    child: _AdminStatCard(
+                      asset: 'assets/svg/apply_for_lawyer.svg',
+                      color: Color(0xFFFFF9C4),
+                      title: "Experts",
+                      countAsync: ref.watch(expertsCountProvider),
+                    ),
                   ),
-                ),
-                SizedBox(width: 20),
-                // Showcases
-                Expanded(
-                  child: _AdminStatCard(
-                    asset: 'assets/svg/showcase.svg',
-                    color: Color(0xFFE1BEE7),
-                    title: "Showcases",
-                    countAsync: ref.watch(showcasesCountProvider),
+                  SizedBox(width: 20),
+                  // Showcases
+                  Expanded(
+                    child: _AdminStatCard(
+                      asset: 'assets/svg/showcase.svg',
+                      color: Color(0xFFE1BEE7),
+                      title: "Showcases",
+                      countAsync: ref.watch(showcasesCountProvider),
+                    ),
                   ),
-                ),
-                SizedBox(width: 20),
-                // Posts
-                Expanded(
-                  child: _AdminStatCard(
-                    asset: 'assets/svg/posts.svg',
-                    color: Color(0xFFC8E6C9),
-                    title: "Posts",
-                    countAsync: ref.watch(postsCountProvider),
+                  SizedBox(width: 20),
+                  // Posts
+                  Expanded(
+                    child: _AdminStatCard(
+                      asset: 'assets/svg/posts.svg',
+                      color: Color(0xFFC8E6C9),
+                      title: "Posts",
+                      countAsync: ref.watch(postsCountProvider),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 30),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Left: Search field and results
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: searchController,
-                        decoration: InputDecoration(
-                          hintText: "Search users...",
-                          prefixIcon: Icon(Icons.search),
-                          border: OutlineInputBorder(
+                ],
+              ),
+              SizedBox(height: 30),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Left: Search field and results
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: searchController,
+                          decoration: InputDecoration(
+                            hintText: "Search users...",
+                            prefixIcon: Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onChanged: (value) => setState(() {}),
+                        ),
+                        if (searchController.text.isNotEmpty)
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              icon: Icon(Icons.clear),
+                              onPressed: () {
+                                searchController.clear();
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                        SizedBox(height: 10),
+                        if (searchController.text.trim().isNotEmpty)
+                          // Show search results in the gap below the TextField
+                          Container(
+                            height: 300, // Adjust as needed
+                            child: SearchUser(query: searchController.text),
+                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 50),
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Daily Insights",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Pallete.whiteColor,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Pallete.primaryColor.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                        ),
-                        onChanged: (value) => setState(() {}),
-                      ),
-                      if (searchController.text.isNotEmpty)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            icon: Icon(Icons.clear),
-                            onPressed: () {
-                              searchController.clear();
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      SizedBox(height: 10),
-                      if (searchController.text.trim().isNotEmpty)
-                        // Show search results in the gap below the TextField
-                        Container(
-                          height: 300, // Adjust as needed
-                          child: SearchUser(query: searchController.text),
-                        ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 50),
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Daily Insights",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Pallete.whiteColor,
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Pallete.primaryColor.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        height: 380,
-                        child: ref
-                            .watch(todayStatsProvider)
-                            .when(
-                              data: (data) => UsersDailyActivityGraph(
-                                users: data['users']!,
-                                posts: data['posts']!,
-                                showcases: data['showcases']!,
+                          height: 380,
+                          child: ref
+                              .watch(todayStatsProvider)
+                              .when(
+                                data: (data) => UsersDailyActivityGraph(
+                                  users: data['users']!,
+                                  posts: data['posts']!,
+                                  showcases: data['showcases']!,
+                                ),
+                                loading: () => Loader(),
+                                error: (e, st) => Icon(Icons.error),
                               ),
-                              loading: () => Loader(),
-                              error: (e, st) => Icon(Icons.error),
-                            ),
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-          ],
+                ],
+              ),
+              SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
     );
