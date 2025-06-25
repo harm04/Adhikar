@@ -60,19 +60,6 @@ class _ShowcaseState extends ConsumerState<ShowcaseList> {
                 ),
               ),
               centerTitle: true,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 18.0),
-                  child: SvgPicture.asset(
-                    'assets/svg/search.svg',
-                    colorFilter: ColorFilter.mode(
-                      Pallete.whiteColor,
-                      BlendMode.srcIn,
-                    ),
-                    height: 30,
-                  ),
-                ),
-              ],
             ),
             body: CheckInternet(
               child: SingleChildScrollView(

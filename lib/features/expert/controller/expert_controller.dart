@@ -8,6 +8,7 @@ import 'package:adhikar/features/admin/graph/today_stats.dart';
 import 'package:adhikar/features/expert/views/expert_verification.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -43,6 +44,14 @@ class ExpertController extends StateNotifier<bool> {
   }) : _expertAPI = expertAPI,
        _storageApi = storageApi,
        super(false);
+  void _subscribeToTopics(String userType) {
+    if (userType == 'User') {
+      FirebaseMessaging.instance.subscribeToTopic('all_users');
+    } else if (userType == 'Expert') {
+      FirebaseMessaging.instance.subscribeToTopic('all_experts');
+      FirebaseMessaging.instance.subscribeToTopic('all_users');
+    }
+  }
 
   void applyForExpert({
     required UserModel userModel,
@@ -79,13 +88,16 @@ class ExpertController extends StateNotifier<bool> {
       casesWon: casesWon,
       experience: experience,
       description: description,
-    profileImage:  profileImageurl[0],
+      profileImage: profileImageurl[0],
       tags: tags,
       credits: 0.0,
       meetings: [],
     );
 
     final res = await _expertAPI.applyForExpert(updatedUser);
+
+    _subscribeToTopics(userModel.userType);
+
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) {
       showSnackbar(context, 'Your profile is sent for verification');
@@ -101,7 +113,6 @@ class ExpertController extends StateNotifier<bool> {
     return expertsList.map((doc) => UserModel.fromMap(doc.data)).toList();
   }
 
-  
   //approve expert
   Future<void> approveExpert(
     String uid,
@@ -111,14 +122,11 @@ class ExpertController extends StateNotifier<bool> {
     state = true;
     final res = await _expertAPI.approveExpert(uid);
     res.fold((l) => showSnackbar(context, l.message), (r) async {
-     
-
       showSnackbar(context, 'Expert approved successfully');
       ref.invalidate(getExpertsProvider);
       ref.invalidate(usersCountProvider);
       ref.invalidate(expertsCountProvider);
       ref.invalidate(todayStatsProvider);
-     
     });
     state = false;
   }

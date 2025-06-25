@@ -4,7 +4,9 @@ import 'package:adhikar/apis/showcase_api.dart';
 import 'package:adhikar/apis/storage_api.dart';
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
+import 'package:adhikar/features/admin/services/send_notification_service.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/message/controller/messaging_controller.dart';
 import 'package:adhikar/features/notification/controller/notification_controller.dart';
 import 'package:adhikar/models/notification_modal.dart';
 import 'package:adhikar/models/showcase_model.dart';
@@ -246,6 +248,12 @@ class ShowcaseController extends StateNotifier<bool> {
 
     final res = await _showcaseAPI.shareShowcase(showcaseModel);
     state = false;
+    await SendNotificationService.sendNotificationToTopic(
+      topic: 'all_users',
+      title: 'New Showcase',
+      body: title,
+      data: {"screen": "Showcase"},
+    );
     Navigator.pop(context);
     res.fold(
       (l) => showSnackbar(context, l.message),
@@ -311,6 +319,8 @@ class ShowcaseController extends StateNotifier<bool> {
             .read(notificationControllerProvider.notifier)
             .createNotification(notification);
       }
+
+     
 
       state = false;
       Navigator.pop(context);

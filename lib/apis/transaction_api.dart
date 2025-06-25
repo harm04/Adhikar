@@ -22,7 +22,8 @@ abstract class IUserAPI {
     TransactionModel transactionModel,
   );
   FutureEitherVoid updateExpertWithTransaction(
- UserModel userModel,    String transactionId,
+    UserModel userModel,
+    String transactionId,
   );
   FutureEitherVoid updateUserWithTransaction(
     UserModel userModel,
@@ -79,7 +80,7 @@ class TransactionAPI implements IUserAPI {
   //update expert transaction[] with same transactionID
   @override
   FutureEitherVoid updateExpertWithTransaction(
-     UserModel userModel,
+    UserModel userModel,
     String transactionId,
   ) async {
     try {
@@ -105,5 +106,40 @@ class TransactionAPI implements IUserAPI {
     );
 
     return documents.documents;
+  }
+
+  //update transaction status by taking paymentid
+  FutureEitherVoid updateTransactionStatus(String paymentId, String status) async {
+    try {
+      // Find the transaction with the matching paymentId
+      final documents = await _db.listDocuments(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.transactionCollectionID,
+        queries: [Query.equal('paymentID', paymentId)],
+      );
+
+      if (documents.documents.isNotEmpty) {
+        final transactionId = documents.documents.first.$id;
+        print('Transaction ID: $transactionId');
+
+        // Update the transaction status
+        await _db.updateDocument(
+          databaseId: AppwriteConstants.databaseID,
+          collectionId: AppwriteConstants.transactionCollectionID,
+          documentId: transactionId,
+          data: {'paymentStatus': status},
+        );
+        return right(null);
+      } else {
+        return left(
+          Failure(
+            'Transaction not found for payment ID: $paymentId',
+            StackTrace.current,
+          ),
+        );
+      }
+    } catch (err, stackTrace) {
+      return left(Failure(err.toString(), stackTrace));
+    }
   }
 }

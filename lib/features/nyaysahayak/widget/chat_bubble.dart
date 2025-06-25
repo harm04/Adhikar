@@ -121,4 +121,13 @@ class ChatBubble extends StatelessWidget {
         return BorderRadius.circular(15);
     }
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'direction': direction.toString(),
+      'message': message,
+      'photoUrl': photoUrl,
+      'type': type.toString(),
+    };
+  }
 }

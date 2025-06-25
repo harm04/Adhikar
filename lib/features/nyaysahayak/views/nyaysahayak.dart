@@ -475,7 +475,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                               child: SizedBox(
                                 width: 24,
                                 height: 24,
-                                child: Loader(),
+                                child: CircularProgressIndicator(),
                               ),
                             )
                           : IconButton(

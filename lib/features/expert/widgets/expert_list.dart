@@ -1,4 +1,5 @@
 import 'package:adhikar/common/widgets/check_internet.dart';
+import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/expert_controller.dart';
 import 'package:adhikar/features/expert/widgets/expert_list_card.dart';
@@ -112,7 +113,7 @@ class _ExpertListState extends ConsumerState<ExpertList> {
                   ),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Loader(),
               error: (err, st) => Center(child: Text('Error: $err')),
             ),
       ),

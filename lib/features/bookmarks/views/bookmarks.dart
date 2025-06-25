@@ -1,5 +1,4 @@
-// bookmarks_screen.dart
-
+import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
@@ -47,7 +46,7 @@ class BookmarksScreen extends ConsumerWidget {
                       itemBuilder: (context, index) =>
                           PostCard(postmodel: posts[index]),
                     ),
-              loading: () => Center(child: CircularProgressIndicator()),
+              loading: () => Loader(),
               error: (e, st) => Center(child: Text('Error: $e')),
             ),
             // Showcases Tab
@@ -60,7 +59,7 @@ class BookmarksScreen extends ConsumerWidget {
                       itemBuilder: (context, index) =>
                           ShowcaseListCard(showcase: showcases[index]),
                     ),
-              loading: () => Center(child: CircularProgressIndicator()),
+              loading: () => Loader(),
               error: (e, st) => Center(child: Text('Error: $e')),
             ),
           ],

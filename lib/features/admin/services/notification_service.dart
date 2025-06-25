@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:adhikar/features/home/views/home.dart';
 import 'package:adhikar/features/notification/views/notifications.dart';
+import 'package:adhikar/features/showcase/views/showcase_list.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -40,6 +41,7 @@ class NotificationService {
 
   //get the token for the device
   Future<String?> getToken() async {
+    // ignore: unused_local_variable
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       badge: true,
@@ -79,6 +81,7 @@ class NotificationService {
   void firebaseInit(BuildContext context) {
     FirebaseMessaging.onMessage.listen((message) {
       RemoteNotification? notification = message.notification;
+      // ignore: unused_local_variable
       AndroidNotification? android = message.notification?.android;
       if (kDebugMode) {
         print("notification title: ${notification!.title}");
@@ -170,6 +173,11 @@ class NotificationService {
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );
+    } else if (message.data['screen'] == 'Showcase') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ShowcaseList()),
+      );
     } else {
       // Handle other screens or default action
       Navigator.push(
@@ -177,7 +185,6 @@ class NotificationService {
         MaterialPageRoute(builder: (context) => HomePage()),
       );
     }
-   
   }
 
   //ios foreground notification

@@ -30,8 +30,9 @@ abstract class IUserAPI {
   FutureEitherVoid addToFollowers(UserModel userModel);
   FutureEitherVoid updateUser(UserModel userModel);
   Future<Document> getUserData(String uid);
-    Future<List<Document>> getUsers();
+  Future<List<Document>> getUsers();
   Future<List<Document>> searchUser(String name);
+  Future<void> updateUserCredits(String uid, double credits);
 }
 
 class UserAPI implements IUserAPI {
@@ -41,8 +42,8 @@ class UserAPI implements IUserAPI {
     : _db = db,
       _realtime = realtime;
 
-      //getUsers
-      Future<List<Document>> getUsers() async {
+  //getUsers
+  Future<List<Document>> getUsers() async {
     final documents = await _db.listDocuments(
       databaseId: AppwriteConstants.databaseID,
       collectionId: AppwriteConstants.usersCollectionID,
@@ -97,9 +98,6 @@ class UserAPI implements IUserAPI {
     }
   }
 
-
-
-
   //search user
   @override
   Future<List<Document>> searchUser(String name) async {
@@ -144,6 +142,19 @@ class UserAPI implements IUserAPI {
       return right(null);
     } catch (err, stackTrace) {
       return left(Failure(err.toString(), stackTrace));
+    }
+  }
+
+  Future<void> updateUserCredits(String uid, double credits) async {
+    try {
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.usersCollectionID,
+        documentId: uid,
+        data: {'credits': credits},
+      );
+    } catch (e) {
+      throw Failure(e.toString(), StackTrace.current);
     }
   }
 }

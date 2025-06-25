@@ -1,5 +1,5 @@
 name: adhikar
-description: "A new Flutter project."
+description: 'A new Flutter project.'
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -21,12 +21,6 @@ version: 1.0.0+1
 environment:
   sdk: ^3.8.0
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
@@ -66,11 +60,13 @@ dependencies:
   flutter_local_notifications: ^19.2.1
   googleapis_auth: ^2.0.0
   app_settings: ^6.1.1
+  lottie: ^3.3.1
+  video_player: ^2.10.0
+  flutter_native_splash: ^2.4.6
+  flutter_launcher_icons: ^0.14.4
 
-
- 
 dependency_overrides:
-  flutter_web_auth_2: 
+  flutter_web_auth_2:
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -84,10 +80,24 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+flutter_native_splash:
+  color: '#000000'
+  image: assets/images/adhikar_app_icon.png
+  android_12:
+    color: '#000000'
+    image: assets/images/adhikar_app_icon.png
+    icon_background_color: '#000000'
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/images/adhikar_app_icon.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/images/adhikar_app_icon.png"
+  
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -99,6 +109,7 @@ flutter:
     - assets/icons/
     - assets/images/
     - lib/kyr_fundamental_rights.json
+    - assets/animation/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -125,3 +136,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+

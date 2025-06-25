@@ -1,4 +1,3 @@
-
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,7 +19,6 @@ final appwriteFunctionsProvider = Provider((ref) {
   final client = ref.watch(appwriteClientProvider);
   return Functions(client);
 });
-
 
 final appwriteAccountProvider = Provider((ref) {
   final client = ref.watch(appwriteClientProvider);

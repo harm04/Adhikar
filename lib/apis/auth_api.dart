@@ -1,11 +1,8 @@
-import 'package:adhikar/apis/messaging_api.dart';
 import 'package:adhikar/common/failure.dart';
 import 'package:adhikar/common/type_def.dart';
-import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/providers/provider.dart';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -28,6 +25,7 @@ abstract class IAuthApi {
 
 class AuthAPI implements IAuthApi {
   final Account _account;
+  // ignore: unused_field
   final Messaging _messaging;
 
   AuthAPI({required Account account, required Messaging messaging})

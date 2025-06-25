@@ -39,7 +39,11 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.transaction.paymentDescription,
+                              widget.transaction.paymentStatus == 'Requested'
+                                  ? "Your Payment will be transfered once verified."
+                                  : widget.transaction.paymentStatus == 'Paid'
+                                  ? 'Your Payment is successfully transfered.'
+                                  : widget.transaction.paymentDescription,
                               maxLines: 2,
                               style: TextStyle(
                                 fontSize: 17,
@@ -51,6 +55,11 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                             Text(
                               widget.transaction.paymentStatus == 'Success'
                                   ? 'ID : ${widget.transaction.paymentID}'
+                                  : widget.transaction.paymentStatus ==
+                                        'Requested'
+                                  ? 'ID : ${widget.transaction.paymentID}'
+                                  : widget.transaction.paymentStatus == 'Paid'
+                                  ? "Withdraw successfull"
                                   : 'Transaction failed',
                               style: TextStyle(
                                 color: Pallete.whiteColor,
@@ -93,20 +102,34 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                                     widget.transaction.paymentStatus ==
                                         'Success'
                                     ? Colors.green
+                                    : widget.transaction.paymentStatus ==
+                                          'Requested'
+                                    ? Pallete.primaryColor
+                                    : widget.transaction.paymentStatus == 'Paid'
+                                    ? Colors.green
                                     : Pallete.redColor,
                                 fontSize: 23,
                               ),
                             ),
                             SizedBox(height: 7),
                             SvgPicture.asset(
-                              widget.transaction.paymentStatus == 'Success'
+                              widget.transaction.paymentStatus == 'Success' ||
+                                      widget.transaction.paymentStatus == 'Paid'
+                                  ? 'assets/svg/payment_success.svg'
+                                  : widget.transaction.paymentStatus ==
+                                        'Requested'
                                   ? 'assets/svg/payment_success.svg'
                                   : 'assets/svg/failed_payement.svg',
                               width: 40,
                               height: 40,
                               colorFilter: ColorFilter.mode(
-                                widget.transaction.paymentStatus == 'Success'
+                                widget.transaction.paymentStatus == 'Success' ||
+                                        widget.transaction.paymentStatus ==
+                                            'Paid'
                                     ? Colors.green
+                                    : widget.transaction.paymentStatus ==
+                                          'Requested'
+                                    ? Pallete.primaryColor
                                     : Pallete.redColor,
                                 BlendMode.srcIn,
                               ),
@@ -115,12 +138,22 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                             Text(
                               widget.transaction.paymentStatus == 'Success'
                                   ? 'Successfull'
+                                  : widget.transaction.paymentStatus ==
+                                        'Requested'
+                                  ? 'Requested'
+                                  : widget.transaction.paymentStatus == 'Paid'
+                                  ? 'Paid'
                                   : 'Failed',
                               style: TextStyle(
                                 color:
                                     widget.transaction.paymentStatus ==
-                                        'Success'
+                                            'Success' ||
+                                        widget.transaction.paymentStatus ==
+                                            'Paid'
                                     ? Colors.green
+                                    : widget.transaction.paymentStatus ==
+                                          'Requested'
+                                    ? Pallete.primaryColor
                                     : Pallete.redColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

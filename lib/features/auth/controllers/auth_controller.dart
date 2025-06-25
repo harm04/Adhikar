@@ -75,7 +75,7 @@ class AuthController extends StateNotifier<bool> {
   final AuthAPI _authAPI;
   final UserAPI _userAPI;
   final StorageApi _storageAPI;
-  final Ref _ref;
+
 
   AuthController({
     required AuthAPI authAPI,
@@ -85,7 +85,7 @@ class AuthController extends StateNotifier<bool> {
   }) : _authAPI = authAPI,
        _storageAPI = storageApi,
        _userAPI = userAPI,
-       _ref = ref,
+    
        super(false);
 
   // Subscribe to topics based on user type
@@ -437,4 +437,11 @@ void _subscribeToTopics(String userType) {
     ); // Convert Document to UserModel
     return user;
   }
+
+  void updateUserCredits({
+  required String uid,
+  required double credits,
+}) async {
+  await _userAPI.updateUserCredits(uid, credits);
+}
 }

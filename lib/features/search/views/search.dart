@@ -112,50 +112,6 @@ class _SearchState extends ConsumerState<Search>
     );
   }
 
-  Widget _buildCategories() {
-    if (_categories.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: _categories.map<Widget>((cat) {
-          final String title = cat[0] ?? '';
-          final List<dynamic> items = cat[1] ?? [];
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              SizedBox(height: 5),
-              Wrap(
-                runSpacing: 10,
-                spacing: 12,
-                children: items.map<Widget>((item) {
-                  return Chip(
-                    label: Text(item['value'] ?? ''),
-                    backgroundColor: Pallete.cardColor,
-                    labelStyle: TextStyle(
-                      color: Pallete.secondaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 8),
-            ],
-          );
-        }).toList(),
-      ),
-    );
-  }
-
   // Utility function to parse <b>...</b> and make bold
   TextSpan parseBoldHtml(
     String text, {
@@ -205,13 +161,11 @@ class _SearchState extends ConsumerState<Search>
       return const Center(child: Text('No results found.'));
     }
     return ListView.separated(
-      itemCount: _legalResults.length + 1,
+      padding: const EdgeInsets.only(top: 10.0),
+      itemCount: _legalResults.length,
       separatorBuilder: (_, __) => const Divider(),
       itemBuilder: (context, index) {
-        if (index == 0) {
-          return _buildCategories();
-        }
-        final item = _legalResults[index - 1];
+        final item = _legalResults[index];
         return Card(
           color: Pallete.cardColor,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

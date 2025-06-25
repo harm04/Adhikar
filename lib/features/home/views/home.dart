@@ -1,6 +1,5 @@
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
-import 'package:adhikar/features/admin/services/fcm_service.dart';
 import 'package:adhikar/features/admin/services/notification_service.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/bookmarks/views/bookmarks.dart';
@@ -16,6 +15,7 @@ import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/views/create_post.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/features/settings/views/settings.dart';
+import 'package:adhikar/features/withdraw/views/withdraw_request.dart';
 import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +40,6 @@ class _HomePageState extends ConsumerState<HomePage>
     notificationService.getToken();
     notificationService.firebaseInit(context);
     notificationService.backgroundNotification(context);
-   
   }
 
   void signout() {
@@ -95,9 +94,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                   child: Row(
                                     children: [
                                       CircleAvatar(
-                                        key: ValueKey(
-                                          currentUser.profileImage,
-                                        ), // <-- Add this line
+                                        key: ValueKey(currentUser.profileImage),
 
                                         radius: 50,
                                         backgroundImage:
@@ -200,7 +197,22 @@ class _HomePageState extends ConsumerState<HomePage>
                                 ),
 
                                 currentUser.userType == 'Expert'
-                                    ? SizedBox()
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) {
+                                                return const WithdrawRequest();
+                                              },
+                                            ),
+                                          );
+                                        },
+                                        child: drawerItems(
+                                          'Withdraw',
+                                          'assets/svg/wallet.svg',
+                                        ),
+                                      )
                                     : GestureDetector(
                                         onTap: () => Navigator.push(
                                           context,

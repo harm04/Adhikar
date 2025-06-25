@@ -1,29 +1,39 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
-class CheckInternet extends StatefulWidget {
+import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+
+class CheckInternet extends ConsumerStatefulWidget {
   final Widget child;
   final Future<void> Function()? onTryAgain;
   const CheckInternet({super.key, required this.child, this.onTryAgain});
 
   @override
-  State<CheckInternet> createState() => _CheckInternetState();
+  ConsumerState<CheckInternet> createState() => _CheckInternetState();
 }
 
-class _CheckInternetState extends State<CheckInternet> {
+class _CheckInternetState extends ConsumerState<CheckInternet> {
   bool isConnectedToInternet = true;
   StreamSubscription? _internetConnectionStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    _internetConnectionStreamSubscription = InternetConnection().onStatusChange
-        .listen((event) {
-          setState(() {
-            isConnectedToInternet = event == InternetStatus.connected;
-          });
-        });
+    _internetConnectionStreamSubscription = InternetConnection().onStatusChange.listen((event) async {
+      final hasInternet = event == InternetStatus.connected;
+      setState(() {
+        isConnectedToInternet = hasInternet;
+      });
+
+      if (hasInternet) {
+        // 🔄 Refresh your auth-related providers
+        ref.refresh(currentUserAccountProvider);
+        ref.refresh(currentUserDataProvider);
+      }
+    });
+
     // Initial check
     InternetConnection().hasInternetAccess.then((value) {
       setState(() {
@@ -40,6 +50,11 @@ class _CheckInternetState extends State<CheckInternet> {
     setState(() {
       isConnectedToInternet = hasInternet;
     });
+
+    if (hasInternet) {
+      ref.refresh(currentUserAccountProvider);
+      ref.refresh(currentUserDataProvider);
+    }
   }
 
   @override

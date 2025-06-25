@@ -1,6 +1,7 @@
 import 'package:adhikar/features/admin/views/admin_expert_list.dart';
 import 'package:adhikar/features/admin/views/admin_home.dart';
 import 'package:adhikar/features/admin/views/admin_push_notification.dart';
+import 'package:adhikar/features/admin/views/admin_withdraw_list.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,9 +20,9 @@ class _SideNavState extends State<SideNav> {
   final List<Widget> pages = [
     AdminHome(),
     AdminExpertList(),
-    Center(child: Text('Payment Page', style: TextStyle(fontSize: 32))),
+    AdminWithdrawList(),
     Center(child: Text('Meetings Page', style: TextStyle(fontSize: 32))),
-    AdminPushNotification()
+    AdminPushNotification(),
   ];
 
   @override

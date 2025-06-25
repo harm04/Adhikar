@@ -98,4 +98,25 @@ class TransactionController extends StateNotifier<bool> {
         .map((meetings) => TransactionModel.fromMap(meetings.data))
         .toList();
   }
+
+  //update transaction status
+  Future<void> updateTransactionStatus({
+    required String paymentId,
+    required String status,
+    required BuildContext context,
+  }) async {
+    state = true;
+    final res = await _transactionAPI.updateTransactionStatus(
+      paymentId, status,
+    );
+    state = false;
+    res.fold(
+      (l) {
+        showSnackbar(context, l.message);
+      },
+      (r) {
+        showSnackbar(context, 'Transaction status updated successfully');
+      },
+    );
+  }
 }
