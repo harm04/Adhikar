@@ -38,19 +38,6 @@ final getCommentsProvider = FutureProvider.family((
   return commentsController.getComments(showcaseModel);
 });
 
-// final getUsersPostProvider = FutureProvider.family((
-//   ref,
-//   UserModel userModel,
-// ) async {
-//   final postController = ref.watch(postControllerProvider.notifier);
-//   return postController.getUsersPost(userModel);
-// });
-
-// final getPodsPostProvider = FutureProvider.family((ref, String podName) async {
-//   final postController = ref.watch(postControllerProvider.notifier);
-//   return postController.getPodsPost(podName);
-// });
-
 final getLatestShowcaseProvider = StreamProvider.autoDispose((ref) {
   ref.keepAlive();
   final showcaseAPI = ref.watch(showcaseAPIProvider);
@@ -197,10 +184,22 @@ class ShowcaseController extends StateNotifier<bool> {
     final res = await _showcaseAPI.shareShowcase(showcaseModel);
     state = false;
     Navigator.pop(context);
-    res.fold(
-      (l) => showSnackbar(context, l.message),
-      (r) => showSnackbar(context, 'Showcased successfully'),
-    );
+    res.fold((l) => showSnackbar(context, l.message), (r) async {
+      showSnackbar(context, 'Showcased successfully');
+      // Send notification for image showcase
+      await SendNotificationService.sendNotificationToTopic(
+        topic: 'all_users',
+        title: "New Showcase",
+        body: title,
+        imageUrl: logoImageUrl.isNotEmpty ? logoImageUrl : null,
+        data: {
+          "screen": "Showcase",
+          "showcaseId": r.$id,
+          "creatorId": user.uid,
+        },
+      );
+      print("showcase notification sent");
+    });
   }
 
   //sharing text post
@@ -248,17 +247,24 @@ class ShowcaseController extends StateNotifier<bool> {
 
     final res = await _showcaseAPI.shareShowcase(showcaseModel);
     state = false;
-    await SendNotificationService.sendNotificationToTopic(
-      topic: 'all_users',
-      title: 'New Showcase',
-      body: title,
-      data: {"screen": "Showcase"},
-    );
+
     Navigator.pop(context);
-    res.fold(
-      (l) => showSnackbar(context, l.message),
-      (r) => showSnackbar(context, 'Showcased successfully'),
-    );
+    res.fold((l) => showSnackbar(context, l.message), (r) async {
+      showSnackbar(context, 'Showcase created successfully');
+      // Send notification for text showcase
+      await SendNotificationService.sendNotificationToTopic(
+        topic: 'all_users',
+        title: "New Showcase",
+        body: title,
+        imageUrl: logoImageUrl.isNotEmpty ? logoImageUrl : null,
+        data: {
+          "screen": "Showcase",
+          "showcaseId": r.$id,
+          "creatorId": user.uid,
+        },
+      );
+      print("showcase notification sent");
+    });
   }
 
   Future shareComment({
@@ -318,12 +324,30 @@ class ShowcaseController extends StateNotifier<bool> {
         _ref
             .read(notificationControllerProvider.notifier)
             .createNotification(notification);
-      }
 
-     
+        // Fetch the showcase owner's user model to get their FCM token
+        final ownerUser = await _ref.read(
+          userDataByIdProvider(parentShowcases.uid).future,
+        );
+
+        if (ownerUser != null && ownerUser.fcmToken.isNotEmpty) {
+          await SendNotificationService.sendNotificationUsingAPI(
+            token: ownerUser.fcmToken,
+            title: 'New Comment',
+            body: '${user.firstName} commented on your showcase.',
+            data: {
+              "screen": "Showcase",
+              "showcaseId": parentShowcases.id,
+              "commentId": r.$id,
+              "senderId": user.uid,
+            },
+          );
+        }
+      }
 
       state = false;
       Navigator.pop(context);
+      _ref.invalidate(getShowcaseProvider);
       res2.fold(
         (l) => showSnackbar(context, l.message),
         (r) => showSnackbar(context, 'Comment posted successfully'),
@@ -372,16 +396,6 @@ class ShowcaseController extends StateNotifier<bool> {
         .toList();
   }
 
-  // Future<List<PostModel>> getUsersPost(UserModel userModel) async {
-  //   final postList = await _postAPI.getUsersPost(userModel);
-  //   return postList.map((post) => PostModel.fromMap(post.data)).toList();
-  // }
-
-  // Future<List<PostModel>> getPodsPost(String podName) async {
-  //   final postList = await _postAPI.getPodsPost(podName);
-  //   return postList.map((post) => PostModel.fromMap(post.data)).toList();
-  // }
-
   //upvote showcase
   void upvoteShowcase(ShowcaseModel showcaseModel, UserModel userModel) async {
     List<String> upvotes = showcaseModel.upvotes;
@@ -405,11 +419,25 @@ class ShowcaseController extends StateNotifier<bool> {
         _ref
             .read(notificationControllerProvider.notifier)
             .createNotification(notification);
+        final ownerUser = await _ref.read(
+          userDataByIdProvider(showcaseModel.uid).future,
+        );
+
+        if (ownerUser != null && ownerUser.fcmToken.isNotEmpty) {
+          await SendNotificationService.sendNotificationUsingAPI(
+            token: ownerUser.fcmToken,
+            title: 'New Comment',
+            body: '${userModel.firstName} upvoted your showcase.',
+            data: {"screen": "notification"},
+          );
+        }
       }
       showcaseModel = showcaseModel.copyWith(upvotes: upvotes);
       await _showcaseAPI.upvoteShowcase(showcaseModel);
     }
   }
+
+  
 
   //bookmark showcase
 
@@ -423,4 +451,7 @@ class ShowcaseController extends StateNotifier<bool> {
     userModel = userModel.copyWith(bookmarked: bookmarks);
     await _showcaseAPI.bookmarkShowcase(userModel);
   }
+
+
+
 }

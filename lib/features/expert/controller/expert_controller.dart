@@ -57,6 +57,9 @@ class ExpertController extends StateNotifier<bool> {
     required UserModel userModel,
     required BuildContext context,
     required String phone,
+    required String firstName,
+    required String lastName,
+    required String email,
     required String dob,
     required String countryState,
     required String city,
@@ -79,6 +82,9 @@ class ExpertController extends StateNotifier<bool> {
       userType: 'pending',
       phone: phone,
       dob: dob,
+      firstName: firstName,
+      email: email,
+      lastName: lastName  ,
       state: countryState,
       city: city,
       address1: address1,
@@ -95,8 +101,6 @@ class ExpertController extends StateNotifier<bool> {
     );
 
     final res = await _expertAPI.applyForExpert(updatedUser);
-
-    _subscribeToTopics(userModel.userType);
 
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) {
@@ -122,13 +126,15 @@ class ExpertController extends StateNotifier<bool> {
     state = true;
     final res = await _expertAPI.approveExpert(uid);
     res.fold((l) => showSnackbar(context, l.message), (r) async {
+     
+    
+      state = false;
       showSnackbar(context, 'Expert approved successfully');
       ref.invalidate(getExpertsProvider);
       ref.invalidate(usersCountProvider);
       ref.invalidate(expertsCountProvider);
       ref.invalidate(todayStatsProvider);
     });
-    state = false;
   }
 
   //reject expert

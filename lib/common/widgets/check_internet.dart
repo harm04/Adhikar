@@ -21,18 +21,21 @@ class _CheckInternetState extends ConsumerState<CheckInternet> {
   @override
   void initState() {
     super.initState();
-    _internetConnectionStreamSubscription = InternetConnection().onStatusChange.listen((event) async {
-      final hasInternet = event == InternetStatus.connected;
-      setState(() {
-        isConnectedToInternet = hasInternet;
-      });
+    _internetConnectionStreamSubscription = InternetConnection().onStatusChange
+        .listen((event) async {
+          final hasInternet = event == InternetStatus.connected;
+          if (isConnectedToInternet != hasInternet) {
+            setState(() {
+              isConnectedToInternet = hasInternet;
+            });
 
-      if (hasInternet) {
-        // 🔄 Refresh your auth-related providers
-        ref.refresh(currentUserAccountProvider);
-        ref.refresh(currentUserDataProvider);
-      }
-    });
+            if (hasInternet) {
+              // Refresh providers only if the internet connection is restored
+              ref.refresh(currentUserAccountProvider);
+              ref.refresh(currentUserDataProvider);
+            }
+          }
+        });
 
     // Initial check
     InternetConnection().hasInternetAccess.then((value) {
@@ -47,13 +50,15 @@ class _CheckInternetState extends ConsumerState<CheckInternet> {
       await widget.onTryAgain!();
     }
     final hasInternet = await InternetConnection().hasInternetAccess;
-    setState(() {
-      isConnectedToInternet = hasInternet;
-    });
+    if (isConnectedToInternet != hasInternet) {
+      setState(() {
+        isConnectedToInternet = hasInternet;
+      });
 
-    if (hasInternet) {
-      ref.refresh(currentUserAccountProvider);
-      ref.refresh(currentUserDataProvider);
+      if (hasInternet) {
+        ref.refresh(currentUserAccountProvider);
+        ref.refresh(currentUserDataProvider);
+      }
     }
   }
 

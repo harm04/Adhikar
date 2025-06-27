@@ -1,7 +1,6 @@
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:flutter/foundation.dart';
 
-
 class PostModel {
   final String text;
   final String link;
@@ -16,6 +15,7 @@ class PostModel {
   final List<String> commentIds;
   final PostType type;
   final String commentedTo;
+  final bool isDeletedByAdmin;
   PostModel({
     required this.text,
     required this.link,
@@ -30,12 +30,13 @@ class PostModel {
     required this.commentIds,
     required this.type,
     required this.commentedTo,
+    this.isDeletedByAdmin = false,
   });
 
   PostModel copyWith({
     String? text,
     String? link,
-     List<String>? hashtags,
+    List<String>? hashtags,
     String? uid,
     String? id,
     String? pod,
@@ -46,11 +47,12 @@ class PostModel {
     List<String>? commentIds,
     PostType? type,
     String? commentedTo,
+    bool? isDeletedByAdmin,
   }) {
     return PostModel(
       text: text ?? this.text,
       link: link ?? this.link,
-       hashtags: hashtags ?? this.hashtags,
+      hashtags: hashtags ?? this.hashtags,
       uid: uid ?? this.uid,
       id: id ?? this.id,
       pod: pod ?? this.pod,
@@ -61,6 +63,7 @@ class PostModel {
       commentIds: commentIds ?? this.commentIds,
       type: type ?? this.type,
       commentedTo: commentedTo ?? this.commentedTo,
+      isDeletedByAdmin: isDeletedByAdmin ?? this.isDeletedByAdmin,
     );
   }
 
@@ -70,7 +73,7 @@ class PostModel {
       'link': link,
       'hashtags': hashtags,
       'uid': uid,
-      
+
       'pod': pod,
       'isAnonymous': isAnonymous,
       'createdAt': createdAt.millisecondsSinceEpoch,
@@ -79,6 +82,7 @@ class PostModel {
       'commentIds': commentIds,
       'type': type.type,
       'commentedTo': commentedTo,
+      'isDeletedByAdmin': isDeletedByAdmin,
     };
   }
 
@@ -86,7 +90,9 @@ class PostModel {
     return PostModel(
       text: map['text'] as String,
       link: map['link'] as String,
-      hashtags: List<String>.from((map['hashtags'] ?? []).map((x) => x as String)),
+      hashtags: List<String>.from(
+        (map['hashtags'] ?? []).map((x) => x as String),
+      ),
       uid: map['uid'] as String,
       id: map['\$id'] as String,
       pod: map['pod'] as String,
@@ -94,16 +100,18 @@ class PostModel {
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
       images: List<String>.from((map['images'] ?? []).map((x) => x as String)),
       likes: List<String>.from((map['likes'] ?? []).map((x) => x as String)),
-      commentIds:
-          List<String>.from((map['commentIds'] ?? []).map((x) => x as String)),
+      commentIds: List<String>.from(
+        (map['commentIds'] ?? []).map((x) => x as String),
+      ),
       type: (map['type'] as String).toPostTypeEnum(),
       commentedTo: map['commentedTo'] as String,
+      isDeletedByAdmin: map['isDeletedByAdmin'] as bool? ?? false,
     );
   }
 
   @override
   String toString() {
-    return 'PostModel(text: $text, link: $link, hashtags: $hashtags, uid: $uid, id: $id, pod: $pod, isAnonymous: $isAnonymous, createdAt: $createdAt, images: $images, likes: $likes, commentIds: $commentIds, type: $type, commentedTo: $commentedTo)';
+    return 'PostModel(text: $text, link: $link, hashtags: $hashtags, uid: $uid, id: $id, pod: $pod, isAnonymous: $isAnonymous, createdAt: $createdAt, images: $images, likes: $likes, commentIds: $commentIds, type: $type, commentedTo: $commentedTo, isDeletedByAdmin: $isDeletedByAdmin)';
   }
 
   @override
@@ -122,7 +130,8 @@ class PostModel {
         listEquals(other.likes, likes) &&
         listEquals(other.commentIds, commentIds) &&
         other.type == type &&
-        other.commentedTo == commentedTo;
+        other.commentedTo == commentedTo &&
+        other.isDeletedByAdmin == isDeletedByAdmin;
   }
 
   @override
@@ -139,6 +148,7 @@ class PostModel {
         likes.hashCode ^
         commentIds.hashCode ^
         type.hashCode ^
-        commentedTo.hashCode;
+        commentedTo.hashCode ^
+        isDeletedByAdmin.hashCode;
   }
 }

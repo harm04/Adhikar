@@ -40,6 +40,20 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
   final TextEditingController _controller = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final user = ref.read(currentUserDataProvider).value;
+      if (user != null) {
+        emailController.text = user.email;
+        firstNameController.text = user.firstName;
+        lastNameController.text = user.lastName;
+        // set other controllers if needed
+      }
+    });
+  }
+
+  @override
   void dispose() {
     super.dispose();
     statecontroller.dispose();
@@ -150,14 +164,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
       "Jammu and Kashmir",
     ];
     final currentUser = ref.watch(currentUserDataProvider).value;
-    if (currentUser != null) {
-      emailController.text = currentUser.email;
-      firstNameController.text = currentUser.firstName;
-      lastNameController.text = currentUser.lastName;
-      currentUser.profileImage != ''
-          ? profileImage != currentUser.profileImage
-          : profileImage != "";
-    }
+    
     bool isLoading = ref.watch(expertControllerProvider);
 
     return Scaffold(
@@ -604,6 +611,9 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                               .applyForExpert(
                                 userModel: currentUser!,
                                 context: context,
+                                firstName: firstNameController.text,
+                                lastName: lastNameController.text,
+                                email: emailController.text,
                                 phone: phoneController.text,
                                 dob: dobController.text,
                                 countryState: statecontroller.text,

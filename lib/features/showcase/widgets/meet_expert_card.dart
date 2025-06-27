@@ -126,6 +126,16 @@ class MeetExpertCard extends ConsumerWidget {
                             );
                         ref.invalidate(currentUserDataProvider);
                       }
+                      if(user.uid == currentUser.uid) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return ProfileView(userModel: user);
+                            },
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       decoration: BoxDecoration(

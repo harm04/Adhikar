@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
 import 'package:adhikar/common/widgets/check_internet.dart';
 import 'package:adhikar/common/widgets/error.dart';
@@ -13,6 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:adhikar/features/admin/services/notification_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
@@ -44,6 +47,15 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Listen for notification taps (background/terminated)
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      NotificationService().handleMessage(context, message, ref);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (_showSplash) {
       return MaterialApp(
@@ -68,6 +80,24 @@ class _MyAppState extends ConsumerState<MyApp> {
                     return currentUserAsyncValue.when(
                       data: (currentUser) {
                         if (currentUser != null) {
+                          // --- FCM topic subscription logic ---
+                          if (!kIsWeb &&
+                              (Platform.isAndroid || Platform.isIOS)) {
+                            if (currentUser.userType == 'Expert') {
+                              FirebaseMessaging.instance.subscribeToTopic(
+                                'all_experts',
+                              );
+                            } else if (currentUser.userType == 'User') {
+                              FirebaseMessaging.instance.subscribeToTopic(
+                                'all_users',
+                              );
+                              FirebaseMessaging.instance.unsubscribeFromTopic(
+                                'all_experts',
+                              );
+                            }
+                          }
+                          // --- End FCM topic subscription logic ---
+
                           if (currentUser.email == 'admin@gmail.com' &&
                               currentUser.password == 'asdfghjkl') {
                             return SideNav();

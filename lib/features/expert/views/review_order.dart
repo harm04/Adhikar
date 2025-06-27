@@ -53,7 +53,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
       },
       (meetingDoc) async {
         // 2. Create transaction (Success)
-        ref
+       await ref
             .read(transactionControllerProvider.notifier)
             .createTransaction(
               userModel: currentUser,

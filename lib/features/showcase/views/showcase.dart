@@ -88,7 +88,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                                     ?.bookmarked
                                     .contains(widget.showcaseModel.id) ??
                                 false,
-                            size: 32,
+                            size: 28,
                             onTap: (isLiked) async {
                               ref
                                   .read(showcaseControllerProvider.notifier)
@@ -120,29 +120,38 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                         ),
                         SizedBox(width: 10),
                         //share
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Colors.black.withOpacity(0.5),
-                          child: SvgPicture.asset(
-                            height: 30,
-                            'assets/svg/share.svg',
-                            colorFilter: ColorFilter.mode(
-                              Pallete.whiteColor,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        //report
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Colors.black.withOpacity(0.5),
-                          child: SvgPicture.asset(
-                            height: 30,
-                            'assets/svg/report.svg',
-                            colorFilter: ColorFilter.mode(
-                              Pallete.whiteColor,
-                              BlendMode.srcIn,
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Coming Soon'),
+                                  content: Text(
+                                    'Sharing feature is coming soon.',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 25,
+                            backgroundColor: Colors.black.withOpacity(0.5),
+                            child: SvgPicture.asset(
+                              height: 30,
+                              'assets/svg/share.svg',
+                              colorFilter: ColorFilter.mode(
+                                Pallete.whiteColor,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
                         ),

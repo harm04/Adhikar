@@ -18,9 +18,27 @@ class News extends ConsumerStatefulWidget {
 class _NewsState extends ConsumerState<News> {
   @override
   Widget build(BuildContext context) {
+    final thread = widget.item['thread'] ?? {};
+    final title = thread['title'] ?? widget.item['title'] ?? 'No title';
+    final image = thread['main_image'] ?? 'assets/images/logo.png';
+    final publishedAt = thread['published'] ?? widget.item['published_at'];
+    final siteDomain = thread['site'] ?? widget.item['source'] ?? '';
+
+    // Favicon URL using Google S2 API
+    final faviconUrl = siteDomain.isNotEmpty
+        ? 'https://www.google.com/s2/favicons?sz=32&domain=$siteDomain'
+        : null;
+
+    final rawdDescription =
+        widget.item['highlightText'] ??
+        widget.item['highlightTitle'] ??
+        'No description';
+    final description = rawdDescription.replaceAll(RegExp(r'</?em>'), '');
+    final url = thread['url'] ?? widget.item['url'];
+
     // Filter out the current news item
     final List<dynamic> otherNews = widget.allNews
-        .where((news) => news['url'] != widget.item['url'])
+        .where((news) => (news['url'] ?? news['thread']?['url']) != url)
         .toList();
 
     return Scaffold(
@@ -32,9 +50,9 @@ class _NewsState extends ConsumerState<News> {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  widget.item['image'] == null
+                  image == ''
                       ? Image.asset('assets/images/logo.png', fit: BoxFit.cover)
-                      : Image.network(widget.item['image'], fit: BoxFit.cover),
+                      : Image.network(image, fit: BoxFit.cover),
                   Positioned(
                     bottom: 0,
                     child: Container(
@@ -56,7 +74,7 @@ class _NewsState extends ConsumerState<News> {
                     left: 20,
                     right: 20,
                     child: Text(
-                      widget.item['title'] ?? 'No title',
+                      title,
                       style: TextStyle(
                         fontSize: 27,
                         fontWeight: FontWeight.bold,
@@ -75,44 +93,57 @@ class _NewsState extends ConsumerState<News> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            widget.item['source'] ?? 'Unknown Source',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Pallete.greyColor,
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Row(
+                          children: [
+                            if (faviconUrl != null)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Image.network(
+                                  faviconUrl,
+                                  width: 20,
+                                  height: 20,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      SizedBox(width: 20),
+                                ),
+                              ),
+                            Flexible(
+                              child: Text(
+                                siteDomain,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Pallete.greyColor,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 10),
-
-                          Text(
-                            widget.item['published_at'] != null
-                                ? timeago.format(
-                                    DateTime.parse(
-                                      widget.item['published_at'],
-                                    ).toLocal(),
-                                  )
-                                : '',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Pallete.greyColor,
+                            SizedBox(width: 10),
+                            Text(
+                              publishedAt != null
+                                  ? timeago.format(
+                                      DateTime.parse(publishedAt).toLocal(),
+                                    )
+                                  : '',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Pallete.greyColor,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
                         //navigate to the source URL
-                        if (widget.item['url'] != null) {
+                        if (url != null) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => WebViewPage(
-                                url: widget.item['url'],
+                                url: url,
                                 appBarText: 'News Source',
                               ),
                             ),
@@ -161,7 +192,7 @@ class _NewsState extends ConsumerState<News> {
                 Padding(
                   padding: const EdgeInsets.all(18.0),
                   child: Text(
-                    widget.item['description'] ?? 'No description',
+                    description,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -181,7 +212,6 @@ class _NewsState extends ConsumerState<News> {
                     ),
                   ),
                 ),
-
                 ListView.builder(
                   shrinkWrap: true,
                   padding: const EdgeInsets.only(top: 0.0),
@@ -189,6 +219,17 @@ class _NewsState extends ConsumerState<News> {
                   itemCount: otherNews.length,
                   itemBuilder: (context, index) {
                     final news = otherNews[index];
+                    final newsThread = news['thread'] ?? {};
+                    final newsTitle =
+                        newsThread['title'] ?? news['title'] ?? 'No title';
+                    final newsImage = newsThread['main_image'] ?? news['image'];
+                    final newsPublishedAt =
+                        newsThread['published'] ?? news['published_at'];
+                    final newsSource =
+                        newsThread['site'] ??
+                        news['source'] ??
+                        'Unknown Source';
+
                     return GestureDetector(
                       onTap: () => Navigator.push(
                         context,
@@ -213,8 +254,7 @@ class _NewsState extends ConsumerState<News> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '${news['source'] ?? 'Unknown Source'} ·  ${news['published_at'] != null ? timeago.format(DateTime.parse(news['published_at']).toLocal()) : ''}',
-
+                                      '$newsSource ·  ${newsPublishedAt != null ? timeago.format(DateTime.parse(newsPublishedAt).toLocal()) : ''}',
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Pallete.greyColor,
@@ -223,7 +263,7 @@ class _NewsState extends ConsumerState<News> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      news['title'] ?? 'No title',
+                                      newsTitle,
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w600,
@@ -242,9 +282,9 @@ class _NewsState extends ConsumerState<News> {
                                 width: 120,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(5),
-                                  child: news['image'] != null
+                                  child: newsImage != null
                                       ? Image.network(
-                                          news['image'],
+                                          newsImage,
                                           height: 80,
                                           width: 80,
                                           fit: BoxFit.cover,

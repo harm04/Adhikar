@@ -34,13 +34,14 @@ abstract class IPostAPI {
   Future<List<Document>> getComments(PostModel postModel);
   Stream<List<PostModel>> getUserPostsStream(String uid);
   Future<List<Document>> getPodsPost(String podName);
-  // Future<List<PostModel>> getPopularPosts();
+  FutureEither<Document> deletePost(String postId);
   FutureEither<Document> addCommentIdToPost(
     String postId,
     List<String> commentIds,
   );
   Future<List<Document>> searchPosts(String text);
   Future<PostModel?> getPostById(String postId);
+  FutureEither<Document> markPostAsDeletedByAdmin(String postId);
 }
 
 class PostAPI implements IPostAPI {
@@ -93,6 +94,21 @@ class PostAPI implements IPostAPI {
         collectionId: AppwriteConstants.postCollectionID,
         documentId: postModel.id,
         data: {'likes': postModel.likes},
+      );
+      return right(document);
+    } catch (e, stackTrace) {
+      return left(Failure(e.toString(), stackTrace));
+    }
+  }
+
+  //delete post
+  @override
+  FutureEither<Document> deletePost(String postId) async {
+    try {
+      final document = await _db.deleteDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.postCollectionID,
+        documentId: postId,
       );
       return right(document);
     } catch (e, stackTrace) {
@@ -235,6 +251,27 @@ class PostAPI implements IPostAPI {
         queries: [Query.orderDesc('createdAt')],
       );
       yield docs.documents.map((doc) => PostModel.fromMap(doc.data)).toList();
+    }
+  }
+
+  @override
+  FutureEither<Document> markPostAsDeletedByAdmin(String postId) async {
+    try {
+      final document = await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.postCollectionID,
+        documentId: postId,
+        data: {
+          'isDeletedByAdmin': true,
+        },
+      );
+      return right(document);
+    } on AppwriteException catch (e, st) {
+      return left(
+        Failure(e.message ?? 'Some unexpected error occurred', st),
+      );
+    } catch (e, st) {
+      return left(Failure(e.toString(), st));
     }
   }
 }

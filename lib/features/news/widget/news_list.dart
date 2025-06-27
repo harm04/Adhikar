@@ -35,13 +35,13 @@ class _NewsState extends ConsumerState<NewsList> {
     try {
       final response = await http.get(
         Uri.parse(
-          'http://api.mediastack.com/v1/news?access_key=${AppwriteConstants.newsAuthToken}&countries=IN&keywords=legal&sort=published_desc&limit=100',
+          'https://api.webz.io/newsApiLite?token=${AppwriteConstants.newsAuthToken}&q=legal&language=english&country=IN',
         ),
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          _newsResults = data['data'] ?? [];
+          _newsResults = data['posts'] ?? [];
         });
       } else {
         setState(() {

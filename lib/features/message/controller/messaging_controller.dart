@@ -1,10 +1,10 @@
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
-import 'package:adhikar/features/notification/controller/notification_controller.dart';
 import 'package:adhikar/models/message_modal.dart';
 import 'package:adhikar/apis/messaging_api.dart';
-import 'package:adhikar/models/notification_modal.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:adhikar/features/admin/services/send_notification_service.dart';
+import 'package:adhikar/providers/open_chat_provider.dart'; // Import the provider
 
 final messagingControllerProvider = Provider((ref) {
   return MessagingController(ref.watch(messagingAPIProvider));
@@ -18,10 +18,10 @@ class MessagingController {
     required String senderId,
     required String receiverId,
     required String text,
-     required WidgetRef ref,
+    required WidgetRef ref,
   }) async {
     final message = MessageModel(
-      id: '', // Let Appwrite generate the ID
+      id: '',
       senderId: senderId,
       receiverId: receiverId,
       text: text,
@@ -29,20 +29,26 @@ class MessagingController {
       isRead: false,
     );
     await _api.sendMessage(message);
-final notification = NotificationModel(
-    id: '',
-    userId: receiverId,
-    senderId: senderId,
-    type: 'message',
-    messageId: message.id,
-    title: 'New Message',
-    body: 'You have received a new message.',
-    createdAt: DateTime.now(),
-    isRead: false,
-    extraData: {'text': text},
-  );
-  await ref.read(notificationControllerProvider.notifier).createNotification(notification);
 
+    final receiverUser = await ref.read(
+      userDataByIdProvider(receiverId).future,
+    );
+    final senderUser = await ref.read(userDataByIdProvider(senderId).future);
+    if (receiverUser != null &&
+        receiverUser.fcmToken != null &&
+        receiverUser.fcmToken.isNotEmpty) {
+      await SendNotificationService.sendNotificationUsingAPI(
+        token: receiverUser.fcmToken,
+        title: '${senderUser!.firstName} sent a message',
+        body: text,
+        data: {
+          "screen": "chat",
+          "senderId": senderId,
+          "receiverId": receiverId,
+          "messageId": message.id,
+        },
+      );
+    }
   }
 
   Stream<List<MessageModel>> getMessages(String userId, String peerId) {

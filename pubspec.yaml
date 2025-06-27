@@ -64,6 +64,7 @@ dependencies:
   video_player: ^2.10.0
   flutter_native_splash: ^2.4.6
   flutter_launcher_icons: ^0.14.4
+ 
 
 dependency_overrides:
   flutter_web_auth_2:

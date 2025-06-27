@@ -38,8 +38,8 @@ class _HomePageState extends ConsumerState<HomePage>
     super.initState();
     notificationService.requestNotificationPermission();
     notificationService.getToken();
-    notificationService.firebaseInit(context);
-    notificationService.backgroundNotification(context);
+    notificationService.firebaseInit(context,ref);
+    notificationService.backgroundNotification(context,ref);
   }
 
   void signout() {

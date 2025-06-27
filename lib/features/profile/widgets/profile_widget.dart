@@ -1,5 +1,7 @@
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
+import 'package:adhikar/common/widgets/snackbar.dart';
+import 'package:adhikar/common/widgets/webview_page.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/message/views/conversations.dart';
 import 'package:adhikar/features/message/views/messaging.dart';
@@ -43,6 +45,20 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
     super.dispose();
   }
 
+  void _openSocialLink(BuildContext context, String url, String platform) {
+    if (url.isEmpty ||
+        !(url.startsWith('http://') || url.startsWith('https://'))) {
+      showSnackbar(context, '$platform link is invalid');
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WebViewPage(url: url, appBarText: 'Adhikar'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDataProvider).value;
@@ -68,10 +84,11 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                         radius: 42,
                         backgroundImage: widget.userModel.profileImage == ''
                             ? AssetImage(ImageTheme.defaultProfileImage)
-                            : NetworkImage(widget.userModel.profileImage),
+                            : NetworkImage(widget.userModel.profileImage)
+                                  as ImageProvider,
                       ),
                     ),
-                    
+
                     SizedBox(width: 20),
                     Expanded(
                       child: Column(
@@ -224,32 +241,57 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
           child: Row(
             children: [
-              Image.asset(
-                widget.userModel.linkedin == ''
-                    ? 'assets/icons/ic_linkedin_grey.png'
-                    : 'assets/icons/ic_linkedin.png',
-                height: 40,
+              GestureDetector(
+                onTap: () => _openSocialLink(
+                  context,
+                  widget.userModel.linkedin,
+                  'Linkedin',
+                ),
+                child: Image.asset(
+                  widget.userModel.linkedin == ''
+                      ? 'assets/icons/ic_linkedin_grey.png'
+                      : 'assets/icons/ic_linkedin.png',
+                  height: 40,
+                ),
               ),
               SizedBox(width: 9),
-              Image.asset(
-                widget.userModel.instagram == ''
-                    ? 'assets/icons/ic_instagram_grey.png'
-                    : 'assets/icons/ic_instagram.png',
-                height: 40,
+              GestureDetector(
+                onTap: () => _openSocialLink(
+                  context,
+                  widget.userModel.instagram,
+                  'Instagram',
+                ),
+                child: Image.asset(
+                  widget.userModel.instagram == ''
+                      ? 'assets/icons/ic_instagram_grey.png'
+                      : 'assets/icons/ic_instagram.png',
+                  height: 40,
+                ),
               ),
               SizedBox(width: 9),
-              Image.asset(
-                widget.userModel.twitter == ''
-                    ? 'assets/icons/ic_x_grey.png'
-                    : 'assets/icons/ic_x.png',
-                height: 40,
+              GestureDetector(
+                onTap: () =>
+                    _openSocialLink(context, widget.userModel.twitter, 'X'),
+                child: Image.asset(
+                  widget.userModel.twitter == ''
+                      ? 'assets/icons/ic_x_grey.png'
+                      : 'assets/icons/ic_x.png',
+                  height: 40,
+                ),
               ),
               SizedBox(width: 9),
-              Image.asset(
-                widget.userModel.facebook == ''
-                    ? 'assets/icons/ic_facebook_grey.png'
-                    : 'assets/icons/ic_facebook.png',
-                height: 40,
+              GestureDetector(
+                onTap: () => _openSocialLink(
+                  context,
+                  widget.userModel.facebook,
+                  'Facebook',
+                ),
+                child: Image.asset(
+                  widget.userModel.facebook == ''
+                      ? 'assets/icons/ic_facebook_grey.png'
+                      : 'assets/icons/ic_facebook.png',
+                  height: 40,
+                ),
               ),
             ],
           ),

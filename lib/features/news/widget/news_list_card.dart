@@ -14,41 +14,65 @@ class NewsListCard extends ConsumerStatefulWidget {
 class _NewsListCardState extends ConsumerState<NewsListCard> {
   @override
   Widget build(BuildContext context) {
+    // Use thread if available, else fallback to top-level
+    final thread = widget.item['thread'] ?? {};
+    final title = thread['title'] ?? widget.item['title'] ?? 'No title';
+    final image = thread['main_image'] ?? widget.item['image'];
+    final publishedAt = thread['published'] ?? widget.item['published_at'];
+    final siteDomain = thread['site'] ?? widget.item['source'] ?? '';
+
+    // Favicon URL using Google S2 API
+    final faviconUrl = siteDomain.isNotEmpty
+        ? 'https://www.google.com/s2/favicons?sz=32&domain=$siteDomain'
+        : null;
+
+    final rawdDescription =
+        widget.item['highlightText'] ??
+        widget.item['highlightTitle'] ??
+        'No description';
+    final description = rawdDescription.replaceAll(RegExp(r'</?em>'), '');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 10),
         Text(
-          widget.item['title'] ?? 'No title',
+          title,
           style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 10),
         Row(
           children: [
+            if (faviconUrl != null)
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Image.network(
+                  faviconUrl,
+                  width: 20,
+                  height: 20,
+                  errorBuilder: (context, error, stackTrace) =>
+                      SizedBox(width: 20),
+                ),
+              ),
             Text(
-              widget.item['source'] ?? 'Unknown Source',
+              siteDomain,
               style: TextStyle(fontSize: 16, color: Pallete.greyColor),
             ),
             SizedBox(width: 10),
-
             Text(
-              widget.item['published_at'] != null
-                  ? timeago.format(
-                      DateTime.parse(widget.item['published_at']).toLocal(),
-                    )
+              publishedAt != null
+                  ? timeago.format(DateTime.parse(publishedAt).toLocal())
                   : '',
               style: TextStyle(fontSize: 16, color: Pallete.greyColor),
             ),
           ],
         ),
         SizedBox(height: 10),
-
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: widget.item['image'] != null
+          child: image != null
               ? Image.network(
-                  widget.item['image'],
-
+                  image,
                   fit: BoxFit.cover,
                   height: 200,
                   width: double.infinity,
@@ -62,7 +86,7 @@ class _NewsListCardState extends ConsumerState<NewsListCard> {
         ),
         SizedBox(height: 10),
         Text(
-          widget.item['description'] ?? 'No description',
+          description,
           maxLines: 6,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),

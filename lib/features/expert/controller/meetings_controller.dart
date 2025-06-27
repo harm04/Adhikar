@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:adhikar/apis/meetings_api.dart';
 import 'package:adhikar/common/failure.dart';
+import 'package:adhikar/features/admin/services/send_notification_service.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/message/controller/messaging_controller.dart';
 import 'package:adhikar/models/meetings_model.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:appwrite/models.dart';
@@ -64,7 +66,7 @@ class MeetingsController extends StateNotifier<bool> {
   //create meeting
   Future<Either<Failure, Document>> createMeeting({
     required UserModel userModel,
-    required UserModel expertUserModel, 
+    required UserModel expertUserModel,
     required String phone,
     required String transactionID,
     required BuildContext context,
@@ -86,6 +88,7 @@ class MeetingsController extends StateNotifier<bool> {
     );
 
     final res = await _meetingsAPI.createMeeting(meetingsModel);
+    //send push notification to ser and expert when meeting is created
 
     // Update user's phone in UserModel after meeting creation
     if (userModel.phone != phone) {
@@ -105,8 +108,41 @@ class MeetingsController extends StateNotifier<bool> {
             instagram: updatedUser.instagram,
             facebook: updatedUser.facebook,
             summary: updatedUser.summary,
-            
           );
+    }
+
+    // Fetch latest user and expert models to get their FCM tokens
+    final user = await ref.read(userDataByIdProvider(userModel.uid).future);
+    final expert = await ref.read(
+      userDataByIdProvider(expertUserModel.uid).future,
+    );
+
+    if (user != null && user.fcmToken.isNotEmpty) {
+      await SendNotificationService.sendNotificationUsingAPI(
+        token: user.fcmToken,
+        title: 'Meeting Created',
+        body:
+            'Your meeting with ${expertUserModel.firstName} is scheduled. The Expert will contact you within 36hrs.',
+        data: {
+          "screen": "Meetings",
+          "meetingId": res.fold((l) => '', (r) => r.$id),
+          "role": "user",
+        },
+      );
+    }
+
+    if (expert != null && expert.fcmToken.isNotEmpty) {
+      await SendNotificationService.sendNotificationUsingAPI(
+        token: expert.fcmToken,
+        title: 'New Meeting Request',
+        body:
+            'You have a new meeting request from ${userModel.firstName}. Please contact them within 24hrs.',
+        data: {
+          "screen": "Meetings",
+          "meetingId": res.fold((l) => '', (r) => r.$id),
+          "role": "expert",
+        },
+      );
     }
 
     state = false;

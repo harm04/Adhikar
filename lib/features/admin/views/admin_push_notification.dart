@@ -16,6 +16,7 @@ class AdminPushNotification extends ConsumerStatefulWidget {
 class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
   TextEditingController titleController = TextEditingController();
   TextEditingController bodyController = TextEditingController();
+  TextEditingController imageUrlController = TextEditingController();
 
   UserModel? selectedUser;
   UserModel? selectedExpert;
@@ -29,34 +30,45 @@ class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
       isLoading = true; // Set loading state to true
     });
 
+    final imageUrl = imageUrlController.text.trim();
+
+    final notificationData = {
+      "screen": "home",
+      if (imageUrl.isNotEmpty) "image": imageUrl,
+    };
+
     try {
       if (sendToAllUsers) {
         await SendNotificationService.sendNotificationToTopic(
           topic: 'all_users',
           title: titleController.text,
           body: bodyController.text,
-          data: {"screen": "home"},
+          data: notificationData,
+          imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
         );
       } else if (sendToAllExperts) {
         await SendNotificationService.sendNotificationToTopic(
           topic: 'all_experts',
           title: titleController.text,
           body: bodyController.text,
-          data: {"screen": "home"},
+          data: notificationData,
+          imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
         );
       } else if (selectedUser != null) {
         await SendNotificationService.sendNotificationUsingAPI(
           token: selectedUser!.fcmToken,
           title: titleController.text,
           body: bodyController.text,
-          data: {"screen": "home"},
+          data: notificationData,
+          imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
         );
       } else if (selectedExpert != null) {
         await SendNotificationService.sendNotificationUsingAPI(
           token: selectedExpert!.fcmToken,
           title: titleController.text,
           body: bodyController.text,
-          data: {"screen": "home"},
+          data: notificationData,
+          imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -250,6 +262,22 @@ class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
                             controller: bodyController,
                             decoration: InputDecoration(
                               labelText: 'Body',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        Text(
+                          'Image URL (optional)',
+                          style: TextStyle(fontSize: 28),
+                        ),
+                        SizedBox(height: 20),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: TextField(
+                            controller: imageUrlController,
+                            decoration: InputDecoration(
+                              labelText: 'Image URL',
                               border: OutlineInputBorder(),
                             ),
                           ),

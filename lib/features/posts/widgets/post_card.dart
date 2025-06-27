@@ -1,5 +1,8 @@
 import 'package:adhikar/common/enums/post_type_enum.dart';
+import 'package:adhikar/common/widgets/custom_button.dart';
 import 'package:adhikar/common/widgets/error.dart';
+import 'package:adhikar/common/widgets/snackbar.dart';
+import 'package:adhikar/features/admin/controllers/report_controller.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
@@ -8,6 +11,7 @@ import 'package:adhikar/features/posts/views/comment.dart';
 import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/posts_model.dart';
+import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:any_link_preview/any_link_preview.dart';
@@ -20,6 +24,152 @@ import 'package:timeago/timeago.dart' as timeago;
 class PostCard extends ConsumerWidget {
   final PostModel postmodel;
   const PostCard({super.key, required this.postmodel});
+
+  void _showReportBottomSheet(
+    BuildContext context,
+    String postId,
+    UserModel currentUser,
+    UserModel reportedUser,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Pallete.backgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        String selectedReason = '';
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Handle bar
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Pallete.greyColor,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Title
+                  Text(
+                    'Report Post',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Pallete.whiteColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Why are you reporting this post?',
+                    style: TextStyle(fontSize: 16, color: Pallete.greyColor),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Report options
+                  ..._buildReportOptions(selectedReason, (String value) {
+                    setState(() {
+                      selectedReason = value;
+                    });
+                  }),
+
+                  const SizedBox(height: 30),
+
+                  // Submit button
+                  SizedBox(
+                    width: double.infinity,
+                    child: GestureDetector(
+                      onTap: selectedReason.isEmpty
+                          ? null
+                          : () async {
+                              Navigator.pop(context);
+                              _submitReport(
+                                context,
+                                postId,
+                                selectedReason,
+                                currentUser,
+                                reportedUser,
+                              );
+                              showSnackbar(
+                                context,
+                                'Post reported successfully',
+                              );
+                            },
+                      child: CustomButton(text: 'Submit report'),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildReportOptions(
+    String selectedReason,
+    Function(String) onChanged,
+  ) {
+    final reportOptions = [
+      'Inappropriate content',
+      'Spam or misleading',
+      'Harassment or bullying',
+      'Hate speech',
+      'Violence or harmful behavior',
+      'False information',
+      'Copyright infringement',
+      'Other',
+    ];
+
+    return reportOptions.map((option) {
+      return RadioListTile<String>(
+        title: Text(
+          option,
+          style: TextStyle(color: Pallete.whiteColor, fontSize: 16),
+        ),
+        value: option,
+        groupValue: selectedReason,
+        onChanged: (String? value) {
+          if (value != null) {
+            onChanged(value);
+          }
+        },
+        activeColor: Pallete.secondaryColor,
+        contentPadding: EdgeInsets.zero,
+      );
+    }).toList();
+  }
+
+  void _submitReport(
+    BuildContext context,
+    String postId,
+    String reason,
+    UserModel currentUser,
+    UserModel reportedUser,
+  ) {
+    final ref = ProviderContainer().read(reportControllerProvider.notifier);
+    ref.report(
+      postId: postId,
+      currentUser: currentUser,
+      reason: reason,
+      reportedUser: reportedUser,
+      context: context,
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,6 +205,46 @@ class PostCard extends ConsumerWidget {
         .watch(userDataProvider(postmodel.uid))
         .when(
           data: (user) {
+            // If post is deleted by admin, show only the deletion message
+            if (postmodel.isDeletedByAdmin) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18.0,
+                  vertical: 10,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Pallete.greyColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Pallete.greyColor.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Text(
+                        'This post was deleted by the admin',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Pallete.greyColor,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Divider(
+                      color: const Color.fromARGB(255, 49, 48, 48),
+                      thickness: 0,
+                    ),
+                  ],
+                ),
+              );
+            }
+
             return Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 18.0,
@@ -382,18 +572,45 @@ class PostCard extends ConsumerWidget {
                                         Pallete.greyColor,
                                         BlendMode.srcIn,
                                       ),
-                                     
                                     );
                             },
                           ),
                           SizedBox(width: 20),
-                          SvgPicture.asset(
-                            'assets/svg/more_outline.svg',
-                            colorFilter: ColorFilter.mode(
-                              Pallete.greyColor,
-                              BlendMode.srcIn,
+                          PopupMenuButton<String>(
+                            icon: SvgPicture.asset(
+                              'assets/svg/more_outline.svg',
+                              colorFilter: ColorFilter.mode(
+                                Pallete.greyColor,
+                                BlendMode.srcIn,
+                              ),
+                              height: 22,
                             ),
-                            height: 22,
+                            onSelected: (String value) {
+                              if (value == 'report') {
+                                _showReportBottomSheet(
+                                  context,
+                                  postmodel.id,
+                                  currentUser,
+                                  user,
+                                );
+                              }
+                            },
+                            itemBuilder: (BuildContext context) => [
+                              PopupMenuItem<String>(
+                                value: 'report',
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.flag_outlined,
+                                      color: Pallete.greyColor,
+                                      size: 20,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text('Report'),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

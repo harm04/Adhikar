@@ -6,6 +6,7 @@ import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:adhikar/providers/open_chat_provider.dart'; // Import the provider
 
 class MessagingScreen extends ConsumerStatefulWidget {
   final UserModel currentUser;
@@ -25,6 +26,8 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
 
   @override
   void dispose() {
+    // Clear the open chat user ID
+    ref.read(openChatUserIdProvider.notifier).state = null;
     super.dispose();
     _controller.dispose();
   }
@@ -36,6 +39,8 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
       ref
           .read(messagingControllerProvider)
           .markMessagesAsRead(widget.currentUser.uid, widget.peerUser.uid);
+      // Set the open chat user ID
+      ref.read(openChatUserIdProvider.notifier).state = widget.peerUser.uid;
     });
   }
 

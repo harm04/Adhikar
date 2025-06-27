@@ -1,5 +1,6 @@
 import 'package:adhikar/common/widgets/custom_button.dart';
 import 'package:adhikar/common/widgets/loader.dart';
+import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/withdraw/controller/withdraw_controller.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
@@ -89,9 +90,15 @@ class _WithdrawRequestState extends ConsumerState<WithdrawRequest> {
                         ),
                         const SizedBox(width: 10),
                         GestureDetector(
-                          onTap: () => amountController.text = currentUser
-                              .credits
-                              .toString(),
+                          onTap: () {
+                            currentUser.credits == 0.0
+                                ? showSnackbar(
+                                    context,
+                                    "Your account has no credits to withdraw",
+                                  )
+                                : amountController.text = currentUser.credits
+                                      .toString();
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               color: Pallete.primaryColor,

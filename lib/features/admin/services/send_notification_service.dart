@@ -9,6 +9,7 @@ class SendNotificationService {
     required String? title,
     required String? body,
     required Map<String, dynamic>? data,
+    String? imageUrl,
   }) async {
     String serverKey = await GetServerKey().getServerKeyToken();
     String url =
@@ -18,12 +19,14 @@ class SendNotificationService {
       'Authorization': ' Bearer $serverKey',
     };
 
+    Map<String, dynamic> notification = {
+      "body": body,
+      "title": title,
+      if (imageUrl != null && imageUrl.isNotEmpty) "image": imageUrl,
+    };
+
     Map<String, dynamic> message = {
-      "message": {
-        "token": token,
-        "notification": {"body": body, "title": title},
-        "data": data,
-      },
+      "message": {"token": token, "notification": notification, "data": data},
     };
 
     final http.Response response = await http.post(
@@ -41,13 +44,13 @@ class SendNotificationService {
     }
   }
 
-  
   //send notification to a topic
   static Future<void> sendNotificationToTopic({
     required String topic,
     required String? title,
     required String? body,
     required Map<String, dynamic>? data,
+    String? imageUrl,
   }) async {
     String serverKey = await GetServerKey().getServerKeyToken();
     String url =
@@ -57,12 +60,14 @@ class SendNotificationService {
       'Authorization': ' Bearer $serverKey',
     };
 
+    Map<String, dynamic> notification = {
+      "body": body,
+      "title": title,
+      if (imageUrl != null && imageUrl.isNotEmpty) "image": imageUrl,
+    };
+
     Map<String, dynamic> message = {
-      "message": {
-        "topic": topic,
-        "notification": {"body": body, "title": title},
-        "data": data,
-      },
+      "message": {"topic": topic, "notification": notification, "data": data},
     };
 
     final http.Response response = await http.post(

@@ -4,7 +4,9 @@ import 'package:adhikar/apis/posts_api.dart';
 import 'package:adhikar/apis/storage_api.dart';
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
+import 'package:adhikar/features/admin/services/send_notification_service.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/message/controller/messaging_controller.dart';
 import 'package:adhikar/features/notification/controller/notification_controller.dart';
 import 'package:adhikar/models/notification_modal.dart';
 import 'package:adhikar/models/posts_model.dart';
@@ -265,6 +267,19 @@ class PostController extends StateNotifier<bool> {
         _ref
             .read(notificationControllerProvider.notifier)
             .createNotification(notification);
+
+        // Push notification to owner
+        final owner = await _ref.read(
+          userDataByIdProvider(parentPost.uid).future,
+        );
+        if (owner != null && owner.fcmToken.isNotEmpty) {
+          await SendNotificationService.sendNotificationUsingAPI(
+            token: owner.fcmToken,
+            title: 'New Comment',
+            body: '${user.firstName} commented on your post.',
+            data: {"screen": "notification"},
+          );
+        }
       }
 
       state = false;
@@ -328,7 +343,7 @@ class PostController extends StateNotifier<bool> {
     } else {
       likes.add(userModel.uid);
       // Optionally send notification here
-        if (postModel.uid != userModel.uid) {
+      if (postModel.uid != userModel.uid) {
         // Don't notify self
         final notification = NotificationModel(
           id: '',
@@ -343,12 +358,35 @@ class PostController extends StateNotifier<bool> {
         _ref
             .read(notificationControllerProvider.notifier)
             .createNotification(notification);
+
+        // Send push notification to post owner
+        final owner = await _ref.read(
+          userDataByIdProvider(postModel.uid).future,
+        );
+        if (owner != null && owner.fcmToken.isNotEmpty) {
+          await SendNotificationService.sendNotificationUsingAPI(
+            token: owner.fcmToken,
+            title: 'New Like',
+            body: '${userModel.firstName} liked your post.',
+            data: {"screen": "notification"},
+          );
         }
+      }
     }
     final updatedPost = postModel.copyWith(likes: likes);
     await _postAPI.likePost(updatedPost);
   }
 
+  //delete post
+  void deletePost(PostModel postModel, BuildContext context) async {
+    state = true;
+    final res = await _postAPI.deletePost(postModel.id);
+    state = false;
+    res.fold(
+      (l) => showSnackbar(context, l.message),
+      (r) => showSnackbar(context, 'Post deleted successfully'),
+    );
+  }
   //bookmark post
 
   void bookmarkPost(PostModel postModel, UserModel userModel) async {
@@ -362,13 +400,22 @@ class PostController extends StateNotifier<bool> {
     await _postAPI.bookmarkPost(userModel);
   }
 
-  // //fetch posts with more likes
-  // Future<List<PostModel>> getPostsWithMoreLikes() async {
-  //   final posts = await _postAPI.getPosts();
-  //   return posts
-  //       .map((doc) => PostModel.fromMap(doc.data))
-  //       .where((post) => post.pod != 'comment')
-  //       .toList()
-  //     ..sort((a, b) => b.likes.length.compareTo(a.likes.length));
-  // }
+  //mark post as deleted by admin
+
+  Future<void> markPostAsDeletedByAdmin(
+    String postId,
+    BuildContext context,
+  ) async {
+    state = true;
+    try {
+      // Get the post controller to update the post
+      await _postAPI.markPostAsDeletedByAdmin(postId);
+      state = false;
+      showSnackbar(context, 'Post has been marked as deleted by admin');
+    } catch (e) {
+      state = false;
+      showSnackbar(context, 'Failed to mark post as deleted: ${e.toString()}');
+    }
+  }
+
 }

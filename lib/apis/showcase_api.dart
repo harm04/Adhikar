@@ -31,9 +31,7 @@ abstract class IShowcaseAPI {
   FutureEither<Document> upvoteShowcase(ShowcaseModel showcaseModel);
   FutureEither<Document> bookmarkShowcase(UserModel userModel);
   Future<List<Document>> getComments(ShowcaseModel showcaseModel);
-  // Future<List<Document>> getUsersPost(UserModel userModel);
-
-  // Future<List<Document>> getPodsPost(String podName);
+ 
   FutureEither<Document> addCommentIdToShowcase(
     String showcaseId,
     List<String> commentIds,
@@ -99,6 +97,9 @@ class ShowcaseAPI implements IShowcaseAPI {
     }
   }
 
+
+  
+
   //bookmark post
   @override
   FutureEither<Document> bookmarkShowcase(UserModel userModel) async {
@@ -126,27 +127,7 @@ class ShowcaseAPI implements IShowcaseAPI {
     return documents.documents;
   }
 
-  // @override
-  // Future<List<Document>> getUsersPost(UserModel userModel) async {
-  //   final documents = await _db.listDocuments(
-  //     databaseId: AppwriteConstants.databaseID,
-  //     collectionId: AppwriteConstants.postCollectionID,
-  //     queries: [Query.equal('uid', userModel.uid)],
-  //   );
-
-  //   return documents.documents;
-  // }
-
-  // @override
-  // Future<List<Document>> getPodsPost(String podName) async {
-  //   final documents = await _db.listDocuments(
-  //     databaseId: AppwriteConstants.databaseID,
-  //     collectionId: AppwriteConstants.postCollectionID,
-  //     queries: [Query.equal('pod', podName)],
-  //   );
-
-  //   return documents.documents;
-  // }
+  
 
   @override
   FutureEither<Document> addCommentIdToShowcase(
@@ -188,4 +169,5 @@ class ShowcaseAPI implements IShowcaseAPI {
     );
     return ShowcaseModel.fromMap(doc.data);
   }
+
 }

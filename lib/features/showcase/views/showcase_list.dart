@@ -124,6 +124,14 @@ class _ShowcaseState extends ConsumerState<ShowcaseList> {
                                                     ),
                                                   );
                                                 }
+                                                final filteredShowcases =
+                                                    showcases
+                                                        .where(
+                                                          (s) =>
+                                                              s.tagline !=
+                                                              'comment',
+                                                        )
+                                                        .toList();
                                                 return Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -144,10 +152,11 @@ class _ShowcaseState extends ConsumerState<ShowcaseList> {
                                                       physics:
                                                           NeverScrollableScrollPhysics(),
                                                       itemCount:
-                                                          showcases.length,
+                                                          filteredShowcases
+                                                              .length,
                                                       itemBuilder: (context, index) {
                                                         final showcase =
-                                                            showcases[index];
+                                                            filteredShowcases[index];
                                                         return ShowcaseListCard(
                                                           showcase: showcase,
                                                         );
@@ -178,6 +187,14 @@ class _ShowcaseState extends ConsumerState<ShowcaseList> {
                                                     ),
                                                   );
                                                 }
+                                                final filteredShowcases =
+                                                    showcases
+                                                        .where(
+                                                          (s) =>
+                                                              s.tagline !=
+                                                              'comment',
+                                                        )
+                                                        .toList();
                                                 return Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -198,10 +215,11 @@ class _ShowcaseState extends ConsumerState<ShowcaseList> {
                                                       physics:
                                                           NeverScrollableScrollPhysics(),
                                                       itemCount:
-                                                          showcases.length,
+                                                          filteredShowcases
+                                                              .length,
                                                       itemBuilder: (context, index) {
                                                         final showcase =
-                                                            showcases[index];
+                                                            filteredShowcases[index];
                                                         return ShowcaseListCard(
                                                           showcase: showcase,
                                                         );
