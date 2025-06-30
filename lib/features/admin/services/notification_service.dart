@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/message/controller/messaging_controller.dart';
 import 'package:adhikar/features/message/views/messaging.dart';
+import 'package:adhikar/features/news/widget/news_list.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/posts/widgets/post_card.dart';
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/features/showcase/views/showcase.dart';
-import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/providers/open_chat_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +14,6 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:adhikar/features/home/views/home.dart';
 import 'package:adhikar/features/notification/views/notifications.dart';
-import 'package:adhikar/features/showcase/views/showcase_list.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -126,7 +125,6 @@ class NotificationService {
       enableLights: true,
       showBadge: true,
       enableVibration: true,
-      
     );
 
     String? imageUrl =
@@ -263,7 +261,7 @@ class NotificationService {
       } else {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Showcase not found')));
+        ).showSnackBar(const SnackBar(content: Text('Post not found')));
       }
     } else if (message.data['screen'] == 'chat') {
       final senderId = message.data['senderId'];
@@ -301,6 +299,11 @@ class NotificationService {
           ).showSnackBar(const SnackBar(content: Text('User not found')));
         }
       });
+    } else if (message.data['screen'] == 'news') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => NewsList()),
+      );
     } else {
       // Handle other screens or default action
       Navigator.push(

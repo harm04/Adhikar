@@ -1,3 +1,4 @@
+import 'package:adhikar/common/widgets/badge_icon.dart';
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/admin/services/notification_service.dart';
@@ -8,6 +9,7 @@ import 'package:adhikar/features/home/widgets/following_posts.dart';
 import 'package:adhikar/features/home/widgets/latest_posts.dart';
 import 'package:adhikar/features/home/widgets/trending_posts.dart';
 import 'package:adhikar/features/kyr/widget/kyr_list.dart';
+import 'package:adhikar/features/message/controller/messaging_controller.dart';
 import 'package:adhikar/features/message/views/conversations.dart';
 import 'package:adhikar/features/news/widget/news_list.dart';
 import 'package:adhikar/features/notification/views/notifications.dart';
@@ -38,8 +40,8 @@ class _HomePageState extends ConsumerState<HomePage>
     super.initState();
     notificationService.requestNotificationPermission();
     notificationService.getToken();
-    notificationService.firebaseInit(context,ref);
-    notificationService.backgroundNotification(context,ref);
+    notificationService.firebaseInit(context, ref);
+    notificationService.backgroundNotification(context, ref);
   }
 
   void signout() {
@@ -95,7 +97,6 @@ class _HomePageState extends ConsumerState<HomePage>
                                     children: [
                                       CircleAvatar(
                                         key: ValueKey(currentUser.profileImage),
-
                                         radius: 50,
                                         backgroundImage:
                                             currentUser.profileImage == ''
@@ -106,6 +107,34 @@ class _HomePageState extends ConsumerState<HomePage>
                                                     "${currentUser.profileImage}?timestamp=${DateTime.now().millisecondsSinceEpoch}",
                                                   )
                                                   as ImageProvider,
+                                        onBackgroundImageError:
+                                            (exception, stackTrace) {
+                                              // Handle image loading errors
+                                            },
+                                        child: currentUser.profileImage != ''
+                                            ? FutureBuilder<void>(
+                                                future: precacheImage(
+                                                  NetworkImage(
+                                                    "${currentUser.profileImage}?timestamp=${DateTime.now().millisecondsSinceEpoch}",
+                                                  ),
+                                                  context,
+                                                ),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return CircleAvatar(
+                                                      radius: 50,
+                                                      backgroundImage: AssetImage(
+                                                        ImageTheme
+                                                            .loadingPlaceholder,
+                                                      ),
+                                                    );
+                                                  }
+                                                  return SizedBox.shrink();
+                                                },
+                                              )
+                                            : null,
                                       ),
                                       SizedBox(width: 20),
                                       Expanded(
@@ -325,13 +354,37 @@ class _HomePageState extends ConsumerState<HomePage>
                           },
                           child: CircleAvatar(
                             key: ValueKey(currentUser.profileImage),
-
                             radius: 20,
                             backgroundImage: currentUser.profileImage == ''
                                 ? AssetImage(ImageTheme.defaultProfileImage)
                                 : NetworkImage(
                                     "${currentUser.profileImage}?timestamp=${DateTime.now().millisecondsSinceEpoch}",
                                   ),
+                            onBackgroundImageError: (exception, stackTrace) {
+                              // Handle image loading errors
+                            },
+                            child: currentUser.profileImage != ''
+                                ? FutureBuilder<void>(
+                                    future: precacheImage(
+                                      NetworkImage(
+                                        "${currentUser.profileImage}?timestamp=${DateTime.now().millisecondsSinceEpoch}",
+                                      ),
+                                      context,
+                                    ),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return CircleAvatar(
+                                          radius: 20,
+                                          backgroundImage: AssetImage(
+                                            ImageTheme.loadingPlaceholder,
+                                          ),
+                                        );
+                                      }
+                                      return SizedBox.shrink();
+                                    },
+                                  )
+                                : null,
                           ),
                         ),
                       ),
@@ -361,29 +414,63 @@ class _HomePageState extends ConsumerState<HomePage>
                               ),
 
                               const SizedBox(width: 22),
-                              //chat icon
-                              GestureDetector(
-                                onTap: () {
+                              //chat icon with badge
+                              Consumer(
+                                builder: (context, ref, child) {
                                   final currentUser = ref
                                       .watch(currentUserDataProvider)
-                                      .value!;
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => ConversationsListScreen(
-                                        currentUser: currentUser,
+                                      .value;
+                                  if (currentUser == null) {
+                                    return SvgPicture.asset(
+                                      'assets/svg/chat.svg',
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.white,
+                                        BlendMode.srcIn,
                                       ),
+                                      height: 30,
+                                    );
+                                  }
+
+                                  final unseenChatsAsync = ref.watch(
+                                    unseenChatsCountProvider(currentUser.uid),
+                                  );
+
+                                  return unseenChatsAsync.when(
+                                    data: (unseenCount) => BadgeIcon(
+                                      iconPath: 'assets/svg/chat.svg',
+                                      badgeCount: unseenCount,
+                                      iconHeight: 30,
+                                      iconColor: Colors.white,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                ConversationsListScreen(
+                                                  currentUser: currentUser,
+                                                ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    loading: () => SvgPicture.asset(
+                                      'assets/svg/chat.svg',
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.white,
+                                        BlendMode.srcIn,
+                                      ),
+                                      height: 30,
+                                    ),
+                                    error: (_, __) => SvgPicture.asset(
+                                      'assets/svg/chat.svg',
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.white,
+                                        BlendMode.srcIn,
+                                      ),
+                                      height: 30,
                                     ),
                                   );
                                 },
-                                child: SvgPicture.asset(
-                                  'assets/svg/chat.svg',
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.white,
-                                    BlendMode.srcIn,
-                                  ),
-                                  height: 30,
-                                ),
                               ),
                             ],
                           ),
@@ -427,9 +514,6 @@ class _HomePageState extends ConsumerState<HomePage>
 //drawer DrawerItems
 Widget drawerItems(String title, String iconPath) {
   return ListTile(
-    // onTap: () {
-    //   Navigator.pushNamed(context, '/profile');
-    // },
     title: Text(
       title,
       style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),

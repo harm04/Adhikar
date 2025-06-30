@@ -324,7 +324,11 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 9.0),
                         child: isLoading
-                            ? Loader()
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : Text(
                                 widget.userModel.uid == currentUser.uid
                                     ? '${widget.userModel.followers.length} Followers'

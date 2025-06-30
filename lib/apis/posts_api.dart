@@ -34,7 +34,7 @@ abstract class IPostAPI {
   Future<List<Document>> getComments(PostModel postModel);
   Stream<List<PostModel>> getUserPostsStream(String uid);
   Future<List<Document>> getPodsPost(String podName);
-  FutureEither<Document> deletePost(String postId);
+  FutureEither<String> deletePost(String postId);
   FutureEither<Document> addCommentIdToPost(
     String postId,
     List<String> commentIds,
@@ -103,14 +103,14 @@ class PostAPI implements IPostAPI {
 
   //delete post
   @override
-  FutureEither<Document> deletePost(String postId) async {
+  FutureEither<String> deletePost(String postId) async {
     try {
-      final document = await _db.deleteDocument(
+      await _db.deleteDocument(
         databaseId: AppwriteConstants.databaseID,
         collectionId: AppwriteConstants.postCollectionID,
         documentId: postId,
       );
-      return right(document);
+      return right('Post deleted successfully');
     } catch (e, stackTrace) {
       return left(Failure(e.toString(), stackTrace));
     }
@@ -261,15 +261,11 @@ class PostAPI implements IPostAPI {
         databaseId: AppwriteConstants.databaseID,
         collectionId: AppwriteConstants.postCollectionID,
         documentId: postId,
-        data: {
-          'isDeletedByAdmin': true,
-        },
+        data: {'isDeletedByAdmin': true},
       );
       return right(document);
     } on AppwriteException catch (e, st) {
-      return left(
-        Failure(e.message ?? 'Some unexpected error occurred', st),
-      );
+      return left(Failure(e.message ?? 'Some unexpected error occurred', st));
     } catch (e, st) {
       return left(Failure(e.toString(), st));
     }

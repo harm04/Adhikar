@@ -22,20 +22,46 @@ class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
   UserModel? selectedExpert;
   bool sendToAllUsers = false;
   bool sendToAllExperts = false;
+  String selectedScreen = 'home'; // Default to home
+
+  // Available navigation screens
+  final List<Map<String, String>> navigationScreens = [
+    {'value': 'home', 'label': 'Home Page'},
+    {'value': 'notification', 'label': 'Notifications Page'},
+    {'value': 'news', 'label': 'News Page'},
+  ];
 
   bool isLoading = false; // Loading state
 
+  // Helper method to get description text for screen types
+  String getScreenDescription(String screen) {
+    switch (screen) {
+      case 'home':
+        return 'Navigate to the main home page';
+      case 'notification':
+        return 'Navigate to the notifications page';
+      case 'news':
+        return 'Navigate to the news page';
+      default:
+        return 'Navigate to home page';
+    }
+  }
+
   void sendNotification(BuildContext context) async {
     setState(() {
-      isLoading = true; // Set loading state to true
+      isLoading = true;
     });
 
     final imageUrl = imageUrlController.text.trim();
 
-    final notificationData = {
-      "screen": "home",
+    // Build notification data based on selected screen
+    final notificationData = <String, dynamic>{
+      "screen": selectedScreen,
       if (imageUrl.isNotEmpty) "image": imageUrl,
     };
+
+    String? successMessage;
+    String? errorMessage;
 
     try {
       if (sendToAllUsers) {
@@ -71,22 +97,32 @@ class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
           imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select a target audience')),
-        );
+        errorMessage = 'Please select a target audience';
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Notification sent successfully')),
-      );
+      if (errorMessage == null) {
+        successMessage = 'Notification sent successfully';
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to send notification: $e')),
-      );
-    } finally {
-      setState(() {
-        isLoading = false; // Set loading state to false
-      });
+      errorMessage = 'Failed to send notification: $e';
+    }
+
+    // Update loading state first
+    setState(() {
+      isLoading = false;
+    });
+
+    // Then show messages after the state update is complete
+    if (mounted) {
+      if (successMessage != null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(successMessage)));
+      } else if (errorMessage != null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(errorMessage)));
+      }
     }
   }
 
@@ -237,6 +273,59 @@ class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Expert',
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        Text(
+                          'Navigation Screen',
+                          style: TextStyle(fontSize: 28),
+                        ),
+                        SizedBox(height: 20),
+                        // Select navigation screen
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: DropdownButtonFormField<String>(
+                            value: selectedScreen,
+                            hint: Text('Select Screen'),
+                            items: navigationScreens
+                                .map<DropdownMenuItem<String>>((screen) {
+                                  return DropdownMenuItem<String>(
+                                    value: screen['value'],
+                                    child: Text(screen['label']!),
+                                  );
+                                })
+                                .toList(),
+                            onChanged: (screen) {
+                              setState(() {
+                                selectedScreen = screen ?? 'home';
+                              });
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Navigation Screen',
+                              hintText: 'Where should users go when they tap?',
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        // Show description for selected screen
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.1),
+                            border: Border.all(
+                              color: Colors.blue.withOpacity(0.3),
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            getScreenDescription(selectedScreen),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.blue.shade700,
+                              fontStyle: FontStyle.italic,
                             ),
                           ),
                         ),

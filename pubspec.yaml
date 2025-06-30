@@ -64,7 +64,7 @@ dependencies:
   video_player: ^2.10.0
   flutter_native_splash: ^2.4.6
   flutter_launcher_icons: ^0.14.4
- 
+  path_provider: ^2.1.5
 
 dependency_overrides:
   flutter_web_auth_2:
@@ -93,10 +93,10 @@ flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/adhikar_app_icon.png"
-  adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "assets/images/adhikar_app_icon.png"
-  
+  image_path: 'assets/images/adhikar_app_icon.png'
+  adaptive_icon_background: '#000000'
+  adaptive_icon_foreground: 'assets/images/adhikar_app_icon.png'
+
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is
@@ -137,4 +137,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-

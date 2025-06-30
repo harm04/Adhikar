@@ -89,9 +89,13 @@ class _CommentViewState extends ConsumerState<Comment> {
                                   radius: 20,
                                   backgroundColor: Pallete.whiteColor,
                                   backgroundImage: !isAnonymous
-                                      ? AssetImage(
-                                          ImageTheme.defaultProfileImage,
-                                        )
+                                      ? currentUser.profileImage != ''
+                                            ? NetworkImage(
+                                                currentUser.profileImage,
+                                              )
+                                            : AssetImage(
+                                                ImageTheme.defaultProfileImage,
+                                              )
                                       : AssetImage(
                                           'assets/icons/anonymous.png',
                                         ),

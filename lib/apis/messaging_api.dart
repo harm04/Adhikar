@@ -170,4 +170,51 @@ class MessagingAPI {
       );
     }
   }
+
+  // Get count of unseen chats (conversations with unread messages from others)
+  Future<int> getUnseenChatsCount(String userId) async {
+    final docs = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.messagesCollectionID,
+      queries: [
+        Query.equal('receiverId', userId), // Messages received by the user
+        Query.equal('isRead', false), // Only unread messages
+        Query.orderDesc('createdAt'),
+      ],
+    );
+
+    // Group by senderId to count unique conversations with unread messages
+    final Set<String> unseenSenders = {};
+    for (final doc in docs.documents) {
+      final msg = MessageModel.fromMap(doc.data, doc.$id);
+      unseenSenders.add(msg.senderId);
+    }
+
+    return unseenSenders.length;
+  }
+
+  // Stream for unseen chats count
+  Stream<int> getUnseenChatsCountStream(String userId) async* {
+    final channel =
+        'databases.${AppwriteConstants.databaseID}.collections.${AppwriteConstants.messagesCollectionID}.documents';
+
+    Future<int> fetchUnseenCount() async {
+      return await getUnseenChatsCount(userId);
+    }
+
+    // Initial fetch
+    yield await fetchUnseenCount();
+
+    // Listen for realtime updates
+    await for (final event in _realtime.subscribe([channel]).stream) {
+      if (event.events.any(
+        (e) =>
+            e.contains('databases.*.collections.*.documents.*.create') ||
+            e.contains('databases.*.collections.*.documents.*.update') ||
+            e.contains('databases.*.collections.*.documents.*.delete'),
+      )) {
+        yield await fetchUnseenCount();
+      }
+    }
+  }
 }

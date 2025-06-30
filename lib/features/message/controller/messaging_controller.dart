@@ -66,6 +66,14 @@ class MessagingController {
   Future<void> markMessagesAsRead(String currentUserId, String peerId) async {
     await _api.markMessagesAsRead(currentUserId, peerId);
   }
+
+  Future<int> getUnseenChatsCount(String userId) {
+    return _api.getUnseenChatsCount(userId);
+  }
+
+  Stream<int> getUnseenChatsCountStream(String userId) {
+    return _api.getUnseenChatsCountStream(userId);
+  }
 }
 
 final userDataByIdProvider = FutureProvider.family<UserModel?, String>((
@@ -74,4 +82,13 @@ final userDataByIdProvider = FutureProvider.family<UserModel?, String>((
 ) async {
   // Use your existing logic to fetch user by ID
   return ref.read(authControllerProvider.notifier).getUserData(userId);
+});
+
+final unseenChatsCountProvider = StreamProvider.family<int, String>((
+  ref,
+  userId,
+) {
+  return ref
+      .read(messagingControllerProvider)
+      .getUnseenChatsCountStream(userId);
 });

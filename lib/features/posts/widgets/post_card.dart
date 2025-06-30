@@ -275,6 +275,31 @@ class PostCard extends ConsumerWidget {
                               : user.profileImage == ''
                               ? AssetImage(ImageTheme.defaultProfileImage)
                               : NetworkImage(user.profileImage),
+                          onBackgroundImageError: (exception, stackTrace) {
+                            // Handle image loading errors
+                          },
+                          child:
+                              !postmodel.isAnonymous && user.profileImage != ''
+                              ? FutureBuilder<void>(
+                                  future: precacheImage(
+                                    NetworkImage(user.profileImage),
+                                    context,
+                                  ),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return CircleAvatar(
+                                        radius: 28,
+                                        backgroundColor: Pallete.whiteColor,
+                                        backgroundImage: AssetImage(
+                                          ImageTheme.loadingPlaceholder,
+                                        ),
+                                      );
+                                    }
+                                    return SizedBox.shrink();
+                                  },
+                                )
+                              : null,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -594,22 +619,42 @@ class PostCard extends ConsumerWidget {
                                   user,
                                 );
                               }
+                              if (value == 'delete') {
+                                ref
+                                    .read(postControllerProvider.notifier)
+                                    .deletePost(postmodel, context);
+                              }
                             },
                             itemBuilder: (BuildContext context) => [
-                              PopupMenuItem<String>(
-                                value: 'report',
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.flag_outlined,
-                                      color: Pallete.greyColor,
-                                      size: 20,
+                              postmodel.uid == currentUser.uid
+                                  ? PopupMenuItem<String>(
+                                      value: 'delete',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.delete_outline,
+                                            color: Pallete.greyColor,
+                                            size: 20,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text('Delete'),
+                                        ],
+                                      ),
+                                    )
+                                  : PopupMenuItem<String>(
+                                      value: 'report',
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.flag_outlined,
+                                            color: Pallete.greyColor,
+                                            size: 20,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text('Report'),
+                                        ],
+                                      ),
                                     ),
-                                    SizedBox(width: 8),
-                                    Text('Report'),
-                                  ],
-                                ),
-                              ),
                             ],
                           ),
                         ],

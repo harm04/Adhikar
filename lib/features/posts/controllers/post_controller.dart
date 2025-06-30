@@ -384,7 +384,7 @@ class PostController extends StateNotifier<bool> {
     state = false;
     res.fold(
       (l) => showSnackbar(context, l.message),
-      (r) => showSnackbar(context, 'Post deleted successfully'),
+      (r) => showSnackbar(context, r),
     );
   }
   //bookmark post
@@ -417,5 +417,4 @@ class PostController extends StateNotifier<bool> {
       showSnackbar(context, 'Failed to mark post as deleted: ${e.toString()}');
     }
   }
-
 }
