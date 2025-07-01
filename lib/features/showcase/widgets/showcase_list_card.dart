@@ -1,3 +1,4 @@
+import 'package:adhikar/common/widgets/fullscreen_image_viewer.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/features/showcase/views/showcase.dart';
@@ -33,7 +34,7 @@ class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
           ),
         );
         // Refresh the showcases list after returning from detail
-        ref.refresh(getShowcaseProvider);
+        final _ = ref.refresh(getShowcaseProvider);
       },
       child: Card(
         color: Pallete.cardColor,
@@ -49,28 +50,34 @@ class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(6),
-                      child: widget.showcase.logoImage == ''
-                          ? Image.asset(
-                              'assets/images/logo.png',
-                              width: 70,
-                              height: 70,
-                              fit: BoxFit.cover,
-                            )
-                          : FadeInImage.assetNetwork(
-                              placeholder: ImageTheme.defaultAdhikarLogo,
-                              image: widget.showcase.logoImage,
-                              fit: BoxFit.cover,
-                              width: 70,
-                              height: 70,
-                              imageErrorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  ImageTheme.defaultProfileImage,
-                                  fit: BoxFit.cover,
-                                  width: 70,
-                                  height: 70,
-                                );
-                              },
-                            ),
+                      child: FullscreenImageViewer(
+                        imageUrl: widget.showcase.logoImage.isEmpty
+                            ? null
+                            : widget.showcase.logoImage,
+                        child: widget.showcase.logoImage == ''
+                            ? Image.asset(
+                                'assets/images/logo.png',
+                                width: 70,
+                                height: 70,
+                                fit: BoxFit.cover,
+                              )
+                            : FadeInImage.assetNetwork(
+                                placeholder: ImageTheme.defaultAdhikarLogo,
+                                image: widget.showcase.logoImage,
+                                fit: BoxFit.cover,
+                                width: 70,
+                                height: 70,
+                                imageErrorBuilder:
+                                    (context, error, stackTrace) {
+                                      return Image.asset(
+                                        ImageTheme.defaultProfileImage,
+                                        fit: BoxFit.cover,
+                                        width: 70,
+                                        height: 70,
+                                      );
+                                    },
+                              ),
+                      ),
                     ),
                     SizedBox(width: 16),
                     Expanded(

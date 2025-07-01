@@ -1,6 +1,7 @@
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:adhikar/common/widgets/custom_button.dart';
 import 'package:adhikar/common/widgets/error.dart';
+import 'package:adhikar/common/widgets/fullscreen_image_viewer.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/admin/controllers/report_controller.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
@@ -453,17 +454,21 @@ class PostCard extends ConsumerWidget {
                               itemBuilder: (context, index) {
                                 return ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
-                                  child: FadeInImage.assetNetwork(
-                                    placeholder: ImageTheme.defaultAdhikarLogo,
-                                    image: postmodel.images[index],
-                                    fit: BoxFit.cover,
-                                    imageErrorBuilder:
-                                        (context, error, stackTrace) {
-                                          return Image.asset(
-                                            ImageTheme.defaultAdhikarLogo,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
+                                  child: FullscreenImageViewer(
+                                    imageUrl: postmodel.images[index],
+                                    child: FadeInImage.assetNetwork(
+                                      placeholder:
+                                          ImageTheme.defaultAdhikarLogo,
+                                      image: postmodel.images[index],
+                                      fit: BoxFit.cover,
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) {
+                                            return Image.asset(
+                                              ImageTheme.defaultAdhikarLogo,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                    ),
                                   ),
                                 );
                               },

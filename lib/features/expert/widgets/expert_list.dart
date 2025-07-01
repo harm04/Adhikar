@@ -98,19 +98,17 @@ class _ExpertListState extends ConsumerState<ExpertList> {
                   return const Center(child: Text('No experts available'));
                 }
 
-                return Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.49,
-                    ),
-                    itemCount: experts.length,
-                    itemBuilder: (context, index) {
-                      final expert = experts[index];
-                      return ExpertListCard(expertUserModel: expert);
-                    },
+                return GridView.builder(
+                 
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.49,
                   ),
+                  itemCount: experts.length,
+                  itemBuilder: (context, index) {
+                    final expert = experts[index];
+                    return ExpertListCard(expertUserModel: expert);
+                  },
                 );
               },
               loading: () => Loader(),

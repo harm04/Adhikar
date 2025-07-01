@@ -1,5 +1,4 @@
 import 'package:adhikar/common/widgets/error.dart';
-import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/meetings_controller.dart';
@@ -71,14 +70,27 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              expertdata.profileImage.isNotEmpty
-                                  ? expertdata.profileImage
-                                  : ImageTheme.defaultProfileImage,
-                              height: 120,
-                              width: 120,
-                              fit: BoxFit.cover,
-                            ),
+                            child: expertdata.profileImage.isNotEmpty
+                                ? Image.network(
+                                    expertdata.profileImage,
+                                    height: 120,
+                                    width: 120,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        ImageTheme.defaultProfileImage,
+                                        height: 120,
+                                        width: 120,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  )
+                                : Image.asset(
+                                    ImageTheme.defaultProfileImage,
+                                    height: 120,
+                                    width: 120,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                           SizedBox(width: 15),
                           Expanded(
@@ -245,14 +257,27 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
-                          child: Image.network(
-                            clientData.profileImage.isNotEmpty
-                                ? clientData.profileImage
-                                : ImageTheme.defaultProfileImage,
-                            height: 120,
-                            width: 120,
-                            fit: BoxFit.cover,
-                          ),
+                          child: clientData.profileImage.isNotEmpty
+                              ? Image.network(
+                                  clientData.profileImage,
+                                  height: 120,
+                                  width: 120,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      ImageTheme.defaultProfileImage,
+                                      height: 120,
+                                      width: 120,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  ImageTheme.defaultProfileImage,
+                                  height: 120,
+                                  width: 120,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                         const SizedBox(width: 15),
                         Expanded(
@@ -281,11 +306,15 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                     ),
                                   ),
                                   const SizedBox(width: 5),
-                                  Text(
-                                    clientData.phone,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Pallete.secondaryColor,
+                                  Expanded(
+                                    child: Text(
+                                      clientData.phone,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Pallete.secondaryColor,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ),
                                 ],
@@ -295,9 +324,13 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                 children: [
                                   const Text('Booked: '),
                                   const SizedBox(width: 5),
-                                  Text(
-                                    timeago.format(
-                                      widget.meetingsModel.createdAt,
+                                  Expanded(
+                                    child: Text(
+                                      timeago.format(
+                                        widget.meetingsModel.createdAt,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ),
                                 ],
@@ -446,11 +479,12 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                       ],
                     ),
                   ),
-                ),)
-              );
-            },
-            error: (error, st) => ErrorText(error: error.toString()),
-            loading: () => SizedBox(),
-          );
+                ),
+              ),
+            );
+          },
+          error: (error, st) => ErrorText(error: error.toString()),
+          loading: () => SizedBox(),
+        );
   }
 }

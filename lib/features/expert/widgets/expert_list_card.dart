@@ -16,146 +16,152 @@ class ExpertListCard extends ConsumerStatefulWidget {
 class _ExpertListCardState extends ConsumerState<ExpertListCard> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        color: Pallete.cardColor,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min, // Let content dictate height
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1.2, // Keeps image proportional on all screens
-                    child: Card(
-                      color: Pallete.cardColor,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(3.0),
-                        child: Image.network(
-                          widget.expertUserModel.profileImage,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                color: Colors.grey[300],
-                                child: const Icon(
-                                  Icons.person,
-                                  size: 60,
-                                  color: Colors.grey,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: Pallete.cardColor,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // Let content dictate height
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AspectRatio(
+                      aspectRatio:
+                          1.2, // Keeps image proportional on all screens
+                      child: Card(
+                        color: Pallete.cardColor,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(3.0),
+                          child: Image.network(
+                            widget.expertUserModel.profileImage,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                                  color: Colors.grey[300],
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 60,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                              ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 7),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                    const SizedBox(height: 7),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 7.0, right: 7),
-                        child: SvgPicture.asset(
-                          'assets/svg/verified.svg',
-                          height: 20,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 7.0, right: 7),
+                          child: SvgPicture.asset(
+                            'assets/svg/verified.svg',
+                            height: 20,
+                            colorFilter: ColorFilter.mode(
+                              Pallete.secondaryColor,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/svg/location.svg',
+                          width: 18,
+                          height: 18,
                           colorFilter: ColorFilter.mode(
-                            Pallete.secondaryColor,
+                            Pallete.greyColor,
                             BlendMode.srcIn,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/svg/location.svg',
-                        width: 18,
-                        height: 18,
-                        colorFilter: ColorFilter.mode(
-                          Pallete.greyColor,
-                          BlendMode.srcIn,
+                        const SizedBox(width: 5),
+                        Expanded(
+                          child: Text(
+                            widget.expertUserModel.state,
+                            style: TextStyle(color: Pallete.greyColor),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 5),
-                      Expanded(
-                        child: Text(
-                          widget.expertUserModel.state,
-                          style: TextStyle(color: Pallete.greyColor),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Flexible(
-                    child: Text(
-                      widget.expertUserModel.description,
-                      maxLines: widget.expertUserModel.tags.isEmpty ? 4 : 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  if (widget.expertUserModel.tags.isNotEmpty)
-                    Wrap(
-                      spacing: 6,
-                      children: [
-                        Chip(label: Text(widget.expertUserModel.tags.first)),
                       ],
                     ),
-                  const SizedBox(height: 8),
-                ],
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              height: 38,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Pallete.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return ExpertDetails(expertUserModel: widget.expertUserModel);
-                      },
+                    const SizedBox(height: 8),
+                    Flexible(
+                      child: Text(
+                        widget.expertUserModel.description,
+                        maxLines: widget.expertUserModel.tags.isEmpty ? 4 : 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 14),
+                      ),
                     ),
-                  );
-                },
-                child: const Text(
-                  'View Details',
-                  style: TextStyle(
-                    color: Pallete.secondaryColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    const SizedBox(height: 8),
+                    if (widget.expertUserModel.tags.isNotEmpty)
+                      Wrap(
+                        spacing: 6,
+                        children: [
+                          Chip(label: Text(widget.expertUserModel.tags.first)),
+                        ],
+                      ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                height: 38,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Pallete.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ExpertDetails(
+                            expertUserModel: widget.expertUserModel,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'View Details',
+                    style: TextStyle(
+                      color: Pallete.secondaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 10),
-          ],
+              SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
     );

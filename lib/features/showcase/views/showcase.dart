@@ -1,5 +1,6 @@
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:adhikar/common/widgets/error.dart';
+import 'package:adhikar/common/widgets/fullscreen_image_viewer.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/posts/widgets/carousel.dart';
@@ -46,10 +47,18 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                 fit: StackFit.expand,
                 children: [
                   widget.showcaseModel.bannerImage == ''
-                      ? Image.asset('assets/images/logo.png', fit: BoxFit.cover)
-                      : Image.network(
-                          widget.showcaseModel.bannerImage,
-                          fit: BoxFit.cover,
+                      ? FullscreenImageViewer(
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : FullscreenImageViewer(
+                          imageUrl: widget.showcaseModel.bannerImage,
+                          child: Image.network(
+                            widget.showcaseModel.bannerImage,
+                            fit: BoxFit.cover,
+                          ),
                         ),
 
                   //back arrow
@@ -188,19 +197,24 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(6),
-                              child: widget.showcaseModel.logoImage == ''
-                                  ? Image.asset(
-                                      'assets/images/logo.png',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.network(
-                                      widget.showcaseModel.logoImage,
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
+                              child: FullscreenImageViewer(
+                                imageUrl: widget.showcaseModel.logoImage.isEmpty
+                                    ? null
+                                    : widget.showcaseModel.logoImage,
+                                child: widget.showcaseModel.logoImage == ''
+                                    ? Image.asset(
+                                        'assets/images/logo.png',
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.network(
+                                        widget.showcaseModel.logoImage,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
                             ),
                             SizedBox(width: 18),
                             // Showcase title and tagline
@@ -378,9 +392,13 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                               itemBuilder: (context, index) {
                                 return ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    widget.showcaseModel.images[index],
-                                    fit: BoxFit.cover,
+                                  child: FullscreenImageViewer(
+                                    imageUrl:
+                                        widget.showcaseModel.images[index],
+                                    child: Image.network(
+                                      widget.showcaseModel.images[index],
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 );
                               },

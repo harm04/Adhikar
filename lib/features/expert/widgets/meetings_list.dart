@@ -1,4 +1,3 @@
-import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/meetings_controller.dart';

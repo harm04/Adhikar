@@ -6,6 +6,7 @@ import 'package:adhikar/apis/user_api.dart';
 import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/admin/services/notification_service.dart';
+import 'package:adhikar/features/admin/services/send_notification_service.dart';
 import 'package:adhikar/features/auth/views/signin.dart';
 import 'package:adhikar/features/notification/controller/notification_controller.dart';
 import 'package:adhikar/models/notification_modal.dart';
@@ -65,7 +66,9 @@ final usersCountProvider = FutureProvider.autoDispose<int>((ref) async {
   return users.length;
 });
 
-final allUsersProvider = FutureProvider.autoDispose<List<UserModel>>((ref) async {
+final allUsersProvider = FutureProvider.autoDispose<List<UserModel>>((
+  ref,
+) async {
   final userAPI = ref.watch(userAPIProvider);
   final users = await userAPI.getUsers(); // List<Document>
   return users.map((doc) => UserModel.fromMap(doc.data)).toList();
@@ -76,7 +79,6 @@ class AuthController extends StateNotifier<bool> {
   final UserAPI _userAPI;
   final StorageApi _storageAPI;
 
-
   AuthController({
     required AuthAPI authAPI,
     required UserAPI userAPI,
@@ -85,18 +87,19 @@ class AuthController extends StateNotifier<bool> {
   }) : _authAPI = authAPI,
        _storageAPI = storageApi,
        _userAPI = userAPI,
-    
+
        super(false);
 
   // Subscribe to topics based on user type
-void _subscribeToTopics(String userType) {
-  if (userType == 'User') {
-    FirebaseMessaging.instance.subscribeToTopic('all_users');
-  } else if (userType == 'Expert') {
-    FirebaseMessaging.instance.subscribeToTopic('all_experts');
-    FirebaseMessaging.instance.subscribeToTopic('all_users');
+  void _subscribeToTopics(String userType) {
+    if (userType == 'User') {
+      FirebaseMessaging.instance.subscribeToTopic('all_users');
+    } else if (userType == 'Expert') {
+      FirebaseMessaging.instance.subscribeToTopic('all_experts');
+      FirebaseMessaging.instance.subscribeToTopic('all_users');
+    }
   }
-}
+
   //signup
   void signUp({
     required String email,
@@ -157,7 +160,7 @@ void _subscribeToTopics(String userType) {
 
       final res2 = await _userAPI.saveUserData(userModel);
       res2.fold((l) => showSnackbar(context, l.message), (r) async {
-         _subscribeToTopics(userModel.userType);
+        _subscribeToTopics(userModel.userType);
         ref.invalidate(currentUserAccountProvider);
         ref.invalidate(currentUserDataProvider);
         ref.invalidate(userDataProvider(userModel.uid));
@@ -192,7 +195,7 @@ void _subscribeToTopics(String userType) {
         return;
       }
       final userModel = await getUserData(user.$id);
-       _subscribeToTopics(userModel.userType);
+      _subscribeToTopics(userModel.userType);
 
       ref.invalidate(currentUserAccountProvider);
       ref.invalidate(currentUserDataProvider);
@@ -246,7 +249,7 @@ void _subscribeToTopics(String userType) {
 
     res.fold((l) => showSnackbar(context, l.message), (r) async {
       final res2 = await _userAPI.addToFollowing(currentUser);
-      res2.fold((l) => showSnackbar(context, l.message), (r) {
+      res2.fold((l) => showSnackbar(context, l.message), (r) async {
         // Send notification only if followed (not unfollowed) and not self
         if (isFollow && userModel.uid != currentUser.uid) {
           final notification = NotificationModel(
@@ -262,6 +265,16 @@ void _subscribeToTopics(String userType) {
           ref
               .read(notificationControllerProvider.notifier)
               .createNotification(notification);
+
+          // Send push notification to the user being followed
+          if (userModel.fcmToken.isNotEmpty) {
+            await SendNotificationService.sendNotificationUsingAPI(
+              token: userModel.fcmToken,
+              title: 'New Follower',
+              body: '${currentUser.firstName} started following you.',
+              data: {"screen": "notification"},
+            );
+          }
         }
       });
       null;
@@ -438,10 +451,7 @@ void _subscribeToTopics(String userType) {
     return user;
   }
 
-  void updateUserCredits({
-  required String uid,
-  required double credits,
-}) async {
-  await _userAPI.updateUserCredits(uid, credits);
-}
+  void updateUserCredits({required String uid, required double credits}) async {
+    await _userAPI.updateUserCredits(uid, credits);
+  }
 }

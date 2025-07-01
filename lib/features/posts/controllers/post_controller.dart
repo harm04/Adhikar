@@ -342,6 +342,7 @@ class PostController extends StateNotifier<bool> {
       likes.remove(userModel.uid);
     } else {
       likes.add(userModel.uid);
+
       // Optionally send notification here
       if (postModel.uid != userModel.uid) {
         // Don't notify self
@@ -363,6 +364,7 @@ class PostController extends StateNotifier<bool> {
         final owner = await _ref.read(
           userDataByIdProvider(postModel.uid).future,
         );
+
         if (owner != null && owner.fcmToken.isNotEmpty) {
           await SendNotificationService.sendNotificationUsingAPI(
             token: owner.fcmToken,
