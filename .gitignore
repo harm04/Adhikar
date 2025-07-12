@@ -17,6 +17,7 @@ firebase.json
 lib/features/admin/services/get_server_key.dart
 android/app/upload-keystore.jks
 build/web/index.html
+android/app/src/main/AndroidManifest.xml
 
 # IntelliJ related
 *.iml

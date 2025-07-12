@@ -98,6 +98,7 @@ class _AddEducationState extends ConsumerState<AddEducation> {
               SizedBox(height: 5),
               CustomTextfield(
                 keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.sentences,
 
                 controller: degreeController,
                 hintText: 'Degree',
@@ -111,6 +112,7 @@ class _AddEducationState extends ConsumerState<AddEducation> {
               SizedBox(height: 5),
               CustomTextfield(
                 keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.sentences,
                 controller: streamController,
                 hintText: 'Stream',
                 obsecureText: false,
@@ -123,6 +125,7 @@ class _AddEducationState extends ConsumerState<AddEducation> {
               SizedBox(height: 5),
               CustomTextfield(
                 keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.sentences,
                 controller: universityController,
                 hintText: 'University',
                 obsecureText: false,

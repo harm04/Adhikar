@@ -1,7 +1,7 @@
 import 'package:adhikar/common/enums/post_type_enum.dart';
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
-
+import 'package:adhikar/features/posts/controllers/hybrid_likes_controller.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
@@ -15,9 +15,7 @@ import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-
 import 'package:timeago/timeago.dart' as timeago;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:like_button/like_button.dart';
@@ -47,16 +45,14 @@ class _CommentViewState extends ConsumerState<Comment> {
     if (currentUser == null) {
       return const SizedBox.shrink();
     }
-    // final commentsAsyncValue = ref.watch(getCommentsProvider(widget.postModel));
+
     return ref
         .watch(userDataProvider(widget.postModel.uid))
         .when(
           data: (user) {
             return Scaffold(
               resizeToAvoidBottomInset: true,
-
               appBar: AppBar(title: Text('Comments')),
-              //bottom nav bar
               bottomNavigationBar: Padding(
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -94,8 +90,10 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                 currentUser.profileImage,
                                               )
                                             : AssetImage(
-                                                ImageTheme.defaultProfileImage,
-                                              )
+                                                    ImageTheme
+                                                        .defaultProfileImage,
+                                                  )
+                                                  as ImageProvider
                                       : AssetImage(
                                           'assets/icons/anonymous.png',
                                         ),
@@ -132,7 +130,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                               ),
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.done,
-                              autofocus: true, // Auto-focus when tapping
+                              autofocus: true,
                             ),
                           ),
                         ),
@@ -157,7 +155,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                                             .shareComment(
                                               text: commentController.text,
                                               isAnonymous: isAnonymous,
-
                                               pod: 'comment',
                                               context: context,
                                               commentedTo: widget.postModel.id,
@@ -167,7 +164,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                                           getCommentsProvider(widget.postModel),
                                         );
                                       }
-                                    : null, // disables the button if empty
+                                    : null,
                                 child: Text(
                                   'Post',
                                   style: TextStyle(color: Pallete.whiteColor),
@@ -181,7 +178,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                   ),
                 ),
               ),
-
               body: SingleChildScrollView(
                 child: SafeArea(
                   child: Padding(
@@ -193,11 +189,9 @@ class _CommentViewState extends ConsumerState<Comment> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 10),
-
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            //profile image
                             GestureDetector(
                               onTap: () => widget.postModel.isAnonymous
                                   ? SizedBox()
@@ -215,10 +209,12 @@ class _CommentViewState extends ConsumerState<Comment> {
                                 backgroundImage: widget.postModel.isAnonymous
                                     ? AssetImage('assets/icons/anonymous.png')
                                     : (user.profileImage == ''
-                                          ? AssetImage(
-                                              ImageTheme.defaultProfileImage,
-                                            )
-                                          : NetworkImage(user.profileImage)),
+                                              ? AssetImage(
+                                                  ImageTheme
+                                                      .defaultProfileImage,
+                                                )
+                                              : NetworkImage(user.profileImage))
+                                          as ImageProvider,
                               ),
                             ),
                             SizedBox(width: 10),
@@ -228,7 +224,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                                 children: [
                                   Row(
                                     children: [
-                                      //username
                                       GestureDetector(
                                         onTap: () =>
                                             widget.postModel.isAnonymous
@@ -279,7 +274,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                                         ),
                                       ),
                                       SizedBox(width: 5),
-                                      //time
                                       Text(
                                         ' . ${timeago.format(widget.postModel.createdAt, locale: 'en_short')}',
                                         style: TextStyle(
@@ -289,7 +283,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                                       ),
                                     ],
                                   ),
-                                  //bio
                                   Text(
                                     widget.postModel.isAnonymous
                                         ? 'Anonymous User'
@@ -306,7 +299,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                                 ],
                               ),
                             ),
-                            //pod
                             GestureDetector(
                               onTap: () => Navigator.push(
                                 context,
@@ -324,7 +316,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                           ],
                         ),
                         SizedBox(height: 10),
-                        //text content
+
                         LayoutBuilder(
                           builder: (context, constraints) {
                             return SizedBox(
@@ -338,7 +330,6 @@ class _CommentViewState extends ConsumerState<Comment> {
 
                         SizedBox(height: 5),
 
-                        //image
                         if (widget.postModel.type == PostType.image)
                           widget.postModel.images.length <= 4
                               ? Padding(
@@ -384,8 +375,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                                 ),
                         if (widget.postModel.link.isNotEmpty) ...[
                           SizedBox(height: 4),
-
-                          //link preview
                           AnyLinkPreview(
                             link: widget.postModel.link.toString().replaceAll(
                               RegExp(r'[\[\]]'),
@@ -395,7 +384,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                           ),
                         ],
                         SizedBox(height: 20),
-                        //date and time
+
                         Row(
                           children: [
                             Text(
@@ -408,7 +397,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            //am,pm
                             Text(
                               ' . ',
                               style: TextStyle(
@@ -435,39 +423,26 @@ class _CommentViewState extends ConsumerState<Comment> {
                           thickness: 0,
                         ),
 
-                        //like,comment,share,more
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Consumer(
                               builder: (context, ref, _) {
-                                final postStream = ref.watch(
-                                  postStreamProvider(widget.postModel.id),
+                                final hybridLikesController = ref.watch(
+                                  hybridLikesControllerProvider,
                                 );
-                                return postStream.when(
-                                  data: (livePost) => Text(
-                                    '${livePost.likes.length} likes',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Pallete.greyColor,
-                                    ),
-                                  ),
-                                  loading: () => Text(
-                                    '${widget.postModel.likes.length} likes',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Pallete.greyColor,
-                                    ),
-                                  ),
-                                  error: (e, st) => Text(
-                                    '${widget.postModel.likes.length} likes',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Pallete.greyColor,
-                                    ),
+                                hybridLikesController.initPostLikes(
+                                  widget.postModel,
+                                );
+                                final likeCount = hybridLikesController
+                                    .getLikeCount(widget.postModel.id);
+
+                                return Text(
+                                  '$likeCount likes',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Pallete.greyColor,
                                   ),
                                 );
                               },
@@ -515,36 +490,50 @@ class _CommentViewState extends ConsumerState<Comment> {
                                 ),
                                 SizedBox(width: 25),
 
-                                LikeButton(
-                                  isLiked: widget.postModel.likes.contains(
-                                    currentUser.uid,
-                                  ),
-                                  size: 28,
-                                  onTap: (isLiked) async {
-                                    ref
-                                        .read(postControllerProvider.notifier)
-                                        .likePost(
-                                          widget.postModel,
-                                          currentUser,
+                                Consumer(
+                                  builder: (context, ref, _) {
+                                    final hybridLikesController = ref.watch(
+                                      hybridLikesControllerProvider,
+                                    );
+                                    hybridLikesController.initPostLikes(
+                                      widget.postModel,
+                                    );
+                                    final isLiked = hybridLikesController
+                                        .isLiked(
+                                          widget.postModel.id,
+                                          currentUser.uid,
                                         );
-                                    return !isLiked;
-                                  },
-                                  likeBuilder: (isLiked) {
-                                    return isLiked
-                                        ? SvgPicture.asset(
-                                            'assets/svg/like_filled.svg',
-                                            colorFilter: ColorFilter.mode(
-                                              Pallete.secondaryColor,
-                                              BlendMode.srcIn,
-                                            ),
-                                          )
-                                        : SvgPicture.asset(
-                                            'assets/svg/like_outline.svg',
-                                            colorFilter: ColorFilter.mode(
-                                              Pallete.greyColor,
-                                              BlendMode.srcIn,
-                                            ),
-                                          );
+
+                                    return LikeButton(
+                                      isLiked: isLiked,
+                                      size: 28,
+                                      onTap: (isLiked) async {
+                                        final newLikeState =
+                                            await hybridLikesController
+                                                .toggleLike(
+                                                  widget.postModel,
+                                                  currentUser,
+                                                );
+                                        return newLikeState;
+                                      },
+                                      likeBuilder: (isLiked) {
+                                        return isLiked
+                                            ? SvgPicture.asset(
+                                                'assets/svg/like_filled.svg',
+                                                colorFilter: ColorFilter.mode(
+                                                  Pallete.secondaryColor,
+                                                  BlendMode.srcIn,
+                                                ),
+                                              )
+                                            : SvgPicture.asset(
+                                                'assets/svg/like_outline.svg',
+                                                colorFilter: ColorFilter.mode(
+                                                  Pallete.greyColor,
+                                                  BlendMode.srcIn,
+                                                ),
+                                              );
+                                      },
+                                    );
                                   },
                                 ),
                                 SizedBox(width: 25),
@@ -565,7 +554,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                           thickness: 0,
                         ),
 
-                        //replies
                         SizedBox(height: 15),
                         ref
                             .watch(getCommentsProvider(widget.postModel))
@@ -579,7 +567,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                               ),
                               loading: () => Text(
                                 'Loading replies...',
-
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -604,13 +591,12 @@ class _CommentViewState extends ConsumerState<Comment> {
                                   itemCount: comments.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     final commentPost = comments[index];
-
                                     return ref
                                         .watch(
                                           userDataProvider(commentPost.uid),
                                         )
                                         .when(
-                                          data: (user) {
+                                          data: (commentUser) {
                                             return Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -619,7 +605,6 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    //profile image
                                                     GestureDetector(
                                                       onTap: () =>
                                                           commentPost
@@ -628,12 +613,11 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                           : Navigator.push(
                                                               context,
                                                               MaterialPageRoute(
-                                                                builder: (context) {
-                                                                  return ProfileView(
-                                                                    userModel:
-                                                                        user,
-                                                                  );
-                                                                },
+                                                                builder: (context) =>
+                                                                    ProfileView(
+                                                                      userModel:
+                                                                          commentUser,
+                                                                    ),
                                                               ),
                                                             ),
                                                       child: CircleAvatar(
@@ -646,15 +630,18 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                             ? AssetImage(
                                                                 'assets/icons/anonymous.png',
                                                               )
-                                                            : user.profileImage ==
+                                                            : commentUser
+                                                                      .profileImage ==
                                                                   ''
                                                             ? AssetImage(
                                                                 ImageTheme
                                                                     .defaultProfileImage,
                                                               )
                                                             : NetworkImage(
-                                                                user.profileImage,
-                                                              ),
+                                                                    commentUser
+                                                                        .profileImage,
+                                                                  )
+                                                                  as ImageProvider,
                                                       ),
                                                     ),
                                                     SizedBox(width: 10),
@@ -666,65 +653,23 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                         children: [
                                                           Row(
                                                             children: [
-                                                              //username
-                                                              GestureDetector(
-                                                                onTap: () =>
-                                                                    commentPost
+                                                              Text(
+                                                                commentPost
                                                                         .isAnonymous
-                                                                    ? SizedBox()
-                                                                    : Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                          builder:
-                                                                              (
-                                                                                context,
-                                                                              ) {
-                                                                                return ProfileView(
-                                                                                  userModel: user,
-                                                                                );
-                                                                              },
-                                                                        ),
-                                                                      ),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Text(
-                                                                      commentPost
-                                                                              .isAnonymous
-                                                                          ? 'Anonymous'
-                                                                          : '${user.firstName} ${user.lastName}',
-                                                                      style: TextStyle(
-                                                                        fontSize:
-                                                                            20,
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                      ),
-                                                                    ),
-                                                                    user.userType ==
-                                                                                'Expert' &&
-                                                                            !commentPost.isAnonymous
-                                                                        ? Padding(
-                                                                            padding: const EdgeInsets.only(
-                                                                              left: 7.0,
-                                                                            ),
-                                                                            child: SvgPicture.asset(
-                                                                              'assets/svg/verified.svg',
-                                                                              height: 20,
-                                                                              colorFilter: ColorFilter.mode(
-                                                                                Pallete.secondaryColor,
-                                                                                BlendMode.srcIn,
-                                                                              ),
-                                                                            ),
-                                                                          )
-                                                                        : SizedBox(),
-                                                                  ],
+                                                                    ? 'Anonymous'
+                                                                    : '${commentUser.firstName} ${commentUser.lastName}',
+                                                                style: TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
                                                               ),
                                                               SizedBox(
                                                                 width: 5,
                                                               ),
-                                                              //time
                                                               Text(
-                                                                ' . ${timeago.format(commentPost.createdAt, locale: 'en_short')}',
+                                                                ' · ${timeago.format(commentPost.createdAt, locale: 'en_short')}',
                                                                 style: TextStyle(
                                                                   fontSize: 14,
                                                                   color: Pallete
@@ -733,14 +678,16 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                               ),
                                                             ],
                                                           ),
-                                                          //bio
                                                           Text(
                                                             commentPost
                                                                     .isAnonymous
                                                                 ? 'Anonymous Post'
-                                                                : user.bio == ''
+                                                                : commentUser
+                                                                          .bio ==
+                                                                      ''
                                                                 ? 'Adhikar user'
-                                                                : '${user.bio}',
+                                                                : commentUser
+                                                                      .bio,
                                                             maxLines: 1,
                                                             overflow:
                                                                 TextOverflow
@@ -756,12 +703,10 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                     ),
                                                   ],
                                                 ),
-
                                                 Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    //hashtags
                                                     SizedBox(height: 10),
                                                     Row(
                                                       mainAxisAlignment:
@@ -774,85 +719,104 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                                 .text,
                                                           ),
                                                         ),
-                                                        LikeButton(
-                                                          size: 26,
-                                                          onTap: (isLiked) async {
-                                                            ref
-                                                                .read(
-                                                                  postControllerProvider
-                                                                      .notifier,
-                                                                )
-                                                                .likePost(
-                                                                  commentPost,
-                                                                  currentUser,
+                                                        Consumer(
+                                                          builder: (context, ref, _) {
+                                                            final hybridLikesController =
+                                                                ref.watch(
+                                                                  hybridLikesControllerProvider,
                                                                 );
-                                                            return !isLiked;
-                                                          },
-                                                          isLiked: commentPost
-                                                              .likes
-                                                              .contains(
-                                                                currentUser.uid,
-                                                              ),
-                                                          likeBuilder: (isLiked) {
-                                                            return isLiked
-                                                                ? SvgPicture.asset(
-                                                                    'assets/svg/like_filled.svg',
-                                                                    colorFilter: ColorFilter.mode(
-                                                                      Pallete
-                                                                          .secondaryColor,
-                                                                      BlendMode
-                                                                          .srcIn,
-                                                                    ),
-                                                                  )
-                                                                : SvgPicture.asset(
-                                                                    'assets/svg/like_outline.svg',
-                                                                    colorFilter: ColorFilter.mode(
-                                                                      Pallete
-                                                                          .greyColor,
-                                                                      BlendMode
-                                                                          .srcIn,
-                                                                    ),
-                                                                  );
-                                                          },
-                                                          likeCount: commentPost
-                                                              .likes
-                                                              .length,
-                                                          countBuilder:
-                                                              (
-                                                                likeCount,
-                                                                isLiked,
-                                                                text,
-                                                              ) => Padding(
-                                                                padding:
-                                                                    const EdgeInsets.only(
-                                                                      left: 3.0,
-                                                                    ),
-                                                                child: Text(
-                                                                  text,
-                                                                  style: TextStyle(
-                                                                    color:
-                                                                        isLiked
-                                                                        ? Pallete
-                                                                              .secondaryColor
-                                                                        : Pallete
+                                                            hybridLikesController
+                                                                .initPostLikes(
+                                                                  commentPost,
+                                                                );
+                                                            final isLiked =
+                                                                hybridLikesController
+                                                                    .isLiked(
+                                                                      commentPost
+                                                                          .id,
+                                                                      currentUser
+                                                                          .uid,
+                                                                    );
+                                                            final likeCount =
+                                                                hybridLikesController
+                                                                    .getLikeCount(
+                                                                      commentPost
+                                                                          .id,
+                                                                    );
+
+                                                            return LikeButton(
+                                                              isLiked: isLiked,
+                                                              size: 26,
+                                                              likeCount:
+                                                                  likeCount,
+                                                              onTap: (isLiked) async {
+                                                                final newLikeState =
+                                                                    await hybridLikesController.toggleLike(
+                                                                      commentPost,
+                                                                      currentUser,
+                                                                    );
+                                                                return newLikeState;
+                                                              },
+                                                              likeBuilder: (isLiked) {
+                                                                return isLiked
+                                                                    ? SvgPicture.asset(
+                                                                        'assets/svg/like_filled.svg',
+                                                                        colorFilter: ColorFilter.mode(
+                                                                          Pallete
+                                                                              .secondaryColor,
+                                                                          BlendMode
+                                                                              .srcIn,
+                                                                        ),
+                                                                      )
+                                                                    : SvgPicture.asset(
+                                                                        'assets/svg/like_outline.svg',
+                                                                        colorFilter: ColorFilter.mode(
+                                                                          Pallete
                                                                               .greyColor,
-                                                                    fontSize:
-                                                                        16,
-                                                                  ),
-                                                                ),
-                                                              ),
+                                                                          BlendMode
+                                                                              .srcIn,
+                                                                        ),
+                                                                      );
+                                                              },
+                                                              countBuilder:
+                                                                  (
+                                                                    int? count,
+                                                                    bool
+                                                                    isLiked,
+                                                                    String text,
+                                                                  ) {
+                                                                    return Padding(
+                                                                      padding: const EdgeInsets.only(
+                                                                        left:
+                                                                            3.0,
+                                                                      ),
+                                                                      child: Text(
+                                                                        count
+                                                                            .toString(),
+                                                                        style: TextStyle(
+                                                                          color:
+                                                                              isLiked
+                                                                              ? Pallete.secondaryColor
+                                                                              : Pallete.greyColor,
+                                                                          fontSize:
+                                                                              14,
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                            );
+                                                          },
                                                         ),
                                                       ],
                                                     ),
                                                     SizedBox(height: 5),
                                                   ],
                                                 ),
-
                                                 Divider(),
                                               ],
                                             );
                                           },
-                                          error: (error, StackTrace) =>
+                                          error: (error, stackTrace) =>
                                               ErrorText(
                                                 error: error.toString(),
                                               ),
@@ -871,8 +835,8 @@ class _CommentViewState extends ConsumerState<Comment> {
               ),
             );
           },
-          error: (error, StackTrace) => ErrorText(error: error.toString()),
-          loading: () => SizedBox(),
+          error: (err, st) => ErrorText(error: err.toString()),
+          loading: () => Loader(),
         );
   }
 }

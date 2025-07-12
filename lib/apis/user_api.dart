@@ -20,6 +20,7 @@ final userAPIProvider = Provider((ref) {
 final usersCountProvider = FutureProvider<int>((ref) async {
   final userAPI = ref.watch(userAPIProvider);
   final users = await userAPI.getUsers();
+  print("📊 usersCountProvider: Fetched ${users.length} users for count");
   return users.length;
 });
 
@@ -47,6 +48,13 @@ class UserAPI implements IUserAPI {
     final documents = await _db.listDocuments(
       databaseId: AppwriteConstants.databaseID,
       collectionId: AppwriteConstants.usersCollectionID,
+      queries: [
+        Query.limit(999), // Increase limit to fetch all users
+        Query.orderDesc('\$createdAt'), // Order by creation date (newest first)
+      ],
+    );
+    print(
+      "📄 UserAPI.getUsers(): Fetched ${documents.documents.length} users from Appwrite",
     );
     return documents.documents;
   }
@@ -156,5 +164,55 @@ class UserAPI implements IUserAPI {
     } catch (e) {
       throw Failure(e.toString(), StackTrace.current);
     }
+  }
+
+  // New method: Clear invalid FCM token from user document
+  Future<void> clearFCMToken(String uid) async {
+    try {
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.usersCollectionID,
+        documentId: uid,
+        data: {'fcmToken': ''},
+      );
+      print("🧹 Cleared FCM token for user: $uid");
+    } catch (e) {
+      print("❌ Failed to clear FCM token for user $uid: $e");
+      throw Failure(e.toString(), StackTrace.current);
+    }
+  }
+
+  // New method: Update user's FCM token
+  Future<void> updateFCMToken(String uid, String newToken) async {
+    try {
+      await _db.updateDocument(
+        databaseId: AppwriteConstants.databaseID,
+        collectionId: AppwriteConstants.usersCollectionID,
+        documentId: uid,
+        data: {'fcmToken': newToken},
+      );
+      print("🔄 Updated FCM token for user: $uid");
+    } catch (e) {
+      print("❌ Failed to update FCM token for user $uid: $e");
+      throw Failure(e.toString(), StackTrace.current);
+    }
+  }
+
+  // New method: Get users with valid FCM tokens only
+  Future<List<Document>> getUsersWithValidTokens() async {
+    final documents = await _db.listDocuments(
+      databaseId: AppwriteConstants.databaseID,
+      collectionId: AppwriteConstants.usersCollectionID,
+      queries: [
+        Query.limit(999),
+        Query.orderDesc('\$createdAt'),
+        Query.isNotNull('fcmToken'),
+        Query.notEqual('fcmToken', ''),
+      ],
+    );
+    print(
+      "📱 UserAPI.getUsersWithValidTokens(): Found ${documents.documents.length} users with FCM tokens",
+    );
+    return documents.documents;
   }
 }

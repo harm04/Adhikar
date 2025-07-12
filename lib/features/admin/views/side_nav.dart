@@ -2,6 +2,7 @@ import 'package:adhikar/features/admin/views/admin_expert_list.dart';
 import 'package:adhikar/features/admin/views/admin_home.dart';
 import 'package:adhikar/features/admin/views/admin_push_notification.dart';
 import 'package:adhikar/features/admin/views/admin_withdraw_list.dart';
+import 'package:adhikar/features/admin/views/token_management.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,6 +24,7 @@ class _SideNavState extends State<SideNav> {
     AdminWithdrawList(),
     Center(child: Text('Meetings Page', style: TextStyle(fontSize: 32))),
     AdminPushNotification(),
+    TokenManagement(), // Add token management page
   ];
 
   @override
@@ -53,18 +55,23 @@ class _SideNavState extends State<SideNav> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CircleAvatar(
-                                  radius: 40,
+                                  radius: 30, // Reduced from 40
                                   backgroundImage: AssetImage(
                                     'assets/images/logo.png',
                                   ),
                                 ),
-                                const SizedBox(width: 10),
-                                const Text(
-                                  'Adhikar',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
+                                const SizedBox(width: 8), // Reduced from 10
+                                Flexible(
+                                  // Added Flexible to prevent overflow
+                                  child: Text(
+                                    'Adhikar',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24, // Reduced from 30
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow
+                                        .ellipsis, // Handle overflow
                                   ),
                                 ),
                               ],
@@ -91,6 +98,11 @@ class _SideNavState extends State<SideNav> {
                         'Notifications',
                         'assets/svg/notification.svg',
                         4,
+                      ),
+                      buildListTile(
+                        'Token Management',
+                        'assets/svg/gavel.svg', // You can use a different icon
+                        5,
                       ),
                     ],
                   ),

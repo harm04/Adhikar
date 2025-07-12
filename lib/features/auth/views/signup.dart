@@ -91,6 +91,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             CustomTextfield(
                               keyboardType: TextInputType.text,
                               controller: firstnameController,
+                              textCapitalization: TextCapitalization.sentences,
                               obsecureText: false,
                               hintText: 'first name',
                             ),
@@ -108,6 +109,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             CustomTextfield(
                               keyboardType: TextInputType.text,
                               controller: lastnameController,
+                              textCapitalization: TextCapitalization.sentences,
                               obsecureText: false,
                               hintText: 'last name',
                             ),
@@ -126,6 +128,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               keyboardType: TextInputType.emailAddress,
                               controller: emailController,
                               obsecureText: false,
+                              textCapitalization: TextCapitalization.none,
                               hintText: 'email',
                             ),
                             const SizedBox(
@@ -143,6 +146,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               keyboardType: TextInputType.text,
                               controller: passwordController,
                               obsecureText: true,
+                              textCapitalization: TextCapitalization.none,
                               hintText: 'password',
                             ),
                             const SizedBox(

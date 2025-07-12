@@ -6,18 +6,20 @@ class CustomTextfield extends StatelessWidget {
   final TextInputType keyboardType;
   final bool obsecureText;
   final int? maxLines;
+  final TextCapitalization textCapitalization ;
   final int? maxLength;
   const CustomTextfield(
       {super.key,
       required this.controller,
       required this.hintText,this.maxLines,this.maxLength,
+      required this.textCapitalization,
       required this.obsecureText, required this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       maxLines: maxLines ?? 1,
-       textCapitalization: TextCapitalization.sentences,
+       textCapitalization: textCapitalization,
       controller: controller,
       maxLength: maxLength,
       keyboardType: keyboardType,

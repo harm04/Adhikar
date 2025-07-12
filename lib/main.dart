@@ -25,7 +25,7 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // PushNotificationController().initializeNotifications();
+
   FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
   runApp(ProviderScope(child: const MyApp()));
 }
@@ -52,6 +52,11 @@ class _MyAppState extends ConsumerState<MyApp> {
     // Listen for notification taps (background/terminated)
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       NotificationService().handleMessage(context, message, ref);
+    });
+
+    // Initialize notification service
+    Future.delayed(Duration(seconds: 1), () {
+      NotificationService().requestNotificationPermission();
     });
   }
 
@@ -95,6 +100,13 @@ class _MyAppState extends ConsumerState<MyApp> {
                                 'all_experts',
                               );
                             }
+
+                            // Refresh FCM token on app startup for existing users
+                            Future.delayed(Duration(seconds: 2), () {
+                              ref
+                                  .read(authControllerProvider.notifier)
+                                  .updateFCMToken(currentUser.uid);
+                            });
                           }
                           // --- End FCM topic subscription logic ---
 

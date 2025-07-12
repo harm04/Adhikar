@@ -1,20 +1,21 @@
 import 'dart:io';
-
-import 'package:adhikar/common/widgets/loader.dart';
+import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/nyaysahayak/views/nyaysahayak_chat.dart';
 import 'package:adhikar/features/nyaysahayak/widget/chat_bubble.dart';
 import 'package:adhikar/theme/image_theme.dart';
 import 'package:adhikar/theme/pallete_theme.dart';
-import 'package:dropdownfield2/dropdownfield2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class Nyaysahayak extends ConsumerStatefulWidget {
   const Nyaysahayak({super.key});
@@ -25,7 +26,6 @@ class Nyaysahayak extends ConsumerStatefulWidget {
 
 class _NyaysahayakState extends ConsumerState<Nyaysahayak>
     with SingleTickerProviderStateMixin {
-  TextEditingController messageController = TextEditingController();
   bool isLoading = false;
   bool isTyping = false;
   String typingText = '';
@@ -33,6 +33,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   bool isListening = false;
 
   XFile? pickedImage;
+  File? pickedFile;
   String extractedText = '';
   String summaryText = '';
   bool scanning = false;
@@ -40,36 +41,37 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   final ImagePicker imagePicker = ImagePicker();
   TextEditingController languageController = TextEditingController();
   final FlutterTts flutterTts = FlutterTts();
+  final FocusNode _languageFocusNode = FocusNode();
 
-  //chat
-  final chatModel = GenerativeModel(
-    model: 'gemini-2.0-flash',
-    apiKey: AppwriteConstants.geminiApi,
-    generationConfig: GenerationConfig(temperature: 0.7, topP: 0.9),
-  );
+  // //chat
+  // final chatModel = GenerativeModel(
+  //   model: 'gemini-2.0-flash',
+  //   apiKey: AppwriteConstants.geminiApi,
+  //   generationConfig: GenerationConfig(temperature: 0.7, topP: 0.9),
+  // );
 
-  List<ChatBubble> chatBubbles = [
-    const ChatBubble(
-      direction: Direction.left,
-      message:
-          'Hello, I am Nyaysahayak. How can I assist you solve legal trouble?',
-      photoUrl: 'https://i.pravatar.cc/150?img=47',
-      type: BubbleType.alone,
-    ),
-  ];
+  // List<ChatBubble> chatBubbles = [
+  //   const ChatBubble(
+  //     direction: Direction.left,
+  //     message:
+  //         'Hello, I am Nyaysahayak. How can I assist you solve legal trouble?',
+  //     photoUrl: 'https://i.pravatar.cc/150?img=47',
+  //     type: BubbleType.alone,
+  //   ),
+  // ];
 
-  List<Content> chatHistory = [
-    Content.text(
-      "You are NyaySahayak, an AI legal assistant specializing in Indian law."
-      "Your role is to provide clear, direct, and actionable legal solutions based strictly on the Indian Constitution and the Bharatiya Nyay Sanhita."
-      "Always respond concisely with legal references and practical steps the user can take."
-      "Your responses should be structured as follows:"
-      "1. Relevant legal articles, sections, or precedents related to the user's issue."
-      "2. Specific legal actions the user can take (filing complaints, contacting authorities, necessary documents, etc.)."
-      "Avoid generic advice like 'stay calm' and focus on tangible legal remedies."
-      "Respond in English",
-    ),
-  ];
+  // List<Content> chatHistory = [
+  //   Content.text(
+  //     "You are NyaySahayak, an AI legal assistant specializing in Indian law."
+  //     "Your role is to provide clear, direct, and actionable legal solutions based strictly on the Indian Constitution and the Bharatiya Nyay Sanhita."
+  //     "Always respond concisely with legal references and practical steps the user can take."
+  //     "Your responses should be structured as follows:"
+  //     "1. Relevant legal articles, sections, or precedents related to the user's issue."
+  //     "2. Specific legal actions the user can take (filing complaints, contacting authorities, necessary documents, etc.)."
+  //     "Avoid generic advice like 'stay calm' and focus on tangible legal remedies."
+  //     "Respond in English",
+  //   ),
+  // ];
 
   //Document
   final docModel = GenerativeModel(
@@ -92,18 +94,11 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   ];
 
   bool isSpeakerOn = false;
-  late TabController _tabController;
-  int selectedTab = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        selectedTab = _tabController.index;
-      });
-    });
+
     flutterTts.setCompletionHandler(() {
       setState(() {
         isSpeakerOn = false;
@@ -123,138 +118,142 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
 
   @override
   void dispose() {
-    _tabController.dispose();
     languageController.dispose();
-    messageController.dispose();
+    _languageFocusNode.dispose();
     flutterTts.stop();
     super.dispose();
   }
 
-  // send message
-  Future<void> sendMessage() async {
-    if (messageController.text.trim().isEmpty) return;
+  // // send message
+  // Future<void> sendMessage() async {
+  //   if (messageController.text.trim().isEmpty) return;
 
-    String userMessage = messageController.text.trim();
+  //   String userMessage = messageController.text.trim();
 
-    setState(() {
-      chatBubbles = [
-        ...chatBubbles,
-        ChatBubble(
-          direction: Direction.right,
-          message: userMessage,
-          photoUrl: null,
-          type: BubbleType.alone,
-        ),
-      ];
-      isLoading = true;
-      isTyping = true;
-      typingText = '';
-    });
+  //   setState(() {
+  //     chatBubbles = [
+  //       ...chatBubbles,
+  //       ChatBubble(
+  //         direction: Direction.right,
+  //         message: userMessage,
+  //         photoUrl: null,
+  //         type: BubbleType.alone,
+  //       ),
+  //     ];
+  //     isLoading = true;
+  //     isTyping = true;
+  //     typingText = '';
+  //   });
 
-    chatHistory.add(Content.text("User: $userMessage"));
+  //   chatHistory.add(Content.text("User: $userMessage"));
 
-    try {
-      final responseAI = await chatModel.generateContent(chatHistory);
-      String aiResponse =
-          responseAI.text?.replaceAll('*', '') ??
-          'Sorry, I didn’t understand that.';
+  //   try {
+  //     final responseAI = await chatModel.generateContent(chatHistory);
+  //     String aiResponse =
+  //         responseAI.text?.replaceAll('*', '') ??
+  //         'Sorry, I didn’t understand that.';
 
-      //suggest Expert if query is complex
-      if (aiResponse.length > 700 ||
-          aiResponse.contains('legal advice') ||
-          aiResponse.contains('consult')) {
-        aiResponse +=
-            "\n\n*If your query is complex or you need personalized legal help, please consult an expert using the 'Expert' tab in the Adhikar app.*";
-      }
+  //     //suggest Expert if query is complex
+  //     if (aiResponse.length > 700 ||
+  //         aiResponse.contains('legal advice') ||
+  //         aiResponse.contains('consult')) {
+  //       aiResponse +=
+  //           "\n\n*If your query is complex or you need personalized legal help, please consult an expert using the 'Expert' tab in the Adhikar app.*";
+  //     }
 
-      chatHistory.add(Content.text("AI: $aiResponse"));
+  //     chatHistory.add(Content.text("AI: $aiResponse"));
 
-      // Typing animation
-      await _showTypingAnimation(aiResponse);
-    } catch (e) {
-      String errorMsg = 'An error occurred. Please try again.';
-      if (e.toString().contains('model is overloaded') ||
-          e.toString().contains('Server Error [503]')) {
-        errorMsg = 'The AI service is busy. Please try again later.';
-      }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMsg)));
-      print('Error during message processing: $e');
-      setState(() {
-        isTyping = false;
-      });
-    } finally {
-      messageController.clear();
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  //     // Typing animation
+  //     await _showTypingAnimation(aiResponse);
+  //   } catch (e) {
+  //     String errorMsg = 'An error occurred. Please try again.';
+  //     if (e.toString().contains('model is overloaded') ||
+  //         e.toString().contains('Server Error [503]')) {
+  //       errorMsg = 'The AI service is busy. Please try again later.';
+  //     }
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(SnackBar(content: Text(errorMsg)));
+  //     print('Error during message processing: $e');
+  //     setState(() {
+  //       isTyping = false;
+  //     });
+  //   } finally {
+  //     messageController.clear();
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
-  Future<void> _showTypingAnimation(String aiResponse) async {
-    setState(() {
-      typingText = '';
-      isTyping = true;
-    });
-    for (int i = 0; i < aiResponse.length; i++) {
-      await Future.delayed(const Duration(milliseconds: 18));
-      setState(() {
-        typingText = aiResponse.substring(0, i + 1);
-      });
-    }
-    setState(() {
-      chatBubbles = [
-        ...chatBubbles,
-        ChatBubble(
-          direction: Direction.left,
-          message: aiResponse,
-          photoUrl: 'https://i.pravatar.cc/150?img=47',
-          type: BubbleType.alone,
-        ),
-      ];
-      isTyping = false;
-      typingText = '';
-    });
-  }
+  // Future<void> _showTypingAnimation(String aiResponse) async {
+  //   setState(() {
+  //     typingText = '';
+  //     isTyping = true;
+  //   });
+  //   for (int i = 0; i < aiResponse.length; i++) {
+  //     await Future.delayed(const Duration(milliseconds: 18));
+  //     setState(() {
+  //       typingText = aiResponse.substring(0, i + 1);
+  //     });
+  //   }
+  //   setState(() {
+  //     chatBubbles = [
+  //       ...chatBubbles,
+  //       ChatBubble(
+  //         direction: Direction.left,
+  //         message: aiResponse,
+  //         photoUrl: 'https://i.pravatar.cc/150?img=47',
+  //         type: BubbleType.alone,
+  //       ),
+  //     ];
+  //     isTyping = false;
+  //     typingText = '';
+  //   });
+  // }
 
   // Speech to Text for Chat
-  Future<void> startListening() async {
-    bool available = await speech.initialize(
-      onStatus: (val) {
-        if (val == 'done' || val == 'notListening') {
-          setState(() => isListening = false);
-        }
-      },
-      onError: (val) {
-        setState(() => isListening = false);
-      },
-    );
-    if (available) {
-      setState(() => isListening = true);
-      speech.listen(
-        onResult: (val) {
-          setState(() {
-            messageController.text = val.recognizedWords;
-          });
-        },
-      );
-    }
-  }
-
-  void stopListening() {
-    speech.stop();
-    setState(() => isListening = false);
-  }
 
   // Document
-  Future<void> getImage(ImageSource source) async {
-    XFile? result = await imagePicker.pickImage(source: source);
-    if (result != null) {
-      setState(() {
-        pickedImage = result;
-      });
-      await performTextRecognition();
+  Future<void> pickFile() async {
+    // Check if language is selected
+    if (languageController.text.isEmpty) {
+      showSnackbar(
+        context,
+        'Please select a language before uploading a document.',
+      );
+      return;
+    }
+
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        File file = File(result.files.single.path!);
+        String extension = result.files.single.extension?.toLowerCase() ?? '';
+
+        setState(() {
+          pickedFile = file;
+          pickedImage = null; // Reset image for display
+        });
+
+        if (['jpg', 'jpeg', 'png'].contains(extension)) {
+          // Handle image files
+          setState(() {
+            pickedImage = XFile(file.path);
+          });
+          await performTextRecognition();
+        } else if (extension == 'pdf') {
+          // Handle PDF files
+          await performPdfTextExtraction();
+        }
+      }
+    } catch (e) {
+      showSnackbar(context, 'Error picking file: $e');
     }
   }
 
@@ -284,6 +283,46 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
         SnackBar(content: Text('Failed to extract text from image.')),
       );
       print('Error during recognizing text: $e');
+    }
+  }
+
+  // PDF text extraction method
+  Future<void> performPdfTextExtraction() async {
+    setState(() {
+      scanning = true;
+      summaryText = '';
+      extractedText = '';
+    });
+
+    try {
+      final bytes = await pickedFile!.readAsBytes();
+      final PdfDocument document = PdfDocument(inputBytes: bytes);
+
+      String pdfText = '';
+      PdfTextExtractor extractor = PdfTextExtractor(document);
+      pdfText = extractor.extractText();
+
+      document.dispose();
+
+      setState(() {
+        extractedText = pdfText.trim();
+        scanning = false;
+      });
+
+      if (extractedText.isNotEmpty) {
+        await generateSummary();
+      } else {
+        showSnackbar(context, 'No text found in the PDF document.');
+        setState(() {
+          scanning = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        scanning = false;
+      });
+      showSnackbar(context, 'Failed to extract text from PDF: $e');
+      print('Error during PDF text extraction: $e');
     }
   }
 
@@ -336,14 +375,82 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
 
   // Text to Speech for Summary
   Future<void> speakSummary() async {
-    if (summaryText.isNotEmpty) {
+    if (isSpeakerOn) {
+      // If currently speaking, stop the speech
+      await flutterTts.stop();
       setState(() {
-        isSpeakerOn = true;
+        isSpeakerOn = false;
       });
-      await flutterTts.setLanguage("en-IN");
-      await flutterTts.setSpeechRate(0.5);
-      await flutterTts.speak(summaryText);
+    } else {
+      // If not speaking, start the speech
+      if (summaryText.isNotEmpty) {
+        setState(() {
+          isSpeakerOn = true;
+        });
+        await flutterTts.setLanguage("en-IN");
+        await flutterTts.setSpeechRate(0.5);
+        await flutterTts.speak(summaryText);
+      }
     }
+  }
+
+  // Language picker method
+  void _showLanguagePicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Pallete.backgroundColor,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.3,
+          maxChildSize: 0.8,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const Text(
+                    'Select Language',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Pallete.whiteColor,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: ListView.builder(
+                      controller: scrollController,
+                      itemCount: languages.length,
+                      itemBuilder: (context, index) {
+                        final language = languages[index];
+                        return ListTile(
+                          title: Text(
+                            language,
+                            style: const TextStyle(color: Pallete.whiteColor),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              languageController.text = language;
+                            });
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -352,323 +459,265 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
     if (currentUser == null) {
       return const SizedBox.shrink();
     }
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Nyaysahayak'),
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 18.0),
-            child: CircleAvatar(
-              radius: 40,
-              backgroundImage: AssetImage(ImageTheme.defaultAdhikarLogo),
-            ),
-          ),
-          centerTitle: true,
-          bottom: TabBar(
-            controller: _tabController,
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicatorColor: Pallete.secondaryColor,
-            labelColor: Pallete.secondaryColor,
-            unselectedLabelColor: Pallete.whiteColor.withOpacity(0.7),
-            labelStyle: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-            tabs: [
-              Tab(
-                icon: SvgPicture.asset(
-                  'assets/svg/chat.svg',
-                  colorFilter: ColorFilter.mode(
-                    selectedTab == 0
-                        ? Pallete.secondaryColor
-                        : Pallete.whiteColor,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                text: "Chat",
-              ),
-              Tab(
-                icon: SvgPicture.asset(
-                  'assets/svg/scan.svg',
-                  colorFilter: ColorFilter.mode(
-                    selectedTab == 1
-                        ? Pallete.secondaryColor
-                        : Pallete.whiteColor,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                text: "Document",
-              ),
-            ],
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: Text('Nyaysahayak'),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 18.0),
+          child: CircleAvatar(
+            radius: 40,
+            backgroundImage: AssetImage(ImageTheme.defaultAdhikarLogo),
           ),
         ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            //chat tab
-            Column(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      reverse: true,
-                      padding: const EdgeInsets.all(10),
-                      children: [
-                        if (isTyping && typingText.isNotEmpty)
-                          ChatBubble(
-                            direction: Direction.left,
-                            message: typingText,
-                            photoUrl: 'https://i.pravatar.cc/150?img=47',
-                            type: BubbleType.alone,
-                          ),
-                        ...chatBubbles.reversed,
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Pallete.searchBarColor,
-                    border: Border(top: BorderSide(color: Colors.grey)),
-                  ),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          isListening ? stopListening : startListening();
-                          setState(() {
-                            isListening = !isListening;
-                          });
-                        },
+        centerTitle: true,
 
-                        child: SvgPicture.asset(
-                          isListening
-                              ? 'assets/svg/mic_filled.svg'
-                              : 'assets/svg/mic_outline.svg',
-                          colorFilter: ColorFilter.mode(
-                            isListening ? Pallete.whiteColor : Colors.grey,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 15),
-                      Expanded(
-                        child: TextField(
-                          controller: messageController,
-                          decoration: const InputDecoration(
-                            hintText: 'Type a message...',
-                            border: InputBorder.none,
-                          ),
-                          minLines: 1,
-                          maxLines: 4,
-                        ),
-                      ),
-                      isLoading
-                          ? const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.0),
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(),
-                              ),
-                            )
-                          : IconButton(
-                              icon: const Icon(
-                                Icons.send,
-                                color: Pallete.whiteColor,
-                              ),
-                              onPressed: sendMessage,
-                            ),
-                    ],
-                  ),
-                ),
-              ],
+        actions: [
+          IconButton(
+            icon: SvgPicture.asset(
+              'assets/svg/chat.svg',
+              color: Pallete.whiteColor,
+              height: 25,
             ),
-            //Document tab
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Pallete.secondaryColor,
-                                ),
-                                color: Pallete.searchBarColor,
-                              ),
-                              alignment: Alignment.centerLeft,
-                              child: DropDownField(
-                                enabled: true,
-                                textStyle: const TextStyle(
-                                  color: Pallete.whiteColor,
-                                  fontSize: 16,
-                                ),
-                                controller: languageController,
-                                hintText: 'Select your language',
-                                hintStyle: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                                items: languages,
-                                itemsVisibleInDropdown: 4,
-                                onValueChanged: (value) {
-                                  setState(() {
-                                    languageController.text = value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return NyaysahayakChat();
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Pallete.secondaryColor),
+                          color: Pallete.searchBarColor,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: SizedBox(
+                        alignment: Alignment.centerLeft,
+                        child: GestureDetector(
+                          onTap: () {
+                            _showLanguagePicker();
+                          },
+                          child: Container(
                             height: 55,
-                            child: GestureDetector(
-                              onTap: () => getImage(ImageSource.gallery),
-                              child: Card(
-                                elevation: 4,
-                                color: Pallete.primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    'Upload Document',
-                                    style: TextStyle(
-                                      color: Pallete.whiteColor,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-
-                    scanning
-                        ? const Expanded(
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Pallete.whiteColor,
-                              ),
-                            ),
-                          )
-                        : Expanded(
-                            child: ListView(
+                            child: Row(
                               children: [
-                                if (pickedImage != null) ...[
-                                  SizedBox(height: 10),
-                                  SizedBox(
-                                    height: 260,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.file(
-                                        File(pickedImage!.path),
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                ],
-                                if (extractedText.isNotEmpty) ...[
-                                  SizedBox(height: 10),
-                                  Text(
-                                    "Extracted Text:",
+                                Expanded(
+                                  child: Text(
+                                    languageController.text.isEmpty
+                                        ? 'Select your language'
+                                        : languageController.text,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+                                      color: languageController.text.isEmpty
+                                          ? Colors.grey
+                                          : Pallete.whiteColor,
+                                      fontSize: languageController.text.isEmpty
+                                          ? 14
+                                          : 16,
                                     ),
                                   ),
-                                  Container(
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade300,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      extractedText,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                                SizedBox(height: 20),
-                                if (summaryText.isNotEmpty) ...[
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        "Summary:",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      SizedBox(width: 15),
-                                      GestureDetector(
-                                        onTap: speakSummary,
-                                        child: Icon(
-                                          isSpeakerOn
-                                              ? Icons.volume_up_rounded
-                                              : Icons.volume_off_rounded,
-                                          color: isSpeakerOn
-                                              ? Colors.green
-                                              : Colors.grey,
-                                          size: 30,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    width: double.infinity,
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.shade50,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      summaryText,
-                                      style: const TextStyle(
-                                        color: Pallete.primaryColor,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
+                                Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Pallete.whiteColor,
+                                ),
                               ],
                             ),
                           ),
-                  ],
-                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 55,
+                      child: GestureDetector(
+                        onTap: () => pickFile(),
+                        child: Card(
+                          elevation: 4,
+                          color: languageController.text.isEmpty
+                              ? Colors.grey.shade600
+                              : Pallete.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Upload Document',
+                              style: TextStyle(
+                                color: languageController.text.isEmpty
+                                    ? Colors.grey.shade400
+                                    : Pallete.whiteColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+
+              scanning
+                  ? const Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Pallete.whiteColor,
+                        ),
+                      ),
+                    )
+                  : Expanded(
+                      child: ListView(
+                        children: [
+                          if (pickedFile != null) ...[
+                            SizedBox(height: 10),
+                            pickedFile!.path.toLowerCase().endsWith('.pdf')
+                                ? Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Pallete.searchBarColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Pallete.secondaryColor,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          pickedFile!.path
+                                                  .toLowerCase()
+                                                  .endsWith('.pdf')
+                                              ? Icons.picture_as_pdf
+                                              : Icons.image,
+                                          color:
+                                              pickedFile!.path
+                                                  .toLowerCase()
+                                                  .endsWith('.pdf')
+                                              ? Colors.red
+                                              : Pallete.whiteColor,
+                                          size: 30,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Selected File:',
+                                                style: const TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              Text(
+                                                pickedFile!.path
+                                                    .split('/')
+                                                    .last,
+                                                style: const TextStyle(
+                                                  color: Pallete.whiteColor,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : SizedBox(),
+                          ],
+                          if (pickedImage != null &&
+                              !pickedFile!.path.toLowerCase().endsWith(
+                                '.pdf',
+                              )) ...[
+                            SizedBox(height: 10),
+                            SizedBox(
+                              height: 260,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.file(
+                                  File(pickedImage!.path),
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
+                          SizedBox(height: 20),
+                          if (summaryText.isNotEmpty) ...[
+                            Row(
+                              children: [
+                                const Text(
+                                  "Summary:",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                SizedBox(width: 15),
+                                GestureDetector(
+                                  onTap: speakSummary,
+                                  child: Icon(
+                                    isSpeakerOn
+                                        ? Icons.volume_up_rounded
+                                        : Icons.volume_off_rounded,
+                                    color: isSpeakerOn
+                                        ? Colors.green
+                                        : Colors.grey,
+                                    size: 30,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                summaryText,
+                                style: const TextStyle(
+                                  color: Pallete.primaryColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+            ],
+          ),
         ),
       ),
     );

@@ -78,6 +78,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                         CustomTextfield(
                           keyboardType: TextInputType.emailAddress,
                           controller: emailController,
+                          textCapitalization: TextCapitalization.none,
                           obsecureText: false,
                           hintText: 'email',
                         ),
@@ -93,6 +94,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                         CustomTextfield(
                           keyboardType: TextInputType.text,
                           controller: passwordController,
+                          textCapitalization: TextCapitalization.none,
                           obsecureText: true,
                           hintText: 'password',
                         ),
@@ -169,3 +171,43 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
           );
   }
 }
+
+// import 'package:adhikar/common/widgets/custom_button.dart';
+// import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// class SignInScreen extends ConsumerStatefulWidget {
+//   const SignInScreen({super.key});
+
+//   @override
+//   ConsumerState<ConsumerStatefulWidget> createState() => _SignInScreenState();
+// }
+
+// class _SignInScreenState extends ConsumerState<SignInScreen> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           GestureDetector(
+//             onTap: () {
+//               ref
+//                   .read(authControllerProvider.notifier)
+//                   .googleSignIn(context: context, ref: ref);
+//             },
+//             child: CustomButton(text: 'Login with Google'),
+//           ),
+//           SizedBox(height: 20),
+//           TextField(
+//             decoration: InputDecoration(
+//               labelText: 'Login with Email',
+//               border: OutlineInputBorder(),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

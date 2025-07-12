@@ -2,6 +2,7 @@ import 'package:adhikar/common/failure.dart';
 import 'package:adhikar/common/type_def.dart';
 import 'package:adhikar/providers/provider.dart';
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/enums.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
@@ -20,6 +21,7 @@ abstract class IAuthApi {
     required String email,
     required String password,
   });
+  FutureEither<Session> googleSignIn();
   FutureEitherVoid signout();
 }
 
@@ -59,21 +61,34 @@ class AuthAPI implements IAuthApi {
         email: email,
         password: password,
       );
-    //   final targetId = ID.unique();
-    //   final fcmToken = await FirebaseMessaging.instance.getToken();
-      
-    //  await _account.createPushTarget(
-    //     identifier: fcmToken!,
-    //     targetId: targetId,
-    //     providerId: AppwriteConstants.providerId,
-    //   );
+      //   final targetId = ID.unique();
+      //   final fcmToken = await FirebaseMessaging.instance.getToken();
 
-    //   final mess =await  _messaging.createSubscriber(
-    //     topicId: '6853cb17001ea135b5e6',
-    //     targetId: targetId,
-    //     subscriberId: ID.unique(),
-    //   );
-    //   print(mess);
+      //  await _account.createPushTarget(
+      //     identifier: fcmToken!,
+      //     targetId: targetId,
+      //     providerId: AppwriteConstants.providerId,
+      //   );
+
+      //   final mess =await  _messaging.createSubscriber(
+      //     topicId: '6853cb17001ea135b5e6',
+      //     targetId: targetId,
+      //     subscriberId: ID.unique(),
+      //   );
+      //   print(mess);
+
+      return right(session);
+    } catch (err, stackTrace) {
+      return left(Failure(err.toString(), stackTrace));
+    }
+  }
+
+  @override
+  FutureEither<Session> googleSignIn() async {
+    try {
+      final session = await _account.createOAuth2Session(
+        provider: OAuthProvider.google,
+      );
 
       return right(session);
     } catch (err, stackTrace) {

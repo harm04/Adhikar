@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:adhikar/apis/auth_api.dart';
 import 'package:adhikar/apis/storage_api.dart';
 import 'package:adhikar/apis/user_api.dart';
 import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
+import 'package:adhikar/features/admin/services/get_server_key.dart';
 import 'package:adhikar/features/admin/services/notification_service.dart';
 import 'package:adhikar/features/admin/services/send_notification_service.dart';
 import 'package:adhikar/features/auth/views/signin.dart';
@@ -15,6 +17,7 @@ import 'package:appwrite/models.dart' as models;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 final authControllerProvider = StateNotifierProvider<AuthController, bool>((
@@ -197,6 +200,9 @@ class AuthController extends StateNotifier<bool> {
       final userModel = await getUserData(user.$id);
       _subscribeToTopics(userModel.userType);
 
+      // Update FCM token for this user
+      await updateFCMToken(user.$id);
+
       ref.invalidate(currentUserAccountProvider);
       ref.invalidate(currentUserDataProvider);
       ref.invalidate(userDataProvider(user.$id));
@@ -209,6 +215,39 @@ class AuthController extends StateNotifier<bool> {
     });
   }
 
+  void googleSignIn({
+    required BuildContext context,
+    required WidgetRef ref,
+  }) async {
+    state = true;
+    final res = await _authAPI.googleSignIn();
+    state = false;
+
+    res.fold((l) => showSnackbar(context, l.message), (r) async {
+      final user = await _authAPI.currentUserAccount();
+
+      if (user == null) {
+        showSnackbar(context, "Login failed. Please try again.");
+        return;
+      }
+      final userModel = await getUserData(user.$id);
+      _subscribeToTopics(userModel.userType);
+
+      // Update FCM token for this user (MISSING IN GOOGLE SIGN-IN)
+      await updateFCMToken(user.$id);
+
+      ref.invalidate(currentUserAccountProvider);
+      ref.invalidate(currentUserDataProvider);
+      ref.invalidate(userDataProvider(user.$id));
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const BottomNavBar()),
+      );
+      showSnackbar(context, 'Welcome email. You are successfully logged in');
+    });
+  }
+
   Future<models.User?> currentUser() => _authAPI.currentUserAccount();
 
   void signout(BuildContext context, WidgetRef ref) async {
@@ -218,6 +257,7 @@ class AuthController extends StateNotifier<bool> {
     res.fold((l) => showSnackbar(context, l.message), (r) {
       ref.invalidate(currentUserAccountProvider);
       ref.invalidate(currentUserDataProvider);
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const SignInScreen()),
@@ -273,11 +313,11 @@ class AuthController extends StateNotifier<bool> {
               title: 'New Follower',
               body: '${currentUser.firstName} started following you.',
               data: {"screen": "notification"},
+              userId: userModel.uid, // Add userId for token cleanup
             );
           }
         }
       });
-      null;
     });
     state = false;
   }
@@ -453,5 +493,95 @@ class AuthController extends StateNotifier<bool> {
 
   void updateUserCredits({required String uid, required double credits}) async {
     await _userAPI.updateUserCredits(uid, credits);
+  }
+
+  // Update FCM token for existing user
+  Future<void> updateFCMToken(String userId) async {
+    try {
+      print("🔄 Starting FCM token update for user: $userId");
+      final notificationService = NotificationService();
+      String? newToken = await notificationService.getToken();
+
+      if (newToken != null && newToken.isNotEmpty) {
+        print("📱 Got FCM token: ${newToken.substring(0, 20)}...");
+        final currentUser = await getUserData(userId);
+
+        if (currentUser.fcmToken != newToken) {
+          print("🔄 Updating FCM token for user: $userId");
+          print(
+            "📱 Old token: ${currentUser.fcmToken.isNotEmpty ? currentUser.fcmToken.substring(0, 20) + '...' : 'EMPTY'}",
+          );
+          print("📱 New token: ${newToken.substring(0, 20)}...");
+
+          final updatedUser = currentUser.copyWith(fcmToken: newToken);
+          final updateResult = await _userAPI.updateUser(updatedUser);
+
+          updateResult.fold(
+            (failure) {
+              print(
+                "❌ Failed to update FCM token in database: ${failure.message}",
+              );
+            },
+            (success) {
+              print("✅ FCM token updated successfully in database");
+            },
+          );
+        } else {
+          print("✅ FCM token is already up to date");
+        }
+      } else {
+        print("❌ Failed to get FCM token - token is null or empty");
+      }
+    } catch (e) {
+      print("❌ Failed to update FCM token: $e");
+    }
+  }
+
+  // Method to refresh FCM token for current user
+  Future<void> refreshFCMToken() async {
+    try {
+      final user = await _authAPI.currentUserAccount();
+      if (user != null) {
+        await updateFCMToken(user.$id);
+        print("🔄 FCM token refreshed for current user");
+      }
+    } catch (e) {
+      print("❌ Failed to refresh FCM token: $e");
+    }
+  }
+
+  // Helper method to validate FCM token
+  Future<bool> _validateFCMToken(String token) async {
+    try {
+      // Import the send notification service dynamically to avoid circular imports
+      final GetServerKey getServerKey = GetServerKey();
+      final serverKey = await getServerKey.getServerKeyToken();
+
+      final url =
+          'https://fcm.googleapis.com/v1/projects/adhikarnotification/messages:send';
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': ' Bearer $serverKey',
+      };
+
+      // Send a minimal test message
+      final message = {
+        "message": {
+          "token": token,
+          "data": {"test": "validation"},
+        },
+      };
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(message),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print("❌ Error validating FCM token: $e");
+      return false;
+    }
   }
 }

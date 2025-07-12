@@ -98,6 +98,7 @@ class _AddExperienceState extends ConsumerState<AddExperience> {
               SizedBox(height: 5),
               CustomTextfield(
                 keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.sentences,
                 controller: titleController,
                 hintText: 'Title',
                 obsecureText: false,
@@ -110,6 +111,7 @@ class _AddExperienceState extends ConsumerState<AddExperience> {
               SizedBox(height: 5),
               CustomTextfield(
                 keyboardType: TextInputType.text,
+                textCapitalization: TextCapitalization.sentences,
                 controller: firmOrOrganisationController,
                 hintText: 'Law firm / Organisation',
                 obsecureText: false,
@@ -123,6 +125,7 @@ class _AddExperienceState extends ConsumerState<AddExperience> {
               TextField(
                 maxLength: 1000,
                 maxLines: 5,
+                textCapitalization: TextCapitalization.sentences,
                 controller: summaryController,
                 obscureText: false,
                 decoration: InputDecoration(

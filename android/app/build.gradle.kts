@@ -25,7 +25,7 @@
 // }
 
 // android {
-//     namespace = "com.harsh.adhikar"
+//     namespace = "com.harshmali.adhikar"
 //     compileSdk = flutter.compileSdkVersion
 //     ndkVersion = "27.0.12077973"
 
@@ -40,7 +40,7 @@
 //     }
 
 //     defaultConfig {
-//         applicationId = "com.harsh.adhikar"
+//         applicationId = "com.harshmali.adhikar"
 //         minSdk = flutter.minSdkVersion
 //         targetSdk = flutter.targetSdkVersion
 //         versionCode = flutter.versionCode
@@ -82,6 +82,9 @@
 
 
 
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -90,6 +93,12 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 dependencies {
@@ -110,7 +119,7 @@ dependencies {
 }
 
 android {
-    namespace = "com.example.adhikar"
+    namespace = "com.harshmali.adhikar"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -126,26 +135,45 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.harsh.adhikar"
+        applicationId = "com.harshmali.adhikar"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true
     }
-
-    buildTypes {
-    getByName("release") {
-        signingConfig = signingConfigs.getByName("debug")
-        isShrinkResources = true
-        isMinifyEnabled = true
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro"
-        )
+signingConfigs {
+    create("release") {
+        if (keystorePropertiesFile.exists()) {
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+        }
     }
 }
+
+    buildTypes {
+        getByName("debug") {
+            isDebuggable = true
+        }
+        
+        getByName("release") {
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+            isShrinkResources = true
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
 
 }
 

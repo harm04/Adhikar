@@ -432,7 +432,14 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                     ),
                     SizedBox(height: 40),
                     if (images.isNotEmpty) ...[
-                      Text('Images',style: TextStyle(color: Pallete.whiteColor,fontSize: 20,fontWeight: FontWeight.bold),),
+                      Text(
+                        'Images',
+                        style: TextStyle(
+                          color: Pallete.whiteColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       CarouselSlider(
                         items: images.map((file) {
                           return Container(
@@ -505,6 +512,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
         CustomTextfield(
           controller: controller,
           maxLines: maxLines ?? 1,
+          textCapitalization: TextCapitalization.sentences,
           maxLength: maxLength,
           hintText: hintText,
           obsecureText: false,

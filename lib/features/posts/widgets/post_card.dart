@@ -3,6 +3,7 @@ import 'package:adhikar/common/widgets/custom_button.dart';
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/fullscreen_image_viewer.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
+import 'package:adhikar/features/posts/controllers/hybrid_likes_controller.dart';
 import 'package:adhikar/features/admin/controllers/report_controller.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/pods/widgets/pods_list.dart';
@@ -527,13 +528,24 @@ class PostCard extends ConsumerWidget {
                               );
                             },
                           ),
-                          Text(
-                            '. ${postmodel.likes.length} likes',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Pallete.greyColor,
-                            ),
+                          Consumer(
+                            builder: (context, ref, _) {
+                              final hybridLikesController = ref.watch(
+                                hybridLikesControllerProvider,
+                              );
+                              hybridLikesController.initPostLikes(postmodel);
+                              final likeCount = hybridLikesController
+                                  .getLikeCount(postmodel.id);
+
+                              return Text(
+                                '. $likeCount likes',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Pallete.greyColor,
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -578,31 +590,50 @@ class PostCard extends ConsumerWidget {
                           ),
 
                           SizedBox(width: 20),
-                          LikeButton(
-                            isLiked: postmodel.likes.contains(currentUser.uid),
-                            size: 28,
-                            onTap: (isLiked) async {
-                              ref
-                                  .read(postControllerProvider.notifier)
-                                  .likePost(postmodel, currentUser);
-                              return !isLiked;
-                            },
-                            likeBuilder: (isLiked) {
-                              return isLiked
-                                  ? SvgPicture.asset(
-                                      'assets/svg/like_filled.svg',
-                                      colorFilter: ColorFilter.mode(
-                                        Pallete.secondaryColor,
-                                        BlendMode.srcIn,
-                                      ),
-                                    )
-                                  : SvgPicture.asset(
-                                      'assets/svg/like_outline.svg',
-                                      colorFilter: ColorFilter.mode(
-                                        Pallete.greyColor,
-                                        BlendMode.srcIn,
-                                      ),
-                                    );
+                          Consumer(
+                            builder: (context, ref, _) {
+                              // Initialize hybrid likes controller with post data
+                              final hybridLikesController = ref.watch(
+                                hybridLikesControllerProvider,
+                              );
+                              hybridLikesController.initPostLikes(postmodel);
+
+                              // Check if user has liked the post locally
+                              final isLiked = hybridLikesController.isLiked(
+                                postmodel.id,
+                                currentUser.uid,
+                              );
+
+                              return LikeButton(
+                                isLiked: isLiked,
+                                size: 28,
+                                onTap: (isLiked) async {
+                                  // Toggle like using hybrid controller
+                                  final newLikeState =
+                                      await hybridLikesController.toggleLike(
+                                        postmodel,
+                                        currentUser,
+                                      );
+                                  return newLikeState;
+                                },
+                                likeBuilder: (isLiked) {
+                                  return isLiked
+                                      ? SvgPicture.asset(
+                                          'assets/svg/like_filled.svg',
+                                          colorFilter: ColorFilter.mode(
+                                            Pallete.secondaryColor,
+                                            BlendMode.srcIn,
+                                          ),
+                                        )
+                                      : SvgPicture.asset(
+                                          'assets/svg/like_outline.svg',
+                                          colorFilter: ColorFilter.mode(
+                                            Pallete.greyColor,
+                                            BlendMode.srcIn,
+                                          ),
+                                        );
+                                },
+                              );
                             },
                           ),
                           SizedBox(width: 20),

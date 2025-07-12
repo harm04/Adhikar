@@ -1,3 +1,4 @@
+import 'package:adhikar/apis/user_api.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/admin/services/send_notification_service.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
@@ -87,6 +88,7 @@ class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
           body: bodyController.text,
           data: notificationData,
           imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
+          userId: selectedUser!.uid, // Add userId for token cleanup
         );
       } else if (selectedExpert != null) {
         await SendNotificationService.sendNotificationUsingAPI(
@@ -95,6 +97,7 @@ class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
           body: bodyController.text,
           data: notificationData,
           imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
+          userId: selectedExpert!.uid, // Add userId for token cleanup
         );
       } else {
         errorMessage = 'Please select a target audience';
@@ -395,6 +398,34 @@ class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 20),
+                        // Debug FCM Token Button
+                        // Container(
+                        //   width: double.infinity,
+                        //   decoration: BoxDecoration(
+                        //     color: Colors.orange,
+                        //     borderRadius: BorderRadius.circular(5),
+                        //   ),
+                        //   child: InkWell(
+                        //     onTap: () async {
+                        //       print("🧪 Starting FCM Token Debug...");
+                        //       await debugFCMToken();
+                        //     },
+                        //     child: Padding(
+                        //       padding: const EdgeInsets.all(10.0),
+                        //       child: Center(
+                        //         child: Text(
+                        //           'Debug FCM Token',
+                        //           style: TextStyle(
+                        //             color: Colors.white,
+                        //             fontSize: 18,
+                        //             fontWeight: FontWeight.bold,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
