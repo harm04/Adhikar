@@ -152,15 +152,15 @@ class SendNotificationService {
       );
 
       if (response.statusCode == 200) {
-        print("✅ FCM Token is valid: ${token.substring(0, 20)}...");
+        print("FCM Token is valid: ${token.substring(0, 20)}...");
         return true;
       } else {
-        print("❌ FCM Token is invalid: ${response.statusCode}");
+        print("FCM Token is invalid: ${response.statusCode}");
         print("Response: ${response.body}");
         return false;
       }
     } catch (e) {
-      print("❌ Error testing FCM token: $e");
+      print("Error testing FCM token: $e");
       return false;
     }
   }

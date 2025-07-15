@@ -65,11 +65,13 @@ class _SideNavState extends State<SideNav> {
                                   // Added Flexible to prevent overflow
                                   child: Text(
                                     'Adhikar',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24, // Reduced from 30
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.copyWith(
+                                          fontSize: 24, // Reduced from 30
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                     overflow: TextOverflow
                                         .ellipsis, // Handle overflow
                                   ),
@@ -78,10 +80,9 @@ class _SideNavState extends State<SideNav> {
                             ),
                             Text(
                               'Main Menu',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.copyWith(fontSize: 16),
                             ),
                           ],
                         ),
@@ -142,7 +143,9 @@ class _SideNavState extends State<SideNav> {
           ),
           title: Text(
             title,
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(fontSize: 18),
           ),
           selected: selectedIndex == index,
           selectedTileColor: Colors.white24,

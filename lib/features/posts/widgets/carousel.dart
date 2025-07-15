@@ -1,4 +1,6 @@
 import 'package:adhikar/common/widgets/fullscreen_image_viewer.dart';
+import 'package:adhikar/theme/image_theme.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +41,18 @@ class _CarouselImageState extends State<CarouselImage> {
                     borderRadius: BorderRadius.circular(10),
                     child: FullscreenImageViewer(
                       imageUrl: link,
-                      child: Image.network(link, fit: BoxFit.cover),
+                      child: CachedNetworkImage(
+                        imageUrl: link,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Image.asset(
+                          ImageTheme.defaultAdhikarLogo,
+                          fit: BoxFit.cover,
+                        ),
+                        errorWidget: (context, url, error) => Image.asset(
+                          ImageTheme.defaultAdhikarLogo,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 );

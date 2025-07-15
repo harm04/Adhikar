@@ -2,7 +2,7 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,7 +18,7 @@ class MeetExpertCard extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     return Card(
-      color: Pallete.cardColor,
+      color: context.cardColor,
       child: SizedBox(
         height: 80,
         width: MediaQuery.of(context).size.width,
@@ -69,7 +69,7 @@ class MeetExpertCard extends ConsumerWidget {
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Pallete.whiteColor,
+                                color: context.textPrimaryColor,
                               ),
                             ),
                           ),
@@ -83,7 +83,7 @@ class MeetExpertCard extends ConsumerWidget {
                                 'assets/svg/verified.svg',
                                 height: 20,
                                 colorFilter: ColorFilter.mode(
-                                  Pallete.secondaryColor,
+                                  context.secondaryColor,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -97,7 +97,7 @@ class MeetExpertCard extends ConsumerWidget {
                         user.bio == '' ? 'Adhikar user' : user.bio,
                         style: TextStyle(
                           fontSize: 16,
-                          color: Pallete.greyColor,
+                          color: context.textSecondaryColor,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -140,7 +140,7 @@ class MeetExpertCard extends ConsumerWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: Pallete.primaryColor,
+                        color: context.primaryColor,
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -155,7 +155,7 @@ class MeetExpertCard extends ConsumerWidget {
                                 ? 'Unfollow'
                                 : 'Follow',
                             style: TextStyle(
-                              color: Pallete.whiteColor,
+                              color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),

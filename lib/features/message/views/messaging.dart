@@ -3,7 +3,7 @@ import 'package:adhikar/features/message/controller/messaging_controller.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/features/nyaysahayak/widget/chat_bubble.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:adhikar/providers/open_chat_provider.dart'; // Import the provider
@@ -100,8 +100,8 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             decoration: BoxDecoration(
-              color: Pallete.searchBarColor,
-              border: Border(top: BorderSide(color: Colors.grey)),
+              color: Theme.of(context).cardColor,
+              border: Border(top: BorderSide(color: context.borderColor)),
             ),
             child: Row(
               children: [
@@ -121,7 +121,7 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
                   builder: (context, value, child) {
                     final isNotEmpty = value.text.trim().isNotEmpty;
                     return IconButton(
-                      icon: const Icon(Icons.send, color: Pallete.whiteColor),
+                      icon: Icon(Icons.send, color: context.primaryColor),
                       onPressed: isNotEmpty
                           ? () async {
                               final text = _controller.text.trim();

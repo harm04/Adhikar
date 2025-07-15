@@ -1,7 +1,6 @@
 import 'package:adhikar/common/widgets/custom_textfield.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/models/user_model.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 
 class AddEducation extends ConsumerStatefulWidget {
   final UserModel currentUser;
-  const AddEducation({super.key,required this.currentUser});
+  const AddEducation({super.key, required this.currentUser});
 
   @override
   ConsumerState<AddEducation> createState() => _AddEducationState();
@@ -20,7 +19,7 @@ class _AddEducationState extends ConsumerState<AddEducation> {
   TextEditingController streamController = TextEditingController();
   TextEditingController universityController = TextEditingController();
 
-@override
+  @override
   void dispose() {
     super.dispose();
     degreeController.dispose();
@@ -30,12 +29,11 @@ class _AddEducationState extends ConsumerState<AddEducation> {
 
   @override
   void initState() {
-   super.initState();
+    super.initState();
     degreeController.text = widget.currentUser.eduDegree;
     streamController.text = widget.currentUser.eduStream;
     universityController.text = widget.currentUser.eduUniversity;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +83,7 @@ class _AddEducationState extends ConsumerState<AddEducation> {
               Text(
                 'Basic info',
                 style: TextStyle(
-                  color: Pallete.whiteColor,
+                  color: Theme.of(context).colorScheme.onBackground,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -93,7 +91,10 @@ class _AddEducationState extends ConsumerState<AddEducation> {
               SizedBox(height: 20),
               Text(
                 'Add Degree',
-                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontSize: 17,
+                ),
               ),
               SizedBox(height: 5),
               CustomTextfield(
@@ -107,7 +108,10 @@ class _AddEducationState extends ConsumerState<AddEducation> {
               SizedBox(height: 15),
               Text(
                 'Add Stream',
-                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontSize: 17,
+                ),
               ),
               SizedBox(height: 5),
               CustomTextfield(
@@ -120,7 +124,10 @@ class _AddEducationState extends ConsumerState<AddEducation> {
               SizedBox(height: 15),
               Text(
                 'Add University',
-                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontSize: 17,
+                ),
               ),
               SizedBox(height: 5),
               CustomTextfield(

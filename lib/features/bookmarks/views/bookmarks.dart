@@ -1,7 +1,7 @@
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:adhikar/features/posts/widgets/post_card.dart';
@@ -21,9 +21,9 @@ class BookmarksScreen extends ConsumerWidget {
           centerTitle: true,
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
-            indicatorColor: Pallete.secondaryColor,
-            labelColor: Pallete.secondaryColor,
-            unselectedLabelColor: Pallete.whiteColor.withOpacity(0.7),
+            indicatorColor: context.secondaryColor,
+            labelColor: context.secondaryColor,
+            unselectedLabelColor: context.textSecondaryColor,
             labelStyle: const TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
@@ -39,7 +39,15 @@ class BookmarksScreen extends ConsumerWidget {
             // Posts Tab
             postsAsync.when(
               data: (posts) => posts.isEmpty
-                  ? Center(child: Text('No bookmarked posts'))
+                  ? Center(
+                      child: Text(
+                        'No bookmarked posts',
+                        style: TextStyle(
+                          color: context.textSecondaryColor,
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
                   : ListView.builder(
                       padding: EdgeInsets.only(top: 15),
                       itemCount: posts.length,
@@ -47,20 +55,40 @@ class BookmarksScreen extends ConsumerWidget {
                           PostCard(postmodel: posts[index]),
                     ),
               loading: () => Loader(),
-              error: (e, st) => Center(child: Text('Error: $e')),
+              error: (e, st) => Center(
+                child: Text(
+                  'Error: $e',
+                  style: TextStyle(color: context.errorColor),
+                ),
+              ),
             ),
             // Showcases Tab
             showcasesAsync.when(
               data: (showcases) => showcases.isEmpty
-                  ? Center(child: Text('No bookmarked showcases'))
+                  ? Center(
+                      child: Text(
+                        'No bookmarked showcases',
+                        style: TextStyle(
+                          color: context.textSecondaryColor,
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
                   : ListView.builder(
                       padding: EdgeInsets.only(top: 15),
                       itemCount: showcases.length,
-                      itemBuilder: (context, index) =>
-                          ShowcaseListCard(showcase: showcases[index]),
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                        child: ShowcaseListCard(showcase: showcases[index]),
+                      ),
                     ),
               loading: () => Loader(),
-              error: (e, st) => Center(child: Text('Error: $e')),
+              error: (e, st) => Center(
+                child: Text(
+                  'Error: $e',
+                  style: TextStyle(color: context.errorColor),
+                ),
+              ),
             ),
           ],
         ),

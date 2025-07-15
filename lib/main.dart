@@ -11,6 +11,7 @@ import 'package:adhikar/features/expert/views/expert_verification.dart';
 import 'package:adhikar/features/admin/views/side_nav.dart';
 import 'package:adhikar/firebase_options.dart';
 import 'package:adhikar/theme/app_theme.dart';
+import 'package:adhikar/providers/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,12 @@ import 'package:adhikar/features/admin/services/notification_service.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize and show notification with transparent logo when app is terminated
+  final notificationService = NotificationService();
+  await notificationService.showNotification(message);
+
+  print('Background message received: ${message.notification?.title}');
 }
 
 void main() async {
@@ -39,6 +46,8 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   bool _showSplash = true;
+  static bool _fcmTokenUpdated =
+      false; // Static flag to prevent multiple updates across rebuilds
 
   void _finishSplash() {
     setState(() {
@@ -56,12 +65,16 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     // Initialize notification service
     Future.delayed(Duration(seconds: 1), () {
-      NotificationService().requestNotificationPermission();
+      final notificationService = NotificationService();
+      notificationService.requestNotificationPermission();
+      notificationService.firebaseInit(context, ref);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
+
     if (_showSplash) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -71,7 +84,9 @@ class _MyAppState extends ConsumerState<MyApp> {
     return MaterialApp(
       title: 'Adhikar',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.theme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
       home: Scaffold(
         body: CheckInternet(
           child: ref
@@ -100,13 +115,15 @@ class _MyAppState extends ConsumerState<MyApp> {
                                 'all_experts',
                               );
                             }
-
-                            // Refresh FCM token on app startup for existing users
-                            Future.delayed(Duration(seconds: 2), () {
-                              ref
-                                  .read(authControllerProvider.notifier)
-                                  .updateFCMToken(currentUser.uid);
-                            });
+                            // Update FCM token only once per app session
+                            if (!_fcmTokenUpdated) {
+                              _fcmTokenUpdated = true;
+                              Future.delayed(Duration(seconds: 2), () {
+                                ref
+                                    .read(authControllerProvider.notifier)
+                                    .updateFCMToken(currentUser.uid);
+                              });
+                            }
                           }
                           // --- End FCM topic subscription logic ---
 

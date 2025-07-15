@@ -1,6 +1,6 @@
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/nyaysahayak/widget/chat_bubble.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -273,8 +273,8 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              color: Pallete.searchBarColor,
-              border: Border(top: BorderSide(color: Colors.grey)),
+              color: context.surfaceColor,
+              border: Border(top: BorderSide(color: context.dividerColor)),
             ),
             child: Row(
               children: [
@@ -291,7 +291,9 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                         ? 'assets/svg/mic_filled.svg'
                         : 'assets/svg/mic_outline.svg',
                     colorFilter: ColorFilter.mode(
-                      isListening ? Pallete.whiteColor : Colors.grey,
+                      isListening
+                          ? context.errorColor
+                          : context.iconSecondaryColor,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -318,7 +320,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                         ),
                       )
                     : IconButton(
-                        icon: const Icon(Icons.send, color: Pallete.whiteColor),
+                        icon: Icon(Icons.send, color: context.iconPrimaryColor),
                         onPressed: sendMessage,
                       ),
               ],

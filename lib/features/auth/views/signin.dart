@@ -3,7 +3,6 @@ import 'package:adhikar/common/widgets/custom_textfield.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/auth/views/signup.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,25 +53,25 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 10),
-                        const Text(
+                        Text(
                           'Login to your account',
-                          style: TextStyle(
-                            color: Pallete.whiteColor,
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
-                        const Text(
+                        Text(
                           'It\'s great to see you again',
-                          style: TextStyle(color: Colors.grey),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: Theme.of(context).hintColor),
                         ),
                         const SizedBox(height: 20),
-                        const Text(
+                        Text(
                           'Email',
-                          style: TextStyle(
-                            color: Pallete.whiteColor,
-                            fontSize: 16,
-                          ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge?.copyWith(fontSize: 16),
                         ),
                         const SizedBox(height: 5),
                         CustomTextfield(
@@ -83,12 +82,11 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                           hintText: 'email',
                         ),
                         const SizedBox(height: 15),
-                        const Text(
+                        Text(
                           'Password',
-                          style: TextStyle(
-                            color: Pallete.whiteColor,
-                            fontSize: 16,
-                          ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge?.copyWith(fontSize: 16),
                         ),
                         const SizedBox(height: 5),
                         CustomTextfield(
@@ -101,23 +99,24 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                         const SizedBox(height: 15),
                         Row(
                           children: [
-                            const Text(
+                            Text(
                               'Forgot password?',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context).hintColor,
+                                    fontSize: 16,
+                                  ),
                             ),
                             const SizedBox(width: 5),
                             TextButton(
                               onPressed: () {},
-                              child: const Text(
+                              child: Text(
                                 'Reset password',
-                                style: TextStyle(
-                                  color: Pallete.whiteColor,
-                                  fontSize: 16,
-                                  decoration: TextDecoration.underline,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontSize: 16,
+                                      decoration: TextDecoration.underline,
+                                    ),
                               ),
                             ),
                           ],
@@ -133,12 +132,13 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               'Don\'t have an account?',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context).hintColor,
+                                    fontSize: 16,
+                                  ),
                             ),
                             TextButton(
                               onPressed: () {
@@ -151,13 +151,13 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                                   ),
                                 );
                               },
-                              child: const Text(
+                              child: Text(
                                 'Sign up',
-                                style: TextStyle(
-                                  color: Pallete.whiteColor,
-                                  fontSize: 16,
-                                  decoration: TextDecoration.underline,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontSize: 16,
+                                      decoration: TextDecoration.underline,
+                                    ),
                               ),
                             ),
                           ],

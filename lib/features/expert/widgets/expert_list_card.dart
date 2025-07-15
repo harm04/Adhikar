@@ -1,6 +1,6 @@
 import 'package:adhikar/features/expert/views/expert_details.dart';
 import 'package:adhikar/models/user_model.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,7 +21,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
-          color: Pallete.cardColor,
+          color: context.cardColor,
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -36,7 +36,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                       aspectRatio:
                           1.2, // Keeps image proportional on all screens
                       child: Card(
-                        color: Pallete.cardColor,
+                        color: context.surfaceColor,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(3.0),
                           child: Image.network(
@@ -44,11 +44,11 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
                                 Container(
-                                  color: Colors.grey[300],
-                                  child: const Icon(
+                                  color: context.surfaceColor,
+                                  child: Icon(
                                     Icons.person,
                                     size: 60,
-                                    color: Colors.grey,
+                                    color: context.iconSecondaryColor,
                                   ),
                                 ),
                           ),
@@ -61,9 +61,10 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                         Flexible(
                           child: Text(
                             '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color: context.textPrimaryColor,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -75,7 +76,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                             'assets/svg/verified.svg',
                             height: 20,
                             colorFilter: ColorFilter.mode(
-                              Pallete.secondaryColor,
+                              context.secondaryColor,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -91,7 +92,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                           width: 18,
                           height: 18,
                           colorFilter: ColorFilter.mode(
-                            Pallete.greyColor,
+                            context.iconSecondaryColor,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -99,7 +100,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                         Expanded(
                           child: Text(
                             widget.expertUserModel.state,
-                            style: TextStyle(color: Pallete.greyColor),
+                            style: TextStyle(color: context.textHintColor),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -112,7 +113,10 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                         widget.expertUserModel.description,
                         maxLines: widget.expertUserModel.tags.isEmpty ? 4 : 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 14),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: context.textSecondaryColor,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -120,7 +124,13 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                       Wrap(
                         spacing: 6,
                         children: [
-                          Chip(label: Text(widget.expertUserModel.tags.first)),
+                          Chip(
+                            label: Text(
+                              widget.expertUserModel.tags.first,
+                              style: TextStyle(color: context.textPrimaryColor),
+                            ),
+                            backgroundColor: context.surfaceColor,
+                          ),
                         ],
                       ),
                     const SizedBox(height: 8),
@@ -132,7 +142,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                 height: 38,
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    backgroundColor: Pallete.primaryColor,
+                    backgroundColor: context.primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
@@ -149,10 +159,10 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                       ),
                     );
                   },
-                  child: const Text(
+                  child: Text(
                     'View Details',
                     style: TextStyle(
-                      color: Pallete.secondaryColor,
+                      color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),

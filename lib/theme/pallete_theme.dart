@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Pallete {
-  static const Color primaryColor = Color.fromRGBO(45, 29, 189, 1);
+  static const Color primaryColor = Color.fromRGBO(44, 37, 115, 1);
   static const Color secondaryColor = Color.fromRGBO(163, 194, 235, 1);
 
   static const Color backgroundColor = Colors.black;
@@ -12,4 +12,3 @@ class Pallete {
   static const Color greyColor = Colors.grey;
   static const Color redColor = Colors.red;
 }
-

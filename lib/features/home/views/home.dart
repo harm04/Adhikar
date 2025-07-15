@@ -19,7 +19,7 @@ import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/features/settings/views/settings.dart';
 import 'package:adhikar/features/withdraw/views/withdraw_request.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -64,7 +64,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 //drawer
                 drawer: Drawer(
                   width: MediaQuery.of(context).size.width * 0.86,
-                  backgroundColor: Pallete.backgroundColor,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   child: SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.all(18.0),
@@ -166,7 +166,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                                           height: 20,
                                                           colorFilter:
                                                               ColorFilter.mode(
-                                                                Pallete
+                                                                context
                                                                     .secondaryColor,
                                                                 BlendMode.srcIn,
                                                               ),
@@ -193,7 +193,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                 ),
                                 SizedBox(height: 20),
 
-                                Divider(color: Pallete.primaryColor),
+                                Divider(color: Theme.of(context).dividerColor),
                                 //drawer Items
                                 GestureDetector(
                                   onTap: () => Navigator.push(
@@ -314,10 +314,10 @@ class _HomePageState extends ConsumerState<HomePage>
                     ),
                   ),
                 ),
-                backgroundColor: Pallete.backgroundColor,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 //flotting action button
                 floatingActionButton: FloatingActionButton(
-                  backgroundColor: Pallete.primaryColor,
+                  backgroundColor: context.primaryColor,
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -332,7 +332,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     'assets/svg/pencil.svg',
                     height: 30,
                     colorFilter: ColorFilter.mode(
-                      Pallete.whiteColor,
+                      Colors.white,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -340,10 +340,14 @@ class _HomePageState extends ConsumerState<HomePage>
                 body: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) => [
                     SliverAppBar(
-                      backgroundColor: Pallete.backgroundColor,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).scaffoldBackgroundColor,
                       floating: true,
                       snap: true,
                       pinned: false,
+                      expandedHeight: 0,
+                      forceElevated: innerBoxIsScrolled,
                       title: const Text('Adhikar'),
                       centerTitle: true,
                       leading: Padding(
@@ -360,9 +364,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                 : NetworkImage(
                                     "${currentUser.profileImage}?timestamp=${DateTime.now().millisecondsSinceEpoch}",
                                   ),
-                            onBackgroundImageError: (exception, stackTrace) {
-                              // Handle image loading errors
-                            },
+                            onBackgroundImageError: (exception, stackTrace) {},
                             child: currentUser.profileImage != ''
                                 ? FutureBuilder<void>(
                                     future: precacheImage(
@@ -406,7 +408,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                 child: SvgPicture.asset(
                                   'assets/svg/notification.svg',
                                   colorFilter: ColorFilter.mode(
-                                    Colors.white,
+                                    context.iconPrimaryColor,
                                     BlendMode.srcIn,
                                   ),
                                   height: 30,
@@ -423,10 +425,9 @@ class _HomePageState extends ConsumerState<HomePage>
                                   if (currentUser == null) {
                                     return SvgPicture.asset(
                                       'assets/svg/chat.svg',
-                                      colorFilter: const ColorFilter.mode(
-                                        Colors.white,
-                                        BlendMode.srcIn,
-                                      ),
+                                      color: Theme.of(
+                                        context,
+                                      ).appBarTheme.iconTheme?.color,
                                       height: 30,
                                     );
                                   }
@@ -440,7 +441,11 @@ class _HomePageState extends ConsumerState<HomePage>
                                       iconPath: 'assets/svg/chat.svg',
                                       badgeCount: unseenCount,
                                       iconHeight: 30,
-                                      iconColor: Colors.white,
+                                      iconColor:
+                                          Theme.of(
+                                            context,
+                                          ).appBarTheme.foregroundColor ??
+                                          Colors.white,
                                       onTap: () {
                                         Navigator.push(
                                           context,
@@ -455,16 +460,22 @@ class _HomePageState extends ConsumerState<HomePage>
                                     ),
                                     loading: () => SvgPicture.asset(
                                       'assets/svg/chat.svg',
-                                      colorFilter: const ColorFilter.mode(
-                                        Colors.white,
+                                      colorFilter: ColorFilter.mode(
+                                        Theme.of(
+                                              context,
+                                            ).appBarTheme.foregroundColor ??
+                                            Colors.white,
                                         BlendMode.srcIn,
                                       ),
                                       height: 30,
                                     ),
                                     error: (_, __) => SvgPicture.asset(
                                       'assets/svg/chat.svg',
-                                      colorFilter: const ColorFilter.mode(
-                                        Colors.white,
+                                      colorFilter: ColorFilter.mode(
+                                        Theme.of(
+                                              context,
+                                            ).appBarTheme.foregroundColor ??
+                                            Colors.white,
                                         BlendMode.srcIn,
                                       ),
                                       height: 30,
@@ -477,11 +488,11 @@ class _HomePageState extends ConsumerState<HomePage>
                         ),
                       ],
                       //tabs
-                      bottom: const TabBar(
+                      bottom: TabBar(
                         indicatorSize: TabBarIndicatorSize.tab,
-                        indicatorColor: Pallete.secondaryColor,
-                        labelColor: Pallete.secondaryColor,
-                        labelStyle: TextStyle(
+                        indicatorColor: context.secondaryColor,
+                        labelColor: context.secondaryColor,
+                        labelStyle: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
                         ),
@@ -513,15 +524,24 @@ class _HomePageState extends ConsumerState<HomePage>
 
 //drawer DrawerItems
 Widget drawerItems(String title, String iconPath) {
-  return ListTile(
-    title: Text(
-      title,
-      style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-    ),
-    leading: SvgPicture.asset(
-      iconPath,
-      height: 30,
-      colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+  return Builder(
+    builder: (context) => ListTile(
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 19,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
+        ),
+      ),
+      leading: SvgPicture.asset(
+        iconPath,
+        height: 30,
+        colorFilter: ColorFilter.mode(
+          Theme.of(context).iconTheme.color ?? Theme.of(context).primaryColor,
+          BlendMode.srcIn,
+        ),
+      ),
     ),
   );
 }
@@ -539,7 +559,10 @@ class ListTabContent extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Text(
           '$title item ${index + 1}',
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+            fontSize: 16,
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:adhikar/apis/showcase_api.dart';
 import 'package:adhikar/apis/storage_api.dart';
 import 'package:adhikar/common/enums/post_type_enum.dart';
+import 'package:adhikar/common/utils/text_parser.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/admin/services/send_notification_service.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
@@ -151,6 +152,7 @@ class ShowcaseController extends StateNotifier<bool> {
     state = true;
     String link = _linkInTheText(description);
     final hashtags = _hashtagInText(description);
+    final cleanDescription = TextParser.getCleanText(description);
     final user = _ref.watch(currentUserDataProvider).value!;
     String bannerImageUrl = '';
     if (bannerImage != null) {
@@ -169,7 +171,7 @@ class ShowcaseController extends StateNotifier<bool> {
       link: link,
       hashtags: hashtags,
       uid: user.uid,
-      description: description,
+      description: cleanDescription,
       id: '',
       bannerImage: bannerImageUrl,
       logoImage: logoImageUrl,
@@ -215,6 +217,7 @@ class ShowcaseController extends StateNotifier<bool> {
     state = true;
     String link = _linkInTheText(description);
     final hashtags = _hashtagInText(description);
+    final cleanDescription = TextParser.getCleanText(description);
     final user = _ref.watch(currentUserDataProvider).value!;
 
     String bannerImageUrl = '';
@@ -233,7 +236,7 @@ class ShowcaseController extends StateNotifier<bool> {
       link: link,
       hashtags: hashtags,
       uid: user.uid,
-      description: description,
+      description: cleanDescription,
       id: '',
       bannerImage: bannerImageUrl,
       logoImage: logoImageUrl,
@@ -276,9 +279,10 @@ class ShowcaseController extends StateNotifier<bool> {
     state = true;
     String link = _linkInTheText(text);
     final hashtags = _hashtagInText(text);
+    final cleanText = TextParser.getCleanText(text);
     final user = _ref.watch(currentUserDataProvider).value!;
     ShowcaseModel showcaseModel = ShowcaseModel(
-      title: text,
+      title: cleanText,
       tagline: tagline,
       link: link,
       hashtags: hashtags,
@@ -357,28 +361,12 @@ class ShowcaseController extends StateNotifier<bool> {
 
   //identifying link in the text
   String _linkInTheText(String text) {
-    String link = '';
-    final List<String> wordsInSentence = text.split(' ');
-    for (String word in wordsInSentence) {
-      if (word.startsWith('http') ||
-          word.startsWith('https') ||
-          word.startsWith('www')) {
-        link = word;
-      }
-    }
-    return link;
+    return TextParser.extractLink(text);
   }
 
   //identifying hashtag in the text
   List<String> _hashtagInText(String text) {
-    List<String> hashtags = [];
-    final List<String> wordsInSentence = text.split(' ');
-    for (String word in wordsInSentence) {
-      if (word.startsWith('#')) {
-        hashtags.add(word);
-      }
-    }
-    return hashtags;
+    return TextParser.extractHashtags(text);
   }
 
   Future<List<ShowcaseModel>> getShowcase() async {
@@ -437,8 +425,6 @@ class ShowcaseController extends StateNotifier<bool> {
     }
   }
 
-  
-
   //bookmark showcase
 
   void bookmarkPost(ShowcaseModel showcaseModel, UserModel userModel) async {
@@ -451,7 +437,4 @@ class ShowcaseController extends StateNotifier<bool> {
     userModel = userModel.copyWith(bookmarked: bookmarks);
     await _showcaseAPI.bookmarkShowcase(userModel);
   }
-
-
-
 }

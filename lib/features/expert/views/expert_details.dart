@@ -3,7 +3,7 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/views/confirm_phone.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,7 +24,16 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
       return const SizedBox.shrink();
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Book an Expert'), centerTitle: true),
+      backgroundColor: context.backgroundColor,
+      appBar: AppBar(
+        title: Text(
+          'Book an Expert',
+          style: TextStyle(color: context.textPrimaryColor),
+        ),
+        centerTitle: true,
+        backgroundColor: context.surfaceColor,
+        iconTheme: IconThemeData(color: context.iconPrimaryColor),
+      ),
       bottomNavigationBar: currentUser.userType == 'Expert'
           ? SizedBox()
           : Padding(
@@ -39,7 +48,10 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('How does the meeting work?'),
+                      title: Text(
+                        'How does the meeting work?',
+                        style: TextStyle(color: context.textPrimaryColor),
+                      ),
                       content: const Text(
                         'Once you book a call with an expert and complete the payment, '
                         'the expert will reach out to you via phone call within 36 hours from the time of payment.',
@@ -80,7 +92,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                 width: double.infinity,
                 height: 310,
                 child: Card(
-                  color: Colors.grey[200],
+                  color: context.cardColor,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: FadeInImage.assetNetwork(
@@ -102,9 +114,10 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                 children: [
                   Text(
                     '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 33,
                       fontWeight: FontWeight.bold,
+                      color: context.textPrimaryColor,
                     ),
                   ),
                   Padding(
@@ -113,7 +126,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                       'assets/svg/verified.svg',
                       height: 40,
                       colorFilter: ColorFilter.mode(
-                        Pallete.secondaryColor,
+                        context.secondaryColor,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -129,14 +142,17 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                     width: 30,
                     height: 30,
                     colorFilter: ColorFilter.mode(
-                      Pallete.greyColor,
+                      context.textSecondaryColor,
                       BlendMode.srcIn,
                     ),
                   ),
                   SizedBox(width: 5),
                   Text(
                     '${widget.expertUserModel.state}, ${widget.expertUserModel.city}',
-                    style: TextStyle(color: Pallete.greyColor, fontSize: 17),
+                    style: TextStyle(
+                      color: context.textSecondaryColor,
+                      fontSize: 17,
+                    ),
                   ),
                 ],
               ),
@@ -147,7 +163,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                     label: Text(
                       'Cases won : ${widget.expertUserModel.casesWon}',
                       style: TextStyle(
-                        color: Pallete.whiteColor,
+                        color: context.textPrimaryColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -158,7 +174,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                     label: Text(
                       '${widget.expertUserModel.experience} years of experience',
                       style: TextStyle(
-                        color: Pallete.whiteColor,
+                        color: context.textPrimaryColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -171,7 +187,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
               Text(
                 'About ${widget.expertUserModel.firstName}',
                 style: TextStyle(
-                  color: Pallete.whiteColor,
+                  color: context.textPrimaryColor,
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
                 ),
@@ -179,13 +195,16 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
               const SizedBox(height: 17),
               Text(
                 widget.expertUserModel.description,
-                style: const TextStyle(fontSize: 18, color: Pallete.greyColor),
+                style: TextStyle(
+                  fontSize: 18,
+                  color: context.textSecondaryColor,
+                ),
               ),
               const SizedBox(height: 30),
               Text(
                 'Sector of Practice',
                 style: TextStyle(
-                  color: Pallete.whiteColor,
+                  color: context.textPrimaryColor,
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
                 ),
@@ -201,7 +220,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                           label: Text(
                             tag,
                             style: TextStyle(
-                              color: Pallete.whiteColor,
+                              color: context.textPrimaryColor,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),

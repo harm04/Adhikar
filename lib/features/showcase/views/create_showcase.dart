@@ -5,8 +5,7 @@ import 'package:adhikar/common/widgets/custom_textfield.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
-import 'package:carousel_slider/carousel_options.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -97,41 +96,25 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
               margin: EdgeInsets.only(bottom: 10),
               decoration: BoxDecoration(
                 border: Border(
-                  top: BorderSide(color: Pallete.greyColor, width: 0.3),
+                  top: BorderSide(color: context.dividerColor, width: 0.3),
                 ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: GestureDetector(
-                          onTap: () => onPickeImages(),
-                          child: SvgPicture.asset(
-                            'assets/svg/gallery.svg',
-                            height: 30,
-                            colorFilter: ColorFilter.mode(
-                              Pallete.secondaryColor,
-                              BlendMode.srcIn,
-                            ),
-                          ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: GestureDetector(
+                      onTap: () => onPickeImages(),
+                      child: SvgPicture.asset(
+                        'assets/svg/gallery.svg',
+                        height: 30,
+                        colorFilter: ColorFilter.mode(
+                          context.secondaryColor,
+                          BlendMode.srcIn,
                         ),
                       ),
-
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: SvgPicture.asset(
-                          'assets/svg/emoji.svg',
-                          height: 30,
-                          colorFilter: ColorFilter.mode(
-                            Pallete.secondaryColor,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 18.0, top: 10),
@@ -148,8 +131,8 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                                               .trim()
                                               .length >=
                                           100
-                                  ? Colors.green
-                                  : Pallete.greyColor,
+                                  ? context.successColor
+                                  : context.textSecondaryColor,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -164,8 +147,8 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                                               .trim()
                                               .length >=
                                           100
-                                  ? Colors.green
-                                  : Pallete.greyColor,
+                                  ? context.successColor
+                                  : context.textSecondaryColor,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -187,10 +170,10 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                         height: 120,
                         width: 120,
                         decoration: BoxDecoration(
-                          color: Pallete.backgroundColor,
+                          color: context.surfaceColor,
                           borderRadius: BorderRadius.circular(20),
-                          border: BoxBorder.all(
-                            color: Pallete.whiteColor,
+                          border: Border.all(
+                            color: context.borderColor,
                             width: 2,
                           ),
                         ),
@@ -205,7 +188,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                                     SvgPicture.asset(
                                       'assets/svg/add_image.svg',
                                       colorFilter: ColorFilter.mode(
-                                        Pallete.whiteColor,
+                                        context.iconPrimaryColor,
                                         BlendMode.srcIn,
                                       ),
                                       height: 39,
@@ -214,7 +197,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                                     Text(
                                       'Add Logo',
                                       style: TextStyle(
-                                        color: Pallete.whiteColor,
+                                        color: context.textPrimaryColor,
                                         fontSize: 18,
                                       ),
                                     ),
@@ -258,7 +241,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                               top: Radius.circular(20),
                             ),
                           ),
-                          backgroundColor: Pallete.backgroundColor,
+                          backgroundColor: context.surfaceColor,
                           isScrollControlled: true,
                           builder: (context) {
                             return DraggableScrollableSheet(
@@ -279,7 +262,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
-                                          color: Pallete.whiteColor,
+                                          color: context.textPrimaryColor,
                                         ),
                                       ),
                                       SizedBox(height: 20),
@@ -332,14 +315,14 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                Pallete.primaryColor,
+                                                context.primaryColor,
                                           ),
                                           onPressed: () =>
                                               Navigator.pop(context),
                                           child: Text(
                                             'Got it!',
                                             style: TextStyle(
-                                              color: Pallete.secondaryColor,
+                                              color: context.secondaryColor,
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -357,14 +340,14 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                       child: Container(
                         height: 45,
                         decoration: BoxDecoration(
-                          color: Pallete.primaryColor,
+                          color: context.primaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
                           child: Text(
                             'Read community guidelines before posting!',
                             style: TextStyle(
-                              color: Pallete.secondaryColor,
+                              color: context.secondaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -378,7 +361,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                       hintText: 'Min. 100 Characters',
                       label: 'Description',
                       isRequired: true,
-                      maxLength: 1000,
+                      maxLength: 2000,
                       maxLines: 5,
                     ),
                     SizedBox(height: 20),
@@ -386,10 +369,10 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                       height: 220,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                        color: Pallete.backgroundColor,
+                        color: context.surfaceColor,
                         borderRadius: BorderRadius.circular(20),
-                        border: BoxBorder.all(
-                          color: Pallete.whiteColor,
+                        border: Border.all(
+                          color: context.borderColor,
                           width: 2,
                         ),
                       ),
@@ -404,7 +387,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                                   SvgPicture.asset(
                                     'assets/svg/add_image.svg',
                                     colorFilter: ColorFilter.mode(
-                                      Pallete.whiteColor,
+                                      context.iconPrimaryColor,
                                       BlendMode.srcIn,
                                     ),
                                     height: 39,
@@ -413,7 +396,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                                   Text(
                                     'Add Banner',
                                     style: TextStyle(
-                                      color: Pallete.whiteColor,
+                                      color: context.textPrimaryColor,
                                       fontSize: 18,
                                     ),
                                   ),
@@ -435,7 +418,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
                       Text(
                         'Images',
                         style: TextStyle(
-                          color: Pallete.whiteColor,
+                          color: context.textPrimaryColor,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -471,7 +454,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
           Expanded(
             child: Text(
               '$number. ' + text,
-              style: TextStyle(color: Pallete.whiteColor, fontSize: 18),
+              style: TextStyle(color: context.textPrimaryColor, fontSize: 18),
             ),
           ),
         ],
@@ -496,7 +479,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
             Text(
               label,
               style: TextStyle(
-                color: Pallete.whiteColor,
+                color: context.textPrimaryColor,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -504,7 +487,7 @@ class _CreateShowcaseState extends ConsumerState<CreateShowcase> {
             SizedBox(width: 10),
             Text(
               isRequired ? '(Required)' : '',
-              style: TextStyle(color: Pallete.greyColor, fontSize: 16),
+              style: TextStyle(color: context.textSecondaryColor, fontSize: 16),
             ),
           ],
         ),

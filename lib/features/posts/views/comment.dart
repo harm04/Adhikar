@@ -7,7 +7,6 @@ import 'package:adhikar/features/pods/widgets/pods_list.dart';
 import 'package:adhikar/features/posts/controllers/post_controller.dart';
 import 'package:adhikar/features/posts/widgets/carousel.dart';
 import 'package:adhikar/features/posts/widgets/expandable_hashtags.dart';
-import 'package:adhikar/features/posts/widgets/hashtags.dart';
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/posts_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
@@ -317,15 +316,14 @@ class _CommentViewState extends ConsumerState<Comment> {
                         ),
                         SizedBox(height: 10),
 
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            return SizedBox(
-                              width: double.infinity,
-                              child: ExpandableHashtags(
-                                text: widget.postModel.text,
-                              ),
-                            );
-                          },
+                        // Show clean text without links and hashtags
+                        ExpandableHashtags(
+                          text: widget
+                              .postModel
+                              .text, // Clean text without links and hashtags
+                          hashtags: widget
+                              .postModel
+                              .hashtags, // Pass hashtags separately
                         ),
 
                         SizedBox(height: 5),
@@ -714,9 +712,50 @@ class _CommentViewState extends ConsumerState<Comment> {
                                                               .spaceBetween,
                                                       children: [
                                                         Expanded(
-                                                          child: HashTags(
-                                                            text: commentPost
-                                                                .text,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              // Clean text without hashtags
+                                                              Text(
+                                                                commentPost
+                                                                    .text,
+                                                                style: TextStyle(
+                                                                  color: Pallete
+                                                                      .whiteColor,
+                                                                  fontSize: 16,
+                                                                  height: 1.4,
+                                                                ),
+                                                              ),
+                                                              // Hashtags separately
+                                                              if (commentPost
+                                                                  .hashtags
+                                                                  .isNotEmpty) ...[
+                                                                SizedBox(
+                                                                  height: 5,
+                                                                ),
+                                                                Wrap(
+                                                                  spacing: 6,
+                                                                  runSpacing: 2,
+                                                                  children: commentPost.hashtags.map((
+                                                                    hashtag,
+                                                                  ) {
+                                                                    return Text(
+                                                                      hashtag,
+                                                                      style: TextStyle(
+                                                                        color: Pallete
+                                                                            .blueColor,
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    );
+                                                                  }).toList(),
+                                                                ),
+                                                              ],
+                                                            ],
                                                           ),
                                                         ),
                                                         Consumer(

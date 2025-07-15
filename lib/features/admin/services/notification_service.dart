@@ -74,7 +74,7 @@ class NotificationService {
     WidgetRef ref,
   ) async {
     var androidInitSettings = const AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
+      'logo_transaprent',
     );
     var iosInitSettings = const DarwinInitializationSettings();
     var initializationSettings = InitializationSettings(
@@ -91,12 +91,15 @@ class NotificationService {
 
   //firebase init
   void firebaseInit(BuildContext context, WidgetRef ref) {
+    print("🔧 Initializing Firebase messaging listeners");
     FirebaseMessaging.onMessage.listen((message) {
+      print("📨 Received foreground message: ${message.notification?.title}");
       final openChatUserId = ref.read(openChatUserIdProvider);
       final senderId = message.data['senderId'];
 
       // Suppress notification if user is viewing this chat
       if (message.data['screen'] == 'chat' && openChatUserId == senderId) {
+        print("🚫 Suppressing notification - user is viewing this chat");
         return;
       }
 
@@ -109,6 +112,7 @@ class NotificationService {
         iosForgroundNotification();
       }
       if (Platform.isAndroid) {
+        print("📱 Processing Android notification");
         initLocalNotification(context, message, ref);
         showNotification(message);
       }
@@ -117,15 +121,34 @@ class NotificationService {
 
   //function to show notification
   Future<void> showNotification(RemoteMessage message) async {
+    // Initialize notifications if not already done
+    var androidInitSettings = const AndroidInitializationSettings(
+      'logo_transaprent',
+    );
+    var iosInitSettings = const DarwinInitializationSettings();
+    var initializationSettings = InitializationSettings(
+      android: androidInitSettings,
+      iOS: iosInitSettings,
+    );
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
     AndroidNotificationChannel channel = AndroidNotificationChannel(
-      message.notification!.android!.channelId.toString(),
-      message.notification!.android!.channelId.toString(),
+      'adhikar_channel', // Use consistent channel ID
+      'Adhikar Notifications', // Channel name
+      description: 'High importance notifications for Adhikar app',
       importance: Importance.high,
       playSound: true,
       enableLights: true,
       showBadge: true,
       enableVibration: true,
     );
+
+    // Create the notification channel
+    await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(channel);
 
     String? imageUrl =
         message.notification?.android?.imageUrl ?? message.data['image'];
@@ -147,7 +170,6 @@ class NotificationService {
         summaryText: message.notification!.body,
       );
       androidNotificationDetails = AndroidNotificationDetails(
-        icon: 'logo_transaprent',
         channel.id.toString(),
         channel.name.toString(),
         channelDescription: channel.description.toString(),
@@ -156,6 +178,7 @@ class NotificationService {
         priority: Priority.high,
         playSound: true,
         sound: channel.sound,
+        icon: 'logo_transaprent',
       );
     } else {
       androidNotificationDetails = AndroidNotificationDetails(
@@ -183,12 +206,16 @@ class NotificationService {
     );
 
     Future.delayed(Duration.zero, () {
+      print(
+        "📱 Attempting to show notification: ${message.notification?.title}",
+      );
       _flutterLocalNotificationsPlugin.show(
         0,
         message.notification!.title.toString(),
         message.notification!.body.toString(),
         notificationDetails,
       );
+      print("📱 Notification show request completed");
     });
   }
 

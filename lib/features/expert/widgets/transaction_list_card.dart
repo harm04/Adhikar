@@ -1,7 +1,7 @@
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/models/transaction_model.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,7 +24,7 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
         .when(
           data: (expertUser) {
             return Card(
-              color: Pallete.cardColor,
+              color: context.cardColor,
               margin: EdgeInsets.symmetric(vertical: 8),
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 19),
@@ -47,7 +47,7 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                               maxLines: 2,
                               style: TextStyle(
                                 fontSize: 17,
-                                color: Colors.white,
+                                color: context.textPrimaryColor,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -62,7 +62,7 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                                   ? "Withdraw successfull"
                                   : 'Transaction failed',
                               style: TextStyle(
-                                color: Pallete.whiteColor,
+                                color: context.textSecondaryColor,
                                 fontSize: 16,
                               ),
                             ),
@@ -72,7 +72,7 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                               DateFormat(
                                 'dd MMMM, yyyy',
                               ).format(widget.transaction.createdAt),
-                              style: TextStyle(color: Pallete.whiteColor),
+                              style: TextStyle(color: context.textSecondaryColor),
                             ),
                           ],
                         ),
@@ -101,13 +101,13 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                                 color:
                                     widget.transaction.paymentStatus ==
                                         'Success'
-                                    ? Colors.green
+                                    ? context.successColor
                                     : widget.transaction.paymentStatus ==
                                           'Requested'
-                                    ? Pallete.primaryColor
+                                    ? context.primaryColor
                                     : widget.transaction.paymentStatus == 'Paid'
-                                    ? Colors.green
-                                    : Pallete.redColor,
+                                    ? context.successColor
+                                    : context.errorColor,
                                 fontSize: 23,
                               ),
                             ),
@@ -126,11 +126,11 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                                 widget.transaction.paymentStatus == 'Success' ||
                                         widget.transaction.paymentStatus ==
                                             'Paid'
-                                    ? Colors.green
+                                    ? context.successColor
                                     : widget.transaction.paymentStatus ==
                                           'Requested'
-                                    ? Pallete.primaryColor
-                                    : Pallete.redColor,
+                                    ? context.primaryColor
+                                    : context.errorColor,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -150,11 +150,11 @@ class _TransactionListCardState extends ConsumerState<TransactionListCard> {
                                             'Success' ||
                                         widget.transaction.paymentStatus ==
                                             'Paid'
-                                    ? Colors.green
+                                    ? context.successColor
                                     : widget.transaction.paymentStatus ==
                                           'Requested'
-                                    ? Pallete.primaryColor
-                                    : Pallete.redColor,
+                                    ? context.primaryColor
+                                    : context.errorColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),

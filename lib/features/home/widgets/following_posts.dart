@@ -7,6 +7,7 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/features/posts/widgets/post_card.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class FollowingPosts extends ConsumerWidget {
   const FollowingPosts({super.key});
@@ -33,13 +34,35 @@ class FollowingPosts extends ConsumerWidget {
           }
           return RefreshIndicator(
             onRefresh: _refresh,
-            child: ListView.builder(
-              padding: const EdgeInsets.only(top: 10.0),
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                final post = posts[index];
-                return PostCard(postmodel: post);
-              },
+            child: AnimationLimiter(
+              child: ListView.builder(
+                primary:
+                    true, // Use primary scroll controller for NestedScrollView
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(top: 10.0),
+                cacheExtent: 1000.0, // Increased cache for smooth scrolling
+                addAutomaticKeepAlives: true, // Keep widgets alive
+                addRepaintBoundaries: true, // Add repaint boundaries
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  final post = posts[index];
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(
+                      milliseconds: 100,
+                    ), // Reduced for smoother scroll
+                    child: SlideAnimation(
+                      verticalOffset: 5.0, // Reduced offset
+                      child: FadeInAnimation(
+                        child: RepaintBoundary(
+                          key: ValueKey(post.id),
+                          child: PostCard(postmodel: post),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           );
         },
