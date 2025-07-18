@@ -14,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class NotificationsList extends ConsumerWidget {
   final String userId;
-  const NotificationsList({super.key, required this.userId});
+  NotificationsList({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
-  const CreatePostScreen({super.key});
+  CreatePostScreen({super.key});
 
   @override
   ConsumerState<CreatePostScreen> createState() => _AddPostViewState();

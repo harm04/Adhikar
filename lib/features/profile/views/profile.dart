@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   final UserModel userModel;
-  const ProfileView({super.key, required this.userModel});
+  ProfileView({super.key, required this.userModel});
 
   @override
   ConsumerState<ProfileView> createState() => _ProfileViewState();

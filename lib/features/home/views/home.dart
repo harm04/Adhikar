@@ -25,7 +25,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
 class HomePage extends ConsumerStatefulWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
 
   @override
   ConsumerState<HomePage> createState() => _HomePageState();
@@ -55,7 +55,7 @@ class _HomePageState extends ConsumerState<HomePage>
         .when(
           data: (currentUser) {
             if (currentUser == null) {
-              return const LoadingPage();
+              return LoadingPage();
             }
             return DefaultTabController(
               length: 3,
@@ -200,7 +200,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return const PodsListView();
+                                        return PodsListView();
                                       },
                                     ),
                                   ),
@@ -232,7 +232,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) {
-                                                return const WithdrawRequest();
+                                                return WithdrawRequest();
                                               },
                                             ),
                                           );
@@ -247,7 +247,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) {
-                                              return const ApplyForExpert();
+                                              return ApplyForExpert();
                                             },
                                           ),
                                         ),
@@ -261,7 +261,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return const NewsList();
+                                        return NewsList();
                                       },
                                     ),
                                   ),
@@ -276,7 +276,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return const KYRListView();
+                                        return KYRListView();
                                       },
                                     ),
                                   ),
@@ -294,7 +294,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return const Settings();
+                                      return Settings();
                                     },
                                   ),
                                 ),
@@ -344,7 +344,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       floating: true,
                       snap: true,
                       pinned: false,
-                      title: const Text('Adhikar'),
+                      title: Text('Adhikar'),
                       centerTitle: true,
                       leading: Padding(
                         padding: const EdgeInsets.only(left: 18.0),
@@ -399,7 +399,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return const Notifications();
+                                      return Notifications();
                                     },
                                   ),
                                 ),
@@ -413,7 +413,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                 ),
                               ),
 
-                              const SizedBox(width: 22),
+                              SizedBox(width: 22),
                               //chat icon with badge
                               Consumer(
                                 builder: (context, ref, child) {
@@ -477,7 +477,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         ),
                       ],
                       //tabs
-                      bottom: const TabBar(
+                      bottom: TabBar(
                         indicatorSize: TabBarIndicatorSize.tab,
                         indicatorColor: Pallete.secondaryColor,
                         labelColor: Pallete.secondaryColor,
@@ -493,7 +493,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       ),
                     ),
                   ],
-                  body: const TabBarView(
+                  body: TabBarView(
                     children: [
                       TrendingPosts(),
                       // PostList(),
@@ -528,7 +528,7 @@ Widget drawerItems(String title, String iconPath) {
 
 class ListTabContent extends StatelessWidget {
   final String title;
-  const ListTabContent({super.key, required this.title});
+  ListTabContent({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -539,7 +539,7 @@ class ListTabContent extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Text(
           '$title item ${index + 1}',
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
     );

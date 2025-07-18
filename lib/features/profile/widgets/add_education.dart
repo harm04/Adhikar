@@ -9,7 +9,7 @@ import 'package:flutter_svg/svg.dart';
 
 class AddEducation extends ConsumerStatefulWidget {
   final UserModel currentUser;
-  const AddEducation({super.key,required this.currentUser});
+  AddEducation({super.key,required this.currentUser});
 
   @override
   ConsumerState<AddEducation> createState() => _AddEducationState();

@@ -18,7 +18,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class Nyaysahayak extends ConsumerStatefulWidget {
-  const Nyaysahayak({super.key});
+  Nyaysahayak({super.key});
 
   @override
   ConsumerState<Nyaysahayak> createState() => _NyaysahayakState();
@@ -51,7 +51,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   // );
 
   // List<ChatBubble> chatBubbles = [
-  //   const ChatBubble(
+  //   ChatBubble(
   //     direction: Direction.left,
   //     message:
   //         'Hello, I am Nyaysahayak. How can I assist you solve legal trouble?',
@@ -192,7 +192,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   //     isTyping = true;
   //   });
   //   for (int i = 0; i < aiResponse.length; i++) {
-  //     await Future.delayed(const Duration(milliseconds: 18));
+  //     await Future.delayed(Duration(milliseconds: 18));
   //     setState(() {
   //       typingText = aiResponse.substring(0, i + 1);
   //     });
@@ -400,7 +400,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
       context: context,
       backgroundColor: Pallete.backgroundColor,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
@@ -414,7 +414,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'Select Language',
                     style: TextStyle(
                       fontSize: 18,
@@ -422,7 +422,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                       color: Pallete.whiteColor,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                   Expanded(
                     child: ListView.builder(
                       controller: scrollController,
@@ -432,7 +432,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                         return ListTile(
                           title: Text(
                             language,
-                            style: const TextStyle(color: Pallete.whiteColor),
+                            style: TextStyle(color: Pallete.whiteColor),
                           ),
                           onTap: () {
                             setState(() {
@@ -547,7 +547,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                     child: SizedBox(
                       height: 55,
@@ -579,10 +579,10 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
 
               scanning
-                  ? const Expanded(
+                  ? Expanded(
                       child: Center(
                         child: CircularProgressIndicator(
                           color: Pallete.whiteColor,
@@ -620,7 +620,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                               : Pallete.whiteColor,
                                           size: 30,
                                         ),
-                                        const SizedBox(width: 12),
+                                        SizedBox(width: 12),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -628,7 +628,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                             children: [
                                               Text(
                                                 'Selected File:',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: 12,
                                                 ),
@@ -637,7 +637,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                                 pickedFile!.path
                                                     .split('/')
                                                     .last,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   color: Pallete.whiteColor,
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
@@ -666,14 +666,14 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                           ],
 
                           SizedBox(height: 20),
                           if (summaryText.isNotEmpty) ...[
                             Row(
                               children: [
-                                const Text(
+                                Text(
                                   "Summary:",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -705,7 +705,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                               ),
                               child: Text(
                                 summaryText,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Pallete.primaryColor,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,

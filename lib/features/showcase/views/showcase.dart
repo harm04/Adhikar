@@ -19,7 +19,7 @@ import 'package:like_button/like_button.dart';
 
 class Showcase extends ConsumerStatefulWidget {
   final ShowcaseModel showcaseModel;
-  const Showcase({super.key, required this.showcaseModel});
+  Showcase({super.key, required this.showcaseModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ShowcaseState();

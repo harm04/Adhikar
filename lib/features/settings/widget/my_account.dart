@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MyAccount extends ConsumerWidget {
-  const MyAccount({super.key});
+  MyAccount({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -13,7 +13,7 @@ class MyAccount extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('My Account'), centerTitle: true),
+      appBar: AppBar(title: Text('My Account'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Column(

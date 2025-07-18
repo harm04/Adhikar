@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class CommentTextfield extends ConsumerStatefulWidget {
   final ShowcaseModel showcaseModel;
   final UserModel currentUser;
-  const CommentTextfield({
+   CommentTextfield({
     super.key,
     required this.showcaseModel,
     required this.currentUser,

@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ExpertList extends ConsumerStatefulWidget {
-  const ExpertList({super.key});
+  ExpertList({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ExpertListState();
@@ -86,7 +86,7 @@ class _ExpertListState extends ConsumerState<ExpertList> {
             ),
           ),
         ],
-        title: const Text('Book an Expert'),
+        title: Text('Book an Expert'),
         centerTitle: true,
       ),
       body: CheckInternet(
@@ -95,7 +95,7 @@ class _ExpertListState extends ConsumerState<ExpertList> {
             .when(
               data: (experts) {
                 if (experts.isEmpty) {
-                  return const Center(child: Text('No experts available'));
+                  return Center(child: Text('No experts available'));
                 }
 
                 return GridView.builder(

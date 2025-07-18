@@ -10,7 +10,7 @@ import 'package:flutter_svg/svg.dart';
 
 class ExpertDetails extends ConsumerStatefulWidget {
   final UserModel expertUserModel;
-  const ExpertDetails({super.key, required this.expertUserModel});
+  ExpertDetails({super.key, required this.expertUserModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ExpertDetailsState();
@@ -24,7 +24,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
       return const SizedBox.shrink();
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Book an Expert'), centerTitle: true),
+      appBar: AppBar(title: Text('Book an Expert'), centerTitle: true),
       bottomNavigationBar: currentUser.userType == 'Expert'
           ? SizedBox()
           : Padding(
@@ -39,15 +39,15 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('How does the meeting work?'),
-                      content: const Text(
+                      title: Text('How does the meeting work?'),
+                      content: Text(
                         'Once you book a call with an expert and complete the payment, '
                         'the expert will reach out to you via phone call within 36 hours from the time of payment.',
                       ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancel'),
+                          child: Text('Cancel'),
                         ),
                         ElevatedButton(
                           onPressed: () {
@@ -61,7 +61,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                               ),
                             );
                           },
-                          child: const Text('Book a Call'),
+                          child: Text('Book a Call'),
                         ),
                       ],
                     ),
@@ -97,12 +97,12 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Row(
                 children: [
                   Text(
                     '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 33,
                       fontWeight: FontWeight.bold,
                     ),
@@ -140,7 +140,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   ),
                 ],
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: 15),
               Wrap(
                 children: [
                   Chip(
@@ -153,7 +153,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 15),
+                  SizedBox(width: 15),
                   Chip(
                     label: Text(
                       '${widget.expertUserModel.experience} years of experience',
@@ -167,7 +167,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                 ],
               ),
 
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
               Text(
                 'About ${widget.expertUserModel.firstName}',
                 style: TextStyle(
@@ -176,12 +176,12 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 17),
+              SizedBox(height: 17),
               Text(
                 widget.expertUserModel.description,
-                style: const TextStyle(fontSize: 18, color: Pallete.greyColor),
+                style: TextStyle(fontSize: 18, color: Pallete.greyColor),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
               Text(
                 'Sector of Practice',
                 style: TextStyle(
@@ -190,7 +190,7 @@ class _ExpertDetailsState extends ConsumerState<ExpertDetails> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 17),
+              SizedBox(height: 17),
 
               if (widget.expertUserModel.tags.isNotEmpty)
                 Wrap(

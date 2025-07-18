@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ConfirmPhone extends ConsumerStatefulWidget {
   final UserModel expertUserModel; // Changed type to UserModel
-  const ConfirmPhone({super.key, required this.expertUserModel});
+  ConfirmPhone({super.key, required this.expertUserModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ConfirmPhoneState();
@@ -38,7 +38,7 @@ class _ConfirmPhoneState extends ConsumerState<ConfirmPhone> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Confirm Phone number'),
+        title: Text('Confirm Phone number'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -58,21 +58,21 @@ class _ConfirmPhoneState extends ConsumerState<ConfirmPhone> {
                       // India flag emoji
                       Padding(
                         padding: const EdgeInsets.only(left: 20.0, right: 10),
-                        child: const Text(
+                        child: Text(
                           '🇮🇳',
                           style: TextStyle(fontSize: 20),
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       // Country code
-                      const Text(
+                      Text(
                         '+91',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                     ],
                   ),
                   hintText: 'Enter your phone number',
@@ -108,7 +108,7 @@ class _ConfirmPhoneState extends ConsumerState<ConfirmPhone> {
                   if (phoneDigits.length != 10 ||
                       int.tryParse(phoneDigits) == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
+                      SnackBar(
                         content: Text(
                           'Phone number must be in 000-000-0000 format',
                         ),

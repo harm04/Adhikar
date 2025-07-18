@@ -14,7 +14,7 @@ import 'package:flutter_svg/svg.dart';
 
 class EditProfileView extends ConsumerStatefulWidget {
   final UserModel userModel;
-  const EditProfileView({super.key, required this.userModel});
+  EditProfileView({super.key, required this.userModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -121,7 +121,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
         ? LoadingPage()
         : Scaffold(
             appBar: AppBar(
-              title: const Text('Edit Profile'),
+              title: Text('Edit Profile'),
               actions: [
                 Padding(
                   padding: const EdgeInsets.only(right: 18.0),

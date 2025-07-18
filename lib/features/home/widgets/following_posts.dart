@@ -9,12 +9,12 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/features/posts/widgets/post_card.dart';
 
 class FollowingPosts extends ConsumerWidget {
-  const FollowingPosts({super.key});
+  FollowingPosts({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(currentUserDataProvider).value;
-    if (currentUser == null) return const Loader();
+    if (currentUser == null) return Loader();
 
     final followingAsync = ref.watch(
       followingPostsProvider(currentUser.following),
@@ -29,7 +29,7 @@ class FollowingPosts extends ConsumerWidget {
       child: followingAsync.when(
         data: (posts) {
           if (posts.isEmpty) {
-            return const Center(child: Text('No posts from following users'));
+            return Center(child: Text('No posts from following users'));
           }
           return RefreshIndicator(
             onRefresh: _refresh,
@@ -43,7 +43,7 @@ class FollowingPosts extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Loader(),
+        loading: () => Loader(),
         error: (err, st) => ErrorText(error: err.toString()),
       ),
     );

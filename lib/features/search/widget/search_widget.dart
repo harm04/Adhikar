@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SearchWidget extends ConsumerStatefulWidget {
   final TextEditingController searchController;
-  const SearchWidget({super.key, required this.searchController});
+  SearchWidget({super.key, required this.searchController});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SearchViewState();

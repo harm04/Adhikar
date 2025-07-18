@@ -14,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class AdminHome extends ConsumerStatefulWidget {
-  const AdminHome({super.key});
+  AdminHome({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AdminHomeState();

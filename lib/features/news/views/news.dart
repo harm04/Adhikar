@@ -9,7 +9,7 @@ class News extends ConsumerStatefulWidget {
   final dynamic item;
   final List<dynamic> allNews; // Pass all news items to this screen
 
-  const News({super.key, required this.item, required this.allNews});
+  News({super.key, required this.item, required this.allNews});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _NewsState();
@@ -215,7 +215,7 @@ class _NewsState extends ConsumerState<News> {
                 ListView.builder(
                   shrinkWrap: true,
                   padding: const EdgeInsets.only(top: 0.0),
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: NeverScrollableScrollPhysics(),
                   itemCount: otherNews.length,
                   itemBuilder: (context, index) {
                     final news = otherNews[index];
@@ -261,7 +261,7 @@ class _NewsState extends ConsumerState<News> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 4),
+                                    SizedBox(height: 4),
                                     Text(
                                       newsTitle,
                                       style: TextStyle(
@@ -275,7 +275,7 @@ class _NewsState extends ConsumerState<News> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12),
                               // Image at right
                               SizedBox(
                                 height: 120,

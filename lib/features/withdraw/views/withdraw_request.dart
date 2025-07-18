@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class WithdrawRequest extends ConsumerStatefulWidget {
-  const WithdrawRequest({super.key});
+  WithdrawRequest({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -148,12 +148,14 @@ class _WithdrawRequestState extends ConsumerState<WithdrawRequest> {
                           color: const Color.fromARGB(255, 255, 19, 3),
                         ),
                       ),
-                      child: const Padding(
+                      child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Center(
                           child: Text(
                             'Note: Please enter your UPI ID carefully. If you enter the wrong UPI ID, we will not be able to refund your money.',
-                            style: TextStyle(fontSize: 12, color: Colors.white),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.copyWith(fontSize: 12),
                           ),
                         ),
                       ),

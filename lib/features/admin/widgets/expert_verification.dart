@@ -11,7 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ExpertVerification extends ConsumerStatefulWidget {
   final UserModel expertUser;
-  const ExpertVerification({super.key, required this.expertUser});
+  ExpertVerification({super.key, required this.expertUser});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -238,7 +238,7 @@ class _ExpertVerificationState extends ConsumerState<ExpertVerification> {
                                                 100, // adjust for blur height
                                             child: IgnorePointer(
                                               child: Container(
-                                                decoration: const BoxDecoration(
+                                                decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.only(
                                                         bottomLeft:
@@ -587,7 +587,7 @@ class _DocumentPreview extends StatelessWidget {
   final String url;
   final String label;
 
-  const _DocumentPreview({required this.url, required this.label});
+  _DocumentPreview({required this.url, required this.label});
 
   bool get isPdf {
     final path = Uri.parse(url).path.toLowerCase();
@@ -628,16 +628,16 @@ class _DocumentPreview extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.picture_as_pdf, size: 60, color: Colors.red),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   Text(
                     label,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6),
                   Text(
                     "Tap to view/download",
                     textAlign: TextAlign.center,
@@ -654,7 +654,7 @@ class _DocumentPreview extends StatelessWidget {
                   width: 320,
                   height: 360,
                   errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.broken_image),
+                      Icon(Icons.broken_image),
                 ),
               )
             : Center(
@@ -670,7 +670,7 @@ class _DocumentPreview extends StatelessWidget {
                         BlendMode.srcIn,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                     Text(
                       label,
                       style: TextStyle(
@@ -679,7 +679,7 @@ class _DocumentPreview extends StatelessWidget {
                         color: Pallete.primaryColor,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6),
                     Text(
                       "Tap to view/download",
                       textAlign: TextAlign.center,

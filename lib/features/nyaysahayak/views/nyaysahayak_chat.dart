@@ -9,7 +9,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class NyaysahayakChat extends ConsumerStatefulWidget {
-  const NyaysahayakChat({super.key});
+  NyaysahayakChat({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -34,7 +34,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
   );
 
   List<ChatBubble> chatBubbles = [
-    const ChatBubble(
+    ChatBubble(
       direction: Direction.left,
       message:
           'Hello, I am Nyaysahayak. How can I assist you solve legal trouble?',
@@ -171,7 +171,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
     // Use a different approach: update text in chunks to allow smooth scrolling
     const int chunkSize = 5; // Update every 5 characters
     for (int i = 0; i < aiResponse.length; i += chunkSize) {
-      await Future.delayed(const Duration(milliseconds: 90)); // 18ms * 5 = 90ms
+      await Future.delayed(Duration(milliseconds: 90)); // 18ms * 5 = 90ms
 
       int endIndex = (i + chunkSize > aiResponse.length)
           ? aiResponse.length
@@ -204,7 +204,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
         if (scrollController.hasClients) {
           scrollController.animateTo(
             0,
-            duration: const Duration(milliseconds: 300),
+            duration: Duration(milliseconds: 300),
             curve: Curves.easeOut,
           );
         }
@@ -247,14 +247,14 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('NyaySahayak Chat')),
+      appBar: AppBar(title: Text('NyaySahayak Chat')),
       body: Column(
         children: [
           Expanded(
             child: SizedBox(
               child: ListView(
                 controller: scrollController,
-                physics: const BouncingScrollPhysics(),
+                physics: BouncingScrollPhysics(),
                 reverse: true,
                 padding: const EdgeInsets.all(10),
                 children: [
@@ -300,7 +300,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                 Expanded(
                   child: TextField(
                     controller: messageController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Type a message...',
                       border: InputBorder.none,
                     ),
@@ -309,7 +309,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                   ),
                 ),
                 isLoading
-                    ? const Padding(
+                    ? Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.0),
                         child: SizedBox(
                           width: 24,
@@ -318,7 +318,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                         ),
                       )
                     : IconButton(
-                        icon: const Icon(Icons.send, color: Pallete.whiteColor),
+                        icon: Icon(Icons.send, color: Pallete.whiteColor),
                         onPressed: sendMessage,
                       ),
               ],

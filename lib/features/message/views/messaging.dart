@@ -11,7 +11,7 @@ import 'package:adhikar/providers/open_chat_provider.dart'; // Import the provid
 class MessagingScreen extends ConsumerStatefulWidget {
   final UserModel currentUser;
   final UserModel peerUser;
-  const MessagingScreen({
+  MessagingScreen({
     super.key,
     required this.currentUser,
     required this.peerUser,
@@ -58,7 +58,7 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
                   ? AssetImage(ImageTheme.defaultProfileImage)
                   : NetworkImage(peerUser.profileImage),
             ),
-            const SizedBox(width: 10),
+            SizedBox(width: 10),
             Text('${peerUser.firstName} ${peerUser.lastName}'),
           ],
         ),
@@ -108,7 +108,7 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Type a message...',
                       border: InputBorder.none,
                     ),
@@ -121,7 +121,7 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
                   builder: (context, value, child) {
                     final isNotEmpty = value.text.trim().isNotEmpty;
                     return IconButton(
-                      icon: const Icon(Icons.send, color: Pallete.whiteColor),
+                      icon: Icon(Icons.send, color: Pallete.whiteColor),
                       onPressed: isNotEmpty
                           ? () async {
                               final text = _controller.text.trim();

@@ -23,10 +23,10 @@ class _BottomNavBarState extends State<BottomNavBar>
   bool _isBottomNavVisible = true;
 
   List<Widget> pageList = [
-    const HomePage(),
-    const ExpertList(),
-    const Nyaysahayak(),
-    const Search(),
+     HomePage(),
+     ExpertList(),
+     Nyaysahayak(),
+     Search(),
     ShowcaseList(),
   ];
 

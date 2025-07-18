@@ -24,7 +24,7 @@ class Comment extends ConsumerStatefulWidget {
   final PostModel postModel;
   final String podImage;
 
-  const Comment({super.key, required this.postModel, required this.podImage});
+  Comment({super.key, required this.postModel, required this.podImage});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CommentViewState();

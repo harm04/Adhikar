@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SearchUser extends ConsumerWidget {
   final String query;
-  const SearchUser({super.key, required this.query});
+  SearchUser({super.key, required this.query});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

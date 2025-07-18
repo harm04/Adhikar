@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 
 class Search extends ConsumerStatefulWidget {
-  const Search({super.key});
+  Search({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SearchState();
@@ -99,9 +99,9 @@ class _SearchState extends ConsumerState<Search>
       context: context,
       builder: (context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Judgment'),
+          title: Text('Judgment'),
           leading: IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -137,7 +137,7 @@ class _SearchState extends ConsumerState<Search>
           style:
               boldStyle ??
               style?.copyWith(fontWeight: FontWeight.bold) ??
-              const TextStyle(fontWeight: FontWeight.bold),
+              TextStyle(fontWeight: FontWeight.bold),
         ),
       );
       currentIndex = match.end;
@@ -150,20 +150,20 @@ class _SearchState extends ConsumerState<Search>
 
   Widget _buildLegalResults() {
     if (_isLoading) {
-      return const Loader();
+      return Loader();
     }
     if (_error != null) {
       return Center(
-        child: Text(_error!, style: const TextStyle(color: Colors.red)),
+        child: Text(_error!, style: TextStyle(color: Colors.red)),
       );
     }
     if (_legalResults.isEmpty) {
-      return const Center(child: Text('No results found.'));
+      return Center(child: Text('No results found.'));
     }
     return ListView.separated(
       padding: const EdgeInsets.only(top: 10.0),
       itemCount: _legalResults.length,
-      separatorBuilder: (_, __) => const Divider(),
+      separatorBuilder: (_, __) => Divider(),
       itemBuilder: (context, index) {
         final item = _legalResults[index];
         return Card(
@@ -177,15 +177,15 @@ class _SearchState extends ConsumerState<Search>
                 ? RichText(
                     text: parseBoldHtml(
                       item['title'],
-                      style: const TextStyle(fontSize: 18, color: Colors.white),
-                      boldStyle: const TextStyle(
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      boldStyle: TextStyle(
                         fontSize: 18,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   )
-                : const Text('No Title', style: TextStyle(fontSize: 18)),
+                : Text('No Title', style: TextStyle(fontSize: 18)),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -195,11 +195,11 @@ class _SearchState extends ConsumerState<Search>
                     child: RichText(
                       text: parseBoldHtml(
                         item['headline'],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           color: Pallete.whiteColor,
                         ),
-                        boldStyle: const TextStyle(
+                        boldStyle: TextStyle(
                           fontSize: 14,
                           color: Pallete.whiteColor,
                           fontWeight: FontWeight.bold,
@@ -214,7 +214,7 @@ class _SearchState extends ConsumerState<Search>
                     padding: const EdgeInsets.only(top: 4.0),
                     child: Text(
                       'Date : ${item['publishdate']}',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ),
                 if (item['docsource'] != null)
@@ -222,7 +222,7 @@ class _SearchState extends ConsumerState<Search>
                     padding: const EdgeInsets.only(top: 2.0),
                     child: Text(
                       'Source: ${item['docsource']}',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ),
                 if (item['citation'] != null)
@@ -230,7 +230,7 @@ class _SearchState extends ConsumerState<Search>
                     padding: const EdgeInsets.only(top: 2.0),
                     child: Text(
                       'Citation: ${item['citation']}',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ),
               ],
@@ -258,7 +258,7 @@ class _SearchState extends ConsumerState<Search>
               child: TextField(
                 controller: _searchController,
                 cursorColor: Colors.white,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w300,
@@ -275,14 +275,14 @@ class _SearchState extends ConsumerState<Search>
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: Colors.grey),
+                    borderSide: BorderSide(color: Colors.grey),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: Colors.white),
+                    borderSide: BorderSide(color: Colors.white),
                   ),
                   hintText: 'Search for people, posts, or legal documents...',
-                  hintStyle: const TextStyle(color: Pallete.whiteColor),
+                  hintStyle: TextStyle(color: Pallete.whiteColor),
                   hintMaxLines: 1,
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 0,
@@ -298,7 +298,7 @@ class _SearchState extends ConsumerState<Search>
           indicatorSize: TabBarIndicatorSize.tab,
           indicatorColor: Pallete.secondaryColor,
           labelColor: Pallete.secondaryColor,
-          labelStyle: const TextStyle(
+          labelStyle: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
@@ -313,10 +313,10 @@ class _SearchState extends ConsumerState<Search>
         controller: _tabController,
         children: [
           _query.isEmpty
-              ? const Center(child: Text('Type to search users'))
+              ? Center(child: Text('Type to search users'))
               : SearchUser(query: _query),
           _query.isEmpty
-              ? const Center(child: Text('Type to search posts'))
+              ? Center(child: Text('Type to search posts'))
               : SearchPost(query: _query),
 
           _buildLegalResults(),

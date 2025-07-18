@@ -8,7 +8,7 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 class CheckInternet extends ConsumerStatefulWidget {
   final Widget child;
   final Future<void> Function()? onTryAgain;
-  const CheckInternet({super.key, required this.child, this.onTryAgain});
+  CheckInternet({super.key, required this.child, this.onTryAgain});
 
   @override
   ConsumerState<CheckInternet> createState() => _CheckInternetState();
@@ -77,18 +77,18 @@ class _CheckInternetState extends ConsumerState<CheckInternet> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.wifi_off, size: 64, color: Colors.grey),
-          const SizedBox(height: 16),
-          const Text(
+          Icon(Icons.wifi_off, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text(
             'No Internet Connection',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             'Please check your connection and try again.',
             style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
           Container(
             decoration: BoxDecoration(
               color: Colors.blue,
@@ -96,7 +96,7 @@ class _CheckInternetState extends ConsumerState<CheckInternet> {
             ),
             child: TextButton(
               onPressed: _tryAgain,
-              child: const Text(
+              child: Text(
                 'Try Again',
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),

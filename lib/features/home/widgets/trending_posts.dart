@@ -8,7 +8,7 @@ import 'package:adhikar/features/posts/widgets/post_card.dart';
 import 'package:adhikar/common/widgets/check_internet.dart';
 
 class TrendingPosts extends ConsumerWidget {
-  const TrendingPosts({super.key});
+  TrendingPosts({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,7 +23,7 @@ class TrendingPosts extends ConsumerWidget {
       child: trendingAsync.when(
         data: (posts) {
           if (posts.isEmpty) {
-            return const Center(child: Text('No trending posts found'));
+            return Center(child: Text('No trending posts found'));
           }
           return RefreshIndicator(
             onRefresh: _refresh,
@@ -37,7 +37,7 @@ class TrendingPosts extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Loader(),
+        loading: () => Loader(),
         error: (err, st) => ErrorText(error: err.toString()),
       ),
     );

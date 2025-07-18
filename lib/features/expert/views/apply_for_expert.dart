@@ -16,7 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ApplyForExpert extends ConsumerStatefulWidget {
-  const ApplyForExpert({super.key});
+  ApplyForExpert({super.key});
 
   @override
   ConsumerState<ApplyForExpert> createState() => _ApplyForLawyerScreenState();
@@ -169,12 +169,12 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
 
     return Scaffold(
       appBar: AppBar(
-        systemOverlayStyle: const SystemUiOverlayStyle(
+        systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Pallete.primaryColor,
           statusBarIconBrightness: Brightness.light,
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text(
           'Apply for Adhikar Expert',
           style: TextStyle(color: Colors.white),
         ),
@@ -187,7 +187,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     Center(
                       child: Stack(
                         children: [
@@ -259,8 +259,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    const Text(
+                    SizedBox(height: 30),
+                    Text(
                       'First name',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -270,8 +270,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: 'Jhon Doe',
                       keyboardType: TextInputType.text,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Last name',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -281,8 +281,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: 'Jhon Doe',
                       keyboardType: TextInputType.text,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Email',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -292,8 +292,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: 'adhikar@gmail.com',
                       keyboardType: TextInputType.text,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Phone',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -303,8 +303,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: '9999999999',
                       keyboardType: TextInputType.number,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Date of birth',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -314,8 +314,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: '04/03/2004',
                       keyboardType: TextInputType.datetime,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Address line 1',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -325,8 +325,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: 'Flat no / Building',
                       keyboardType: TextInputType.text,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Address line 2',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -336,8 +336,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: 'Area / Street',
                       keyboardType: TextInputType.text,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'City',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -347,8 +347,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: 'City',
                       keyboardType: TextInputType.text,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Choose your State',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -358,13 +358,13 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                         Expanded(
                           child: DropDownField(
                             enabled: true,
-                            textStyle: const TextStyle(
+                            textStyle: TextStyle(
                               color: Pallete.whiteColor,
                               fontSize: 16,
                             ),
                             controller: statecontroller,
                             hintText: 'Select your State',
-                            hintStyle: const TextStyle(
+                            hintStyle: TextStyle(
                               color: Colors.grey,
                               fontSize: 17,
                             ),
@@ -377,13 +377,13 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                             },
                           ),
                         ),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(right: 16.0),
                           child: Text("*", style: TextStyle(color: Colors.red)),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     Text(
                       'Write Tags for your expertise (Criminal, Civil, Family, etc.)',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
@@ -420,7 +420,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'Upload proof of beign Lawyer',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -447,7 +447,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                                           : 'assets/icons/ic_image.png',
                                       height: 30,
                                     ),
-                                    const SizedBox(width: 10),
+                                    SizedBox(width: 10),
                                     SizedBox(
                                       width:
                                           MediaQuery.of(context).size.width *
@@ -456,7 +456,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         proofFile!.name,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: Pallete.whiteColor,
                                           fontSize: 18,
                                         ),
@@ -464,9 +464,9 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                                     ),
                                   ],
                                 )
-                              : const Text(
+                              : Text(
                                   'Upload',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -475,8 +475,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Upload identity proof',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -503,7 +503,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                                           : 'assets/icons/ic_image.png',
                                       height: 35,
                                     ),
-                                    const SizedBox(width: 10),
+                                    SizedBox(width: 10),
                                     SizedBox(
                                       width:
                                           MediaQuery.of(context).size.width *
@@ -512,7 +512,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         idFile!.name,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: Pallete.whiteColor,
                                           fontSize: 18,
                                         ),
@@ -520,7 +520,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                                     ),
                                   ],
                                 )
-                              : const Text(
+                              : Text(
                                   'Upload',
                                   style: TextStyle(
                                     color: Colors.white,
@@ -531,8 +531,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Cases won',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -542,8 +542,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: 'Cases won',
                       keyboardType: TextInputType.number,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Experience (in years)',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -553,8 +553,8 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       hinttext: '10+',
                       keyboardType: TextInputType.number,
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: 20),
+                    Text(
                       'Add description about yourself',
                       style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
                     ),
@@ -571,12 +571,12 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                           suffixText: '*',
-                          suffixStyle: const TextStyle(
+                          suffixStyle: TextStyle(
                             color: Colors.red,
                             letterSpacing: 10,
                           ),
                           hintText: 'Describe yourself within 1000 letters',
-                          hintStyle: const TextStyle(
+                          hintStyle: TextStyle(
                             color: Colors.grey,
                             fontSize: 14,
                           ),
@@ -588,7 +588,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                       ),
                     ),
 
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40),
                     GestureDetector(
                       onTap: () async {
                         if (emailController.text.isNotEmpty &&
@@ -636,11 +636,11 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
                           showSnackbar(context, 'Please fill all the fields');
                         }
                       },
-                      child: const CustomButton(
+                      child: CustomButton(
                         text: 'Submit for verification',
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -665,9 +665,9 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           suffixText: '*',
-          suffixStyle: const TextStyle(color: Colors.red, letterSpacing: 10),
+          suffixStyle: TextStyle(color: Colors.red, letterSpacing: 10),
           hintText: hinttext,
-          hintStyle: const TextStyle(color: Pallete.greyColor, fontSize: 16),
+          hintStyle: TextStyle(color: Pallete.greyColor, fontSize: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,
@@ -688,7 +688,7 @@ class _ApplyForLawyerScreenState extends ConsumerState<ApplyForExpert> {
   //     child: Center(
   //       child: Text(
   //         text,
-  //         style: const TextStyle(
+  //         style: TextStyle(
   //           color: Colors.white,
   //           fontSize: 18,
   //           fontWeight: FontWeight.bold,

@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 class AdminExpertList extends ConsumerStatefulWidget {
-  const AdminExpertList({super.key});
+  AdminExpertList({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

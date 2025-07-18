@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PostList extends ConsumerStatefulWidget {
-  const PostList({super.key});
+  PostList({super.key});
 
   @override
   ConsumerState<PostList> createState() => _PostListState();
@@ -17,7 +17,7 @@ class PostList extends ConsumerStatefulWidget {
 class _PostListState extends ConsumerState<PostList> {
   Future<void> _refreshPosts() async {
     ref.invalidate(getPostProvider);
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(Duration(milliseconds: 500));
   }
 
   @override
@@ -44,7 +44,7 @@ class _PostListState extends ConsumerState<PostList> {
                           itemBuilder: (BuildContext context, int index) {
                             final post = posts[index];
                             return post.pod == 'comment'
-                                ? const SizedBox()
+                                ? SizedBox()
                                 : PostCard(
                                     key: ValueKey(
                                       post.id,
@@ -73,7 +73,7 @@ class _PostListState extends ConsumerState<PostList> {
                 return ErrorText(error: err.toString());
               },
               loading: () {
-                return const Loader();
+                return Loader();
               },
             ),
       ),
@@ -83,7 +83,7 @@ class _PostListState extends ConsumerState<PostList> {
 
 class _KeepAliveWrapper extends StatefulWidget {
   final Widget child;
-  const _KeepAliveWrapper({required this.child});
+  _KeepAliveWrapper({required this.child});
 
   @override
   State<_KeepAliveWrapper> createState() => _KeepAliveWrapperState();

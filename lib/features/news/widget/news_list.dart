@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 class NewsList extends ConsumerStatefulWidget {
-  const NewsList({super.key});
+  NewsList({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _NewsState();

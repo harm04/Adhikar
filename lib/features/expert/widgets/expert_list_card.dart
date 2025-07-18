@@ -7,7 +7,7 @@ import 'package:flutter_svg/svg.dart';
 
 class ExpertListCard extends ConsumerStatefulWidget {
   final UserModel expertUserModel;
-  const ExpertListCard({super.key, required this.expertUserModel});
+  ExpertListCard({super.key, required this.expertUserModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ExpertListCardState();
@@ -45,7 +45,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                             errorBuilder: (context, error, stackTrace) =>
                                 Container(
                                   color: Colors.grey[300],
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.person,
                                     size: 60,
                                     color: Colors.grey,
@@ -55,13 +55,13 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 7),
+                    SizedBox(height: 7),
                     Row(
                       children: [
                         Flexible(
                           child: Text(
                             '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -82,7 +82,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -95,7 +95,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                             BlendMode.srcIn,
                           ),
                         ),
-                        const SizedBox(width: 5),
+                        SizedBox(width: 5),
                         Expanded(
                           child: Text(
                             widget.expertUserModel.state,
@@ -106,16 +106,16 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Flexible(
                       child: Text(
                         widget.expertUserModel.description,
                         maxLines: widget.expertUserModel.tags.isEmpty ? 4 : 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 14),
+                        style: TextStyle(fontSize: 14),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     if (widget.expertUserModel.tags.isNotEmpty)
                       Wrap(
                         spacing: 6,
@@ -123,7 +123,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                           Chip(label: Text(widget.expertUserModel.tags.first)),
                         ],
                       ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                   ],
                 ),
               ),
@@ -149,7 +149,7 @@ class _ExpertListCardState extends ConsumerState<ExpertListCard> {
                       ),
                     );
                   },
-                  child: const Text(
+                  child: Text(
                     'View Details',
                     style: TextStyle(
                       color: Pallete.secondaryColor,

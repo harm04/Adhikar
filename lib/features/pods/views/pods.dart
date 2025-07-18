@@ -11,7 +11,7 @@ class PodsView extends ConsumerStatefulWidget {
   final String podTitle;
   final String podDescription;
   final String podBanner;
-  const PodsView(
+  PodsView(
       {super.key,
       required this.podimage,
       required this.podTitle,

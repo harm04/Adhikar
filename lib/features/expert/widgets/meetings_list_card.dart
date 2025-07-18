@@ -12,7 +12,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class MeetingsListCard extends ConsumerStatefulWidget {
   final MeetingsModel meetingsModel;
-  const MeetingsListCard({super.key, required this.meetingsModel});
+  MeetingsListCard({super.key, required this.meetingsModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -104,7 +104,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                       '${expertdata.firstName} ${expertdata.lastName}',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -137,7 +137,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                     ),
                                     Text(
                                       expertdata.state,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 14,
                                         color: Pallete.secondaryColor,
                                       ),
@@ -180,17 +180,17 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                             BlendMode.srcIn,
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
+                                        SizedBox(width: 8),
                                         Text(
                                           'OTP: ',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
                                           ),
                                         ),
                                         Text(
                                           widget.meetingsModel.otp,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 18,
                                             color: Pallete.secondaryColor,
@@ -209,7 +209,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                       color: Colors.green.withOpacity(0.15),
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
-                                    child: const Center(
+                                    child: Center(
                                       child: Text(
                                         'Completed',
                                         style: TextStyle(
@@ -279,7 +279,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                   fit: BoxFit.cover,
                                 ),
                         ),
-                        const SizedBox(width: 15),
+                        SizedBox(width: 15),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,12 +289,12 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                 '${clientData.firstName} ${clientData.lastName}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 7),
+                              SizedBox(height: 7),
                               Row(
                                 children: [
                                   SvgPicture.asset(
@@ -305,11 +305,11 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                       BlendMode.srcIn,
                                     ),
                                   ),
-                                  const SizedBox(width: 5),
+                                  SizedBox(width: 5),
                                   Expanded(
                                     child: Text(
                                       clientData.phone,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 14,
                                         color: Pallete.secondaryColor,
                                       ),
@@ -319,11 +319,11 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 7),
+                              SizedBox(height: 7),
                               Row(
                                 children: [
-                                  const Text('Booked: '),
-                                  const SizedBox(width: 5),
+                                  Text('Booked: '),
+                                  SizedBox(width: 5),
                                   Expanded(
                                     child: Text(
                                       timeago.format(
@@ -335,7 +335,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 10),
+                              SizedBox(height: 10),
                               if (meetingStatus == 'pending')
                                 TextButton(
                                   onPressed: () {
@@ -348,7 +348,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                         return StatefulBuilder(
                                           builder: (context, setStateDialog) {
                                             return AlertDialog(
-                                              title: const Text(
+                                              title: Text(
                                                 'Enter OTP to Complete Meeting',
                                               ),
                                               content: Column(
@@ -356,13 +356,13 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  const Text(
+                                                  Text(
                                                     'Ask client for OTP to mark this meeting as completed.\n\nClient can find the meeting OTP in the meetings tab.',
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 16),
+                                                  SizedBox(height: 16),
                                                   TextField(
                                                     controller:
                                                         dialogOtpController,
@@ -374,7 +374,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                                           'Enter OTP from client',
                                                       errorText: localError,
                                                       border:
-                                                          const OutlineInputBorder(),
+                                                          OutlineInputBorder(),
                                                       counterText: '',
                                                     ),
                                                   ),
@@ -385,7 +385,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                                   onPressed: () => Navigator.of(
                                                     context,
                                                   ).pop(),
-                                                  child: const Text('Cancel'),
+                                                  child: Text('Cancel'),
                                                 ),
                                                 ElevatedButton(
                                                   onPressed: () async {
@@ -438,7 +438,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                                       });
                                                     }
                                                   },
-                                                  child: const Text('Submit'),
+                                                  child: Text('Submit'),
                                                 ),
                                               ],
                                             );
@@ -447,7 +447,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                       },
                                     );
                                   },
-                                  child: const Text(
+                                  child: Text(
                                     'Click to enter OTP',
                                     style: TextStyle(
                                       color: Pallete.secondaryColor,
@@ -463,7 +463,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                     color: Colors.green.withOpacity(0.15),
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                  child: const Center(
+                                  child: Center(
                                     child: Text(
                                       'Completed',
                                       style: TextStyle(

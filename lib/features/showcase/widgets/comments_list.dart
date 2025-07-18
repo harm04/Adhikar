@@ -16,7 +16,7 @@ import 'package:timeago/timeago.dart' as timeago;
 class CommentsList extends ConsumerStatefulWidget {
   final ShowcaseModel showcaseModel;
   final UserModel currentUser;
-  const CommentsList({
+   CommentsList({
     super.key,
     required this.showcaseModel,
     required this.currentUser,

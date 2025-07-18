@@ -25,7 +25,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class PostCard extends ConsumerWidget {
   final PostModel postmodel;
-  const PostCard({super.key, required this.postmodel});
+  PostCard({super.key, required this.postmodel});
 
   void _showReportBottomSheet(
     BuildContext context,
@@ -37,7 +37,7 @@ class PostCard extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Pallete.backgroundColor,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
@@ -62,7 +62,7 @@ class PostCard extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
 
                   // Title
                   Text(
@@ -73,12 +73,12 @@ class PostCard extends ConsumerWidget {
                       color: Pallete.whiteColor,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     'Why are you reporting this post?',
                     style: TextStyle(fontSize: 16, color: Pallete.greyColor),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
 
                   // Report options
                   ..._buildReportOptions(selectedReason, (String value) {
@@ -87,7 +87,7 @@ class PostCard extends ConsumerWidget {
                     });
                   }),
 
-                  const SizedBox(height: 30),
+                  SizedBox(height: 30),
 
                   // Submit button
                   SizedBox(
@@ -112,7 +112,7 @@ class PostCard extends ConsumerWidget {
                       child: CustomButton(text: 'Submit report'),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                 ],
               ),
             );
@@ -304,7 +304,7 @@ class PostCard extends ConsumerWidget {
                               : null,
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,7 +327,7 @@ class PostCard extends ConsumerWidget {
                                     postmodel.isAnonymous
                                         ? 'Anonymous'
                                         : user.firstName + ' ' + user.lastName,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20,
                                     ),

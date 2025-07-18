@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
-  const SignUpScreen({super.key});
+  SignUpScreen({super.key});
 
   @override
   ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
@@ -63,29 +63,29 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               height: 10,
                             ),
-                            const Text(
+                            Text(
                               'Create an account',
                               style: TextStyle(
                                   color: Pallete.whiteColor,
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold),
                             ),
-                            const Text(
+                            Text(
                               'Let\'s create your account',
                               style: TextStyle(color: Colors.grey),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 20,
                             ),
-                            const Text(
+                            Text(
                               'First Name',
                               style:
                                   TextStyle(color: Pallete.whiteColor, fontSize: 16),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 5,
                             ),
                             CustomTextfield(
@@ -95,15 +95,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               obsecureText: false,
                               hintText: 'first name',
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 15,
                             ),
-                            const Text(
+                            Text(
                               'Last Name',
                               style:
                                   TextStyle(color: Pallete.whiteColor, fontSize: 16),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 5,
                             ),
                             CustomTextfield(
@@ -113,15 +113,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               obsecureText: false,
                               hintText: 'last name',
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 15,
                             ),
-                            const Text(
+                            Text(
                               'Email',
                               style:
                                   TextStyle(color: Pallete.whiteColor, fontSize: 16),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 5,
                             ),
                             CustomTextfield(
@@ -131,15 +131,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               textCapitalization: TextCapitalization.none,
                               hintText: 'email',
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 15,
                             ),
-                            const Text(
+                            Text(
                               'Password',
                               style:
                                   TextStyle(color: Pallete.whiteColor, fontSize: 16),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 5,
                             ),
                             CustomTextfield(
@@ -149,12 +149,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               textCapitalization: TextCapitalization.none,
                               hintText: 'password',
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 15,
                             ),
                             GestureDetector(
                               child: RichText(
-                                  text: const TextSpan(children: [
+                                  text: TextSpan(children: [
                                 TextSpan(
                                   text: 'By signing up you agree to our ',
                                   style: TextStyle(
@@ -170,22 +170,22 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                         decoration: TextDecoration.underline))
                               ])),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 20,
                             ),
                             GestureDetector(
                               onTap: () => onSignup(),
-                              child: const CustomButton(
+                              child: CustomButton(
                                 text: 'Create an account',
                               ),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               height: 20,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text(
+                                Text(
                                   'Already have an account?',
                                   style: TextStyle(
                                       color: Colors.grey, fontSize: 16),
@@ -197,7 +197,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                         return SignInScreen();
                                       }));
                                     },
-                                    child: const Text(
+                                    child: Text(
                                       'Log in',
                                       style: TextStyle(
                                           color: Pallete.whiteColor,

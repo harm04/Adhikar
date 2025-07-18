@@ -9,7 +9,7 @@ import 'package:flutter_svg/svg.dart';
 
 class MeetExpertCard extends ConsumerWidget {
   final UserModel user;
-  const MeetExpertCard({super.key, required this.user});
+   MeetExpertCard({super.key, required this.user});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AdminWithdrawList extends ConsumerStatefulWidget {
-  const AdminWithdrawList({super.key});
+  AdminWithdrawList({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

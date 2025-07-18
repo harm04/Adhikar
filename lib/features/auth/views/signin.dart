@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
-  const SignInScreen({super.key});
+  SignInScreen({super.key});
 
   @override
   ConsumerState<SignInScreen> createState() => _LoginScreenState();
@@ -53,8 +53,8 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 10),
-                        const Text(
+                        SizedBox(height: 10),
+                        Text(
                           'Login to your account',
                           style: TextStyle(
                             color: Pallete.whiteColor,
@@ -62,19 +62,19 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const Text(
+                        Text(
                           'It\'s great to see you again',
                           style: TextStyle(color: Colors.grey),
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
+                        SizedBox(height: 20),
+                        Text(
                           'Email',
                           style: TextStyle(
                             color: Pallete.whiteColor,
                             fontSize: 16,
                           ),
                         ),
-                        const SizedBox(height: 5),
+                        SizedBox(height: 5),
                         CustomTextfield(
                           keyboardType: TextInputType.emailAddress,
                           controller: emailController,
@@ -82,15 +82,15 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                           obsecureText: false,
                           hintText: 'email',
                         ),
-                        const SizedBox(height: 15),
-                        const Text(
+                        SizedBox(height: 15),
+                        Text(
                           'Password',
                           style: TextStyle(
                             color: Pallete.whiteColor,
                             fontSize: 16,
                           ),
                         ),
-                        const SizedBox(height: 5),
+                        SizedBox(height: 5),
                         CustomTextfield(
                           keyboardType: TextInputType.text,
                           controller: passwordController,
@@ -98,20 +98,20 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                           obsecureText: true,
                           hintText: 'password',
                         ),
-                        const SizedBox(height: 15),
+                        SizedBox(height: 15),
                         Row(
                           children: [
-                            const Text(
+                            Text(
                               'Forgot password?',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 16,
                               ),
                             ),
-                            const SizedBox(width: 5),
+                            SizedBox(width: 5),
                             TextButton(
                               onPressed: () {},
-                              child: const Text(
+                              child: Text(
                                 'Reset password',
                                 style: TextStyle(
                                   color: Pallete.whiteColor,
@@ -122,18 +122,18 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20),
                         GestureDetector(
                           onTap: () {
                             onLogin();
                           },
-                          child: const CustomButton(text: 'Login'),
+                          child: CustomButton(text: 'Login'),
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               'Don\'t have an account?',
                               style: TextStyle(
                                 color: Colors.grey,
@@ -146,12 +146,12 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return const SignUpScreen();
+                                      return SignUpScreen();
                                     },
                                   ),
                                 );
                               },
-                              child: const Text(
+                              child: Text(
                                 'Sign up',
                                 style: TextStyle(
                                   color: Pallete.whiteColor,
@@ -178,7 +178,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // class SignInScreen extends ConsumerStatefulWidget {
-//   const SignInScreen({super.key});
+//   SignInScreen({super.key});
 
 //   @override
 //   ConsumerState<ConsumerStatefulWidget> createState() => _SignInScreenState();

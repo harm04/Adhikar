@@ -23,7 +23,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class ProfileWidget extends ConsumerStatefulWidget {
   final UserModel userModel;
-  const ProfileWidget({super.key, required this.userModel});
+  ProfileWidget({super.key, required this.userModel});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ProfileWidgetState();

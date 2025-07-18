@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final tokenValidationProvider = StateProvider<Map<String, bool>>((ref) => {});
 
 class TokenManagement extends ConsumerStatefulWidget {
-  const TokenManagement({super.key});
+  TokenManagement({super.key});
 
   @override
   ConsumerState<TokenManagement> createState() => _TokenManagementState();
@@ -89,7 +89,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
       if (validationResults.isEmpty) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Run validation first')));
+        ).showSnackBar(SnackBar(content: Text('Run validation first')));
         return;
       }
 
@@ -121,7 +121,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FCM Token Management'),
+        title: Text('FCM Token Management'),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
       ),
@@ -146,7 +146,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
                           'Token Statistics',
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10),
                         Text('Total users: ${users.length}'),
                         Text(
                           'Users with FCM tokens: ${usersWithTokens.length}',
@@ -168,19 +168,19 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 Row(
                   children: [
                     ElevatedButton.icon(
                       onPressed: isValidating ? null : validateAllTokens,
                       icon: isValidating
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Icon(Icons.security),
+                          : Icon(Icons.security),
                       label: Text(
                         isValidating ? 'Validating...' : 'Validate All Tokens',
                       ),
@@ -189,20 +189,20 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
                         foregroundColor: Colors.white,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
 
                     if (invalidTokens > 0)
                       ElevatedButton.icon(
                         onPressed: isCleaningUp ? null : cleanupInvalidTokens,
                         icon: isCleaningUp
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 16,
                                 height: 16,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Icon(Icons.cleaning_services),
+                            : Icon(Icons.cleaning_services),
                         label: Text(
                           isCleaningUp ? 'Cleaning...' : 'Clean Invalid Tokens',
                         ),
@@ -214,7 +214,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
                   ],
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 Expanded(
                   child: Card(
@@ -262,7 +262,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
                                     Text('Type: ${userModel.userType}'),
                                     Text(
                                       'Token: ${userModel.fcmToken.substring(0, 20)}...',
-                                      style: const TextStyle(fontSize: 12),
+                                      style: TextStyle(fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -271,7 +271,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
-                                            icon: const Icon(
+                                            icon: Icon(
                                               Icons.refresh,
                                               color: Colors.blue,
                                             ),
@@ -310,7 +310,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
                                                   ScaffoldMessenger.of(
                                                     context,
                                                   ).showSnackBar(
-                                                    const SnackBar(
+                                                    SnackBar(
                                                       content: Text(
                                                         'Failed to generate new token',
                                                       ),
@@ -329,7 +329,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
                                             },
                                           ),
                                           IconButton(
-                                            icon: const Icon(
+                                            icon: Icon(
                                               Icons.delete,
                                               color: Colors.red,
                                             ),
@@ -368,7 +368,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
                                         ],
                                       )
                                     : isValid == true
-                                    ? const Icon(
+                                    ? Icon(
                                         Icons.check_circle,
                                         color: Colors.green,
                                       )
@@ -385,7 +385,7 @@ class _TokenManagementState extends ConsumerState<TokenManagement> {
             ),
           );
         },
-        loading: () => const Loader(),
+        loading: () => Loader(),
         error: (error, stack) =>
             Center(child: Text('Error loading users: $error')),
       ),

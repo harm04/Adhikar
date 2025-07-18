@@ -5,7 +5,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class NewsListCard extends ConsumerStatefulWidget {
   final dynamic item;
-  const NewsListCard({super.key, required this.item});
+  NewsListCard({super.key, required this.item});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _NewsListCardState();

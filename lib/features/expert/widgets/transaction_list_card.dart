@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 
 class TransactionListCard extends ConsumerStatefulWidget {
   final TransactionModel transaction;
-  const TransactionListCard({super.key, required this.transaction});
+  TransactionListCard({super.key, required this.transaction});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

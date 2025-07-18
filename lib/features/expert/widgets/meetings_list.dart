@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MeetingsList extends ConsumerStatefulWidget {
-  const MeetingsList({super.key});
+  MeetingsList({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MeetingsListState();
@@ -26,7 +26,7 @@ class _MeetingsListState extends ConsumerState<MeetingsList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Meetings'),
+        title: Text('My Meetings'),
         centerTitle: true,
         automaticallyImplyLeading: true,
       ),
@@ -38,7 +38,7 @@ class _MeetingsListState extends ConsumerState<MeetingsList> {
                 currentUser.userType == 'User'
                     ? 'No meeting with an expert found.'
                     : 'No appointments with users found.',
-                style: const TextStyle(fontSize: 18, color: Colors.grey),
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
             );
           }

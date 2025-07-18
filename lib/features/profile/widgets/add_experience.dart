@@ -9,7 +9,7 @@ import 'package:flutter_svg/svg.dart';
 
 class AddExperience extends ConsumerStatefulWidget {
   final UserModel currentUser;
-  const AddExperience({super.key, required this.currentUser});
+  AddExperience({super.key, required this.currentUser});
 
   @override
   ConsumerState<AddExperience> createState() => _AddExperienceState();

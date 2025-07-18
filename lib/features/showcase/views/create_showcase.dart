@@ -13,7 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CreateShowcase extends ConsumerStatefulWidget {
-  const CreateShowcase({super.key});
+  CreateShowcase({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _CreateShowcaseState();

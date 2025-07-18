@@ -10,7 +10,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class ConversationsListScreen extends ConsumerWidget {
   final UserModel currentUser;
-  const ConversationsListScreen({super.key, required this.currentUser});
+  ConversationsListScreen({super.key, required this.currentUser});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,11 +22,11 @@ class ConversationsListScreen extends ConsumerWidget {
             .getUserConversationsStream(currentUser.uid),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
           final conversations = snapshot.data!;
           if (conversations.isEmpty) {
-            return const Center(child: Text('No conversations yet'));
+            return Center(child: Text('No conversations yet'));
           }
           return ListView.builder(
             itemCount: conversations.length,
@@ -39,7 +39,7 @@ class ConversationsListScreen extends ConsumerWidget {
                 future: ref.read(userDataByIdProvider(peerId).future),
                 builder: (context, userSnap) {
                   if (!userSnap.hasData) {
-                    return const ListTile(
+                    return ListTile(
                       title: Center(child: Text('Loading...')),
                     );
                   }

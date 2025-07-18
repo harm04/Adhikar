@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TransactionList extends ConsumerStatefulWidget {
-  const TransactionList({super.key});
+  TransactionList({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MeetingsListState();
@@ -26,7 +26,7 @@ class _MeetingsListState extends ConsumerState<TransactionList> {
           data: (transaction) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text('My Transactions '),
+                title: Text('My Transactions '),
                 centerTitle: true,
               ),
               body: transaction.isEmpty

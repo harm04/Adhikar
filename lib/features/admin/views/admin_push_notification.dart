@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AdminPushNotification extends ConsumerStatefulWidget {
-  const AdminPushNotification({super.key});
+  AdminPushNotification({super.key});
 
   @override
   ConsumerState<AdminPushNotification> createState() =>

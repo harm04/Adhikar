@@ -14,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ShowcaseList extends ConsumerStatefulWidget {
-  const ShowcaseList({super.key});
+  ShowcaseList({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ShowcaseState();
@@ -257,7 +257,7 @@ class _ShowcaseState extends ConsumerState<ShowcaseList> {
 
 class _KeepAliveWrapper extends StatefulWidget {
   final Widget child;
-  const _KeepAliveWrapper({required this.child});
+  _KeepAliveWrapper({required this.child});
 
   @override
   State<_KeepAliveWrapper> createState() => _KeepAliveWrapperState();
