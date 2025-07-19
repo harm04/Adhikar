@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MyAccount extends ConsumerWidget {
-  MyAccount({super.key});
+ const MyAccount({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

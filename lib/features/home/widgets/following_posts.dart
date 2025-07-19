@@ -10,7 +10,7 @@ import 'package:adhikar/features/posts/widgets/post_card.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class FollowingPosts extends ConsumerWidget {
-  FollowingPosts({super.key});
+  const FollowingPosts({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

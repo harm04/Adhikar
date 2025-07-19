@@ -8,7 +8,7 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/features/posts/widgets/post_card.dart';
 
 class LatestPosts extends ConsumerWidget {
-  LatestPosts({super.key});
+ const LatestPosts({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class WithdrawRequest extends ConsumerStatefulWidget {
-  WithdrawRequest({super.key});
+  const WithdrawRequest({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

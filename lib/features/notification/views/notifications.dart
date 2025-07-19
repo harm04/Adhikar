@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Notifications extends ConsumerStatefulWidget {
-  Notifications({super.key});
+  const Notifications({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _NotificationsState();
