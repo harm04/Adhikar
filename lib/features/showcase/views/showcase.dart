@@ -10,7 +10,7 @@ import 'package:adhikar/features/showcase/widgets/comment_textfield.dart';
 import 'package:adhikar/features/showcase/widgets/comments_list.dart';
 import 'package:adhikar/features/showcase/widgets/meet_expert_card.dart';
 import 'package:adhikar/models/showcase_model.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,6 +26,11 @@ class Showcase extends ConsumerStatefulWidget {
 }
 
 class _ShowcaseState extends ConsumerState<Showcase> {
+  String _buildDisplayTitle() {
+    // Return only the clean title text, no hashtags or links
+    return widget.showcaseModel.title;
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDataProvider).value;
@@ -74,7 +79,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                           height: 30,
                           'assets/svg/left_arrow.svg',
                           colorFilter: ColorFilter.mode(
-                            Pallete.whiteColor,
+                            Colors.white,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -113,14 +118,14 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                                   ? SvgPicture.asset(
                                       'assets/svg/bookmark_filled.svg',
                                       colorFilter: ColorFilter.mode(
-                                        Pallete.secondaryColor,
+                                        context.secondaryColor,
                                         BlendMode.srcIn,
                                       ),
                                     )
                                   : SvgPicture.asset(
                                       'assets/svg/bookmark_outline.svg',
                                       colorFilter: ColorFilter.mode(
-                                        Pallete.whiteColor,
+                                        context.iconPrimaryColor,
                                         BlendMode.srcIn,
                                       ),
                                     );
@@ -135,7 +140,12 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: Text('Coming Soon'),
+                                  title: Text(
+                                    'Coming Soon',
+                                    style: TextStyle(
+                                      color: context.primaryColor,
+                                    ),
+                                  ),
                                   content: Text(
                                     'Sharing feature is coming soon.',
                                   ),
@@ -158,7 +168,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                               height: 30,
                               'assets/svg/share.svg',
                               colorFilter: ColorFilter.mode(
-                                Pallete.whiteColor,
+                                Colors.white,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -176,7 +186,9 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(1),
+                            color: context.isDarkMode
+                                ? Colors.black.withOpacity(1)
+                                : Colors.white.withOpacity(1),
                             spreadRadius: 200,
                             blurRadius: 200,
                             blurStyle: BlurStyle.normal,
@@ -223,11 +235,11 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.showcaseModel.title,
+                                    _buildDisplayTitle(),
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: Pallete.whiteColor,
+                                      color: context.textPrimaryColor,
                                     ),
                                   ),
                                   SizedBox(
@@ -242,7 +254,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
-                                        color: Pallete.whiteColor,
+                                        color: context.textSecondaryColor,
                                       ),
                                     ),
                                   ),
@@ -254,7 +266,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                                         height: 22,
                                         'assets/svg/upvote_outline.svg',
                                         colorFilter: ColorFilter.mode(
-                                          Pallete.whiteColor,
+                                          context.iconPrimaryColor,
                                           BlendMode.srcIn,
                                         ),
                                       ),
@@ -263,7 +275,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                                         widget.showcaseModel.upvotes.length
                                             .toString(),
                                         style: TextStyle(
-                                          color: Pallete.whiteColor,
+                                          color: context.textPrimaryColor,
                                           fontSize: 16,
                                         ),
                                       ),
@@ -271,7 +283,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                                       SvgPicture.asset(
                                         'assets/svg/comment.svg',
                                         colorFilter: ColorFilter.mode(
-                                          Pallete.whiteColor,
+                                          context.iconPrimaryColor,
                                           BlendMode.srcIn,
                                         ),
                                       ),
@@ -280,7 +292,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                                         widget.showcaseModel.commentIds.length
                                             .toString(),
                                         style: TextStyle(
-                                          color: Pallete.whiteColor,
+                                          color: context.textPrimaryColor,
                                           fontSize: 16,
                                         ),
                                       ),
@@ -320,8 +332,8 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                             widget.showcaseModel.upvotes.contains(
                               currentUser.uid,
                             )
-                            ? Pallete.secondaryColor
-                            : Pallete.cardColor,
+                            ? context.secondaryColor
+                            : Theme.of(context).cardColor,
                       ),
                       child: Center(
                         child: Padding(
@@ -340,8 +352,8 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                                   widget.showcaseModel.upvotes.contains(
                                     currentUser.uid,
                                   )
-                                  ? Pallete.primaryColor
-                                  : Pallete.secondaryColor,
+                                  ? context.primaryColor
+                                  : context.secondaryColor,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -357,11 +369,18 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Pallete.whiteColor,
+                      color: context.textPrimaryColor,
                     ),
                   ),
                   SizedBox(height: 15),
-                  ExpandableHashtags(text: widget.showcaseModel.description),
+                  ExpandableHashtags(
+                    text: widget
+                        .showcaseModel
+                        .description, // Clean description without hashtags and links
+                    hashtags: widget
+                        .showcaseModel
+                        .hashtags, // Pass hashtags separately
+                  ),
                   SizedBox(height: 20),
                   //image
                   if (widget.showcaseModel.type == PostType.image)
@@ -417,6 +436,17 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                         '',
                       ),
                       displayDirection: UIDirection.uiDirectionHorizontal,
+                      backgroundColor: context.cardColor,
+                      borderRadius: 8,
+                      bodyStyle: TextStyle(
+                        fontSize: 14,
+                        color: context.textSecondaryColor,
+                      ),
+                      titleStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: context.textPrimaryColor,
+                      ),
                     ),
                     SizedBox(height: 10),
                   ],
@@ -426,7 +456,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Pallete.whiteColor,
+                      color: context.textPrimaryColor,
                     ),
                   ),
                   SizedBox(height: 15),
@@ -451,7 +481,7 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Pallete.whiteColor,
+                      color: context.textPrimaryColor,
                     ),
                   ),
 

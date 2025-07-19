@@ -4,7 +4,7 @@ import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/search/widget/search_post.dart';
 import 'package:adhikar/features/search/widget/search_user.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 
 class Search extends ConsumerStatefulWidget {
-  Search({super.key});
+  const Search({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SearchState();
@@ -99,9 +99,10 @@ class _SearchState extends ConsumerState<Search>
       context: context,
       builder: (context) => Scaffold(
         appBar: AppBar(
-          title: Text('Judgment'),
+          backgroundColor: Colors.white,
+          title: const Text('Judgment', style: TextStyle(color: Colors.black)),
           leading: IconButton(
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close, color: Colors.black),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -137,7 +138,7 @@ class _SearchState extends ConsumerState<Search>
           style:
               boldStyle ??
               style?.copyWith(fontWeight: FontWeight.bold) ??
-              TextStyle(fontWeight: FontWeight.bold),
+              const TextStyle(fontWeight: FontWeight.bold),
         ),
       );
       currentIndex = match.end;
@@ -150,24 +151,29 @@ class _SearchState extends ConsumerState<Search>
 
   Widget _buildLegalResults() {
     if (_isLoading) {
-      return Loader();
+      return const Loader();
     }
     if (_error != null) {
       return Center(
-        child: Text(_error!, style: TextStyle(color: Colors.red)),
+        child: Text(_error!, style: const TextStyle(color: Colors.red)),
       );
     }
     if (_legalResults.isEmpty) {
-      return Center(child: Text('No results found.'));
+      return Center(
+        child: Text(
+          'No results found.',
+          style: TextStyle(color: context.textSecondaryColor),
+        ),
+      );
     }
     return ListView.separated(
       padding: const EdgeInsets.only(top: 10.0),
       itemCount: _legalResults.length,
-      separatorBuilder: (_, __) => Divider(),
+      separatorBuilder: (_, __) => const Divider(),
       itemBuilder: (context, index) {
         final item = _legalResults[index];
         return Card(
-          color: Pallete.cardColor,
+          color: context.cardColor,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -177,15 +183,18 @@ class _SearchState extends ConsumerState<Search>
                 ? RichText(
                     text: parseBoldHtml(
                       item['title'],
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: context.textPrimaryColor,
+                      ),
                       boldStyle: TextStyle(
                         fontSize: 18,
-                        color: Colors.white,
+                        color: context.textPrimaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   )
-                : Text('No Title', style: TextStyle(fontSize: 18)),
+                : const Text('No Title', style: TextStyle(fontSize: 18)),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -197,11 +206,11 @@ class _SearchState extends ConsumerState<Search>
                         item['headline'],
                         style: TextStyle(
                           fontSize: 14,
-                          color: Pallete.whiteColor,
+                          color: context.textSecondaryColor,
                         ),
                         boldStyle: TextStyle(
                           fontSize: 14,
-                          color: Pallete.whiteColor,
+                          color: context.textSecondaryColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -214,7 +223,10 @@ class _SearchState extends ConsumerState<Search>
                     padding: const EdgeInsets.only(top: 4.0),
                     child: Text(
                       'Date : ${item['publishdate']}',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: context.textTertiaryColor,
+                      ),
                     ),
                   ),
                 if (item['docsource'] != null)
@@ -222,7 +234,10 @@ class _SearchState extends ConsumerState<Search>
                     padding: const EdgeInsets.only(top: 2.0),
                     child: Text(
                       'Source: ${item['docsource']}',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: context.textTertiaryColor,
+                      ),
                     ),
                   ),
                 if (item['citation'] != null)
@@ -230,7 +245,10 @@ class _SearchState extends ConsumerState<Search>
                     padding: const EdgeInsets.only(top: 2.0),
                     child: Text(
                       'Citation: ${item['citation']}',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: context.textTertiaryColor,
+                      ),
                     ),
                   ),
               ],
@@ -251,15 +269,19 @@ class _SearchState extends ConsumerState<Search>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.backgroundColor,
+      // Prevent the scaffold from resizing when keyboard appears
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: context.iconPrimaryColor),
         title: Row(
           children: [
             Expanded(
               child: TextField(
                 controller: _searchController,
-                cursorColor: Colors.white,
+                cursorColor: context.textPrimaryColor,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: context.textPrimaryColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w300,
                 ),
@@ -268,21 +290,21 @@ class _SearchState extends ConsumerState<Search>
                     padding: const EdgeInsets.all(8.0),
                     child: SvgPicture.asset(
                       'assets/svg/search.svg',
-                      color: Colors.white,
+                      color: context.iconSecondaryColor,
                       width: 20,
                       height: 20,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.grey),
+                    borderSide: BorderSide(color: context.borderColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.white),
+                    borderSide: BorderSide(color: context.secondaryColor),
                   ),
                   hintText: 'Search for people, posts, or legal documents...',
-                  hintStyle: TextStyle(color: Pallete.whiteColor),
+                  hintStyle: TextStyle(color: context.textHintColor),
                   hintMaxLines: 1,
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 0,
@@ -296,9 +318,10 @@ class _SearchState extends ConsumerState<Search>
         bottom: TabBar(
           controller: _tabController,
           indicatorSize: TabBarIndicatorSize.tab,
-          indicatorColor: Pallete.secondaryColor,
-          labelColor: Pallete.secondaryColor,
-          labelStyle: TextStyle(
+          indicatorColor: context.secondaryColor,
+          labelColor: context.secondaryColor,
+          unselectedLabelColor: context.textSecondaryColor,
+          labelStyle: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
@@ -313,12 +336,21 @@ class _SearchState extends ConsumerState<Search>
         controller: _tabController,
         children: [
           _query.isEmpty
-              ? Center(child: Text('Type to search users'))
+              ? Center(
+                  child: Text(
+                    'Type to search users',
+                    style: TextStyle(color: context.textSecondaryColor),
+                  ),
+                )
               : SearchUser(query: _query),
           _query.isEmpty
-              ? Center(child: Text('Type to search posts'))
+              ? Center(
+                  child: Text(
+                    'Type to search posts',
+                    style: TextStyle(color: context.textSecondaryColor),
+                  ),
+                )
               : SearchPost(query: _query),
-
           _buildLegalResults(),
         ],
       ),

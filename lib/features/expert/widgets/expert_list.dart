@@ -6,7 +6,7 @@ import 'package:adhikar/features/expert/widgets/expert_list_card.dart';
 import 'package:adhikar/features/expert/widgets/meetings_list.dart';
 import 'package:adhikar/features/expert/widgets/transaction_list.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -55,7 +55,7 @@ class _ExpertListState extends ConsumerState<ExpertList> {
                     width: 30,
                     height: 30,
                     colorFilter: ColorFilter.mode(
-                      Pallete.whiteColor,
+                      context.iconPrimaryColor,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -77,7 +77,7 @@ class _ExpertListState extends ConsumerState<ExpertList> {
                     width: 30,
                     height: 30,
                     colorFilter: ColorFilter.mode(
-                      Pallete.whiteColor,
+                      context.iconPrimaryColor,
                       BlendMode.srcIn,
                     ),
                   ),

@@ -1,6 +1,6 @@
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/nyaysahayak/widget/chat_bubble.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,7 +9,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class NyaysahayakChat extends ConsumerStatefulWidget {
-  NyaysahayakChat({super.key});
+  const NyaysahayakChat({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -34,7 +34,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
   );
 
   List<ChatBubble> chatBubbles = [
-    ChatBubble(
+    const ChatBubble(
       direction: Direction.left,
       message:
           'Hello, I am Nyaysahayak. How can I assist you solve legal trouble?',
@@ -171,7 +171,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
     // Use a different approach: update text in chunks to allow smooth scrolling
     const int chunkSize = 5; // Update every 5 characters
     for (int i = 0; i < aiResponse.length; i += chunkSize) {
-      await Future.delayed(Duration(milliseconds: 90)); // 18ms * 5 = 90ms
+      await Future.delayed(const Duration(milliseconds: 90)); // 18ms * 5 = 90ms
 
       int endIndex = (i + chunkSize > aiResponse.length)
           ? aiResponse.length
@@ -204,7 +204,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
         if (scrollController.hasClients) {
           scrollController.animateTo(
             0,
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeOut,
           );
         }
@@ -247,14 +247,14 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('NyaySahayak Chat')),
+      appBar: AppBar(title: const Text('NyaySahayak Chat')),
       body: Column(
         children: [
           Expanded(
             child: SizedBox(
               child: ListView(
                 controller: scrollController,
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 reverse: true,
                 padding: const EdgeInsets.all(10),
                 children: [
@@ -273,8 +273,8 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              color: Pallete.searchBarColor,
-              border: Border(top: BorderSide(color: Colors.grey)),
+              color: context.surfaceColor,
+              border: Border(top: BorderSide(color: context.dividerColor)),
             ),
             child: Row(
               children: [
@@ -291,7 +291,9 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                         ? 'assets/svg/mic_filled.svg'
                         : 'assets/svg/mic_outline.svg',
                     colorFilter: ColorFilter.mode(
-                      isListening ? Pallete.whiteColor : Colors.grey,
+                      isListening
+                          ? context.errorColor
+                          : context.iconSecondaryColor,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -300,7 +302,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                 Expanded(
                   child: TextField(
                     controller: messageController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Type a message...',
                       border: InputBorder.none,
                     ),
@@ -309,7 +311,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                   ),
                 ),
                 isLoading
-                    ? Padding(
+                    ? const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8.0),
                         child: SizedBox(
                           width: 24,
@@ -318,7 +320,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                         ),
                       )
                     : IconButton(
-                        icon: Icon(Icons.send, color: Pallete.whiteColor),
+                        icon: Icon(Icons.send, color: context.iconPrimaryColor),
                         onPressed: sendMessage,
                       ),
               ],

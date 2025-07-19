@@ -15,7 +15,6 @@ import 'package:adhikar/features/profile/widgets/add_education.dart';
 import 'package:adhikar/features/profile/widgets/add_experience.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -79,7 +78,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                   children: [
                     CircleAvatar(
                       radius: 45,
-                      backgroundColor: Pallete.primaryColor,
+                      backgroundColor: Theme.of(context).primaryColor,
                       child: CircleAvatar(
                         radius: 42,
                         backgroundImage: widget.userModel.profileImage == ''
@@ -110,7 +109,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                         'assets/svg/verified.svg',
                                         height: 20,
                                         colorFilter: ColorFilter.mode(
-                                          Pallete.secondaryColor,
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
                                           BlendMode.srcIn,
                                         ),
                                       ),
@@ -156,7 +157,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                           child: SvgPicture.asset(
                             'assets/svg/pencil.svg',
                             colorFilter: ColorFilter.mode(
-                              Pallete.whiteColor,
+                              Theme.of(context).colorScheme.onBackground,
                               BlendMode.srcIn,
                             ),
                             height: 25,
@@ -174,7 +175,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                               Text(
                                 widget.userModel.credits.toString(),
                                 style: TextStyle(
-                                  color: Pallete.whiteColor,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onBackground,
                                   fontSize: 16,
                                 ),
                               ),
@@ -182,7 +185,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                               SvgPicture.asset(
                                 'assets/svg/wallet.svg',
                                 colorFilter: ColorFilter.mode(
-                                  Pallete.secondaryColor,
+                                  Theme.of(context).colorScheme.secondary,
                                   BlendMode.srcIn,
                                 ),
                                 height: 25,
@@ -205,7 +208,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
               SvgPicture.asset(
                 'assets/svg/location.svg',
                 colorFilter: ColorFilter.mode(
-                  Pallete.greyColor,
+                  Theme.of(context).hintColor,
                   BlendMode.srcIn,
                 ),
                 height: 25,
@@ -216,14 +219,14 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                   widget.userModel.location == ''
                       ? 'India, India'
                       : widget.userModel.location,
-                  style: TextStyle(color: Pallete.greyColor),
+                  style: TextStyle(color: Theme.of(context).hintColor),
                 ),
               ),
               SizedBox(width: 20),
               SvgPicture.asset(
                 'assets/svg/meetings.svg',
                 colorFilter: ColorFilter.mode(
-                  Pallete.greyColor,
+                  Theme.of(context).hintColor,
                   BlendMode.srcIn,
                 ),
                 height: 25,
@@ -231,7 +234,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
               SizedBox(width: 5),
               Text(
                 'Joined on ${widget.userModel.createdAt}',
-                style: TextStyle(color: Pallete.greyColor),
+                style: TextStyle(color: Theme.of(context).hintColor),
               ),
             ],
           ),
@@ -318,7 +321,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Pallete.primaryColor,
+                      color: Theme.of(context).primaryColor,
                     ),
                     child: Center(
                       child: Padding(
@@ -338,7 +341,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                     ? 'Unfollow'
                                     : 'Follow',
                                 style: TextStyle(
-                                  color: Pallete.whiteColor,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
                                   fontSize: 16,
                                 ),
                               ),
@@ -433,7 +438,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Pallete.whiteColor),
+                      border: Border.all(color: Theme.of(context).dividerColor),
                     ),
                     child: Center(
                       child: Padding(
@@ -444,7 +449,8 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                             SvgPicture.asset(
                               'assets/svg/chat.svg',
                               colorFilter: ColorFilter.mode(
-                                Pallete.whiteColor,
+                                Theme.of(context).iconTheme.color ??
+                                    Theme.of(context).colorScheme.onSurface,
                                 BlendMode.srcIn,
                               ),
                               height: 25,
@@ -453,7 +459,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                             Text(
                               'Messages',
                               style: TextStyle(
-                                color: Pallete.whiteColor,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodyLarge?.color,
                                 fontSize: 16,
                               ),
                             ),
@@ -471,8 +479,8 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
         TabBar(
           controller: _tabController,
           indicatorSize: TabBarIndicatorSize.tab,
-          indicatorColor: Pallete.secondaryColor,
-          labelColor: Pallete.secondaryColor,
+          indicatorColor: Theme.of(context).colorScheme.secondary,
+          labelColor: Theme.of(context).colorScheme.secondary,
           labelStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           tabs: [
             Tab(child: Text('About', style: TextStyle(fontSize: 17))),
@@ -504,7 +512,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                               'Adhikar user',
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Pallete.secondaryColor,
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                       SizedBox(height: 23),
@@ -532,7 +540,10 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                       ? SvgPicture.asset(
                                           'assets/svg/add.svg',
                                           colorFilter: ColorFilter.mode(
-                                            Pallete.whiteColor,
+                                            Theme.of(context).iconTheme.color ??
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
                                             BlendMode.srcIn,
                                           ),
                                           height: 25,
@@ -540,7 +551,10 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                       : SvgPicture.asset(
                                           'assets/svg/pencil.svg',
                                           colorFilter: ColorFilter.mode(
-                                            Pallete.whiteColor,
+                                            Theme.of(context).iconTheme.color ??
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
                                             BlendMode.srcIn,
                                           ),
                                           height: 25,
@@ -559,7 +573,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Pallete.secondaryColor,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
                                   ),
                                 ),
 
@@ -567,7 +583,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                   widget.userModel.experienceOrganization,
                                   style: TextStyle(
                                     fontSize: 17,
-                                    color: Pallete.whiteColor,
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.bodyLarge?.color,
                                   ),
                                 ),
                                 SizedBox(height: 7),
@@ -602,7 +620,10 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                       ? SvgPicture.asset(
                                           'assets/svg/add.svg',
                                           colorFilter: ColorFilter.mode(
-                                            Pallete.whiteColor,
+                                            Theme.of(context).iconTheme.color ??
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
                                             BlendMode.srcIn,
                                           ),
                                           height: 25,
@@ -610,7 +631,10 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                       : SvgPicture.asset(
                                           'assets/svg/pencil.svg',
                                           colorFilter: ColorFilter.mode(
-                                            Pallete.whiteColor,
+                                            Theme.of(context).iconTheme.color ??
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
                                             BlendMode.srcIn,
                                           ),
                                           height: 25,
@@ -629,7 +653,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Pallete.secondaryColor,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
                                   ),
                                 ),
 
@@ -637,7 +663,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                   widget.userModel.eduUniversity,
                                   style: TextStyle(
                                     fontSize: 17,
-                                    color: Pallete.whiteColor,
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.bodyLarge?.color,
                                   ),
                                 ),
                                 SizedBox(height: 7),
@@ -645,7 +673,9 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget>
                                   widget.userModel.eduStream,
                                   style: TextStyle(
                                     fontSize: 20,
-                                    color: Pallete.whiteColor,
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.bodyLarge?.color,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

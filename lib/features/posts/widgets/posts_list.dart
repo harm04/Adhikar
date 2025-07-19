@@ -6,18 +6,57 @@ import 'package:adhikar/features/posts/widgets/post_card.dart';
 import 'package:adhikar/models/posts_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'dart:async';
 
 class PostList extends ConsumerStatefulWidget {
-  PostList({super.key});
+  const PostList({super.key});
 
   @override
   ConsumerState<PostList> createState() => _PostListState();
 }
 
 class _PostListState extends ConsumerState<PostList> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isScrolling = false;
+  List<PostModel>? _stablePosts;
+  Timer? _scrollEndTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    _scrollEndTimer?.cancel();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_isScrolling) {
+      setState(() {
+        _isScrolling = true;
+      });
+    }
+
+    _scrollEndTimer?.cancel();
+    _scrollEndTimer = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        setState(() {
+          _isScrolling = false;
+          _stablePosts = null;
+        });
+      }
+    });
+  }
+
   Future<void> _refreshPosts() async {
     ref.invalidate(getPostProvider);
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   @override
@@ -38,34 +77,84 @@ class _PostListState extends ConsumerState<PostList> {
                         )) {
                           posts.insert(0, PostModel.fromMap(data.payload));
                         }
-                        return ListView.builder(
-                          padding: const EdgeInsets.only(top: 10),
-                          itemCount: posts.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final post = posts[index];
-                            return post.pod == 'comment'
-                                ? SizedBox()
-                                : PostCard(
-                                    key: ValueKey(
-                                      post.id,
-                                    ), // <-- This is crucial!
-                                    postmodel: post,
-                                  );
-                          },
+
+                        // Use stable list during scrolling to prevent reordering
+                        List<PostModel> displayPosts;
+                        if (_isScrolling && _stablePosts != null) {
+                          // During scrolling, maintain order but update post data
+                          displayPosts = _stablePosts!.map((stablePost) {
+                            final updatedPost = posts.firstWhere(
+                              (p) => p.id == stablePost.id,
+                              orElse: () => stablePost,
+                            );
+                            return updatedPost;
+                          }).toList();
+                        } else {
+                          // Not scrolling, use new list and save as stable
+                          displayPosts = posts;
+                          _stablePosts = List.from(posts);
+                        }
+
+                        return AnimationLimiter(
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            padding: const EdgeInsets.only(top: 10),
+                            physics: const BouncingScrollPhysics(),
+                            cacheExtent: 1000.0, // Increased cache extent
+                            addAutomaticKeepAlives: true, // Keep widgets alive
+                            addRepaintBoundaries:
+                                true, // Add repaint boundaries
+                            itemCount: displayPosts.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final post = displayPosts[index];
+                              if (post.pod == 'comment') {
+                                return const SizedBox();
+                              }
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 100),
+                                child: SlideAnimation(
+                                  verticalOffset: 5.0, // Reduced offset
+                                  child: FadeInAnimation(
+                                    child: RepaintBoundary(
+                                      key: ValueKey(post.id),
+                                      child: PostCard(postmodel: post),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         );
                       },
                       error: (error, StackTrace) =>
                           ErrorText(error: error.toString()),
-                      loading: () => ListView.builder(
-                        padding: const EdgeInsets.only(top: 10),
-                        itemCount: posts.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final post = posts[index];
-                          return PostCard(
-                            key: ValueKey(post.id), // <-- This is crucial!
-                            postmodel: post,
-                          );
-                        },
+                      loading: () => AnimationLimiter(
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.only(top: 10),
+                          physics: const BouncingScrollPhysics(),
+                          cacheExtent: 1000.0, // Increased cache extent
+                          addAutomaticKeepAlives: true, // Keep widgets alive
+                          addRepaintBoundaries: true, // Add repaint boundaries
+                          itemCount: posts.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final post = posts[index];
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 100),
+                              child: SlideAnimation(
+                                verticalOffset: 5.0, // Reduced offset
+                                child: FadeInAnimation(
+                                  child: RepaintBoundary(
+                                    key: ValueKey(post.id),
+                                    child: PostCard(postmodel: post),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     );
               },
@@ -73,7 +162,7 @@ class _PostListState extends ConsumerState<PostList> {
                 return ErrorText(error: err.toString());
               },
               loading: () {
-                return Loader();
+                return const Loader();
               },
             ),
       ),
@@ -83,7 +172,7 @@ class _PostListState extends ConsumerState<PostList> {
 
 class _KeepAliveWrapper extends StatefulWidget {
   final Widget child;
-  _KeepAliveWrapper({required this.child});
+  const _KeepAliveWrapper({required this.child});
 
   @override
   State<_KeepAliveWrapper> createState() => _KeepAliveWrapperState();

@@ -2,11 +2,12 @@ import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/meetings_controller.dart';
 import 'package:adhikar/features/expert/widgets/meetings_list_card.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MeetingsList extends ConsumerStatefulWidget {
-  MeetingsList({super.key});
+  const MeetingsList({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MeetingsListState();
@@ -26,7 +27,7 @@ class _MeetingsListState extends ConsumerState<MeetingsList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Meetings'),
+        title: const Text('My Meetings'),
         centerTitle: true,
         automaticallyImplyLeading: true,
       ),
@@ -38,7 +39,7 @@ class _MeetingsListState extends ConsumerState<MeetingsList> {
                 currentUser.userType == 'User'
                     ? 'No meeting with an expert found.'
                     : 'No appointments with users found.',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
+                style: TextStyle(fontSize: 18, color: context.textSecondaryColor),
               ),
             );
           }

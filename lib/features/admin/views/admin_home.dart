@@ -8,7 +8,7 @@ import 'package:adhikar/features/admin/graph/today_stats.dart';
 import 'package:adhikar/features/admin/graph/user_activity_graph.dart';
 
 import 'package:adhikar/features/search/widget/search_user.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -43,7 +43,7 @@ class _AdminHomeState extends ConsumerState<AdminHome> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Pallete.whiteColor,
+                  color: context.textPrimaryColor,
                 ),
               ),
               SizedBox(height: 20),
@@ -143,13 +143,13 @@ class _AdminHomeState extends ConsumerState<AdminHome> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Pallete.whiteColor,
+                            color: context.textPrimaryColor,
                           ),
                         ),
                         SizedBox(height: 20),
                         Container(
                           decoration: BoxDecoration(
-                            color: Pallete.primaryColor.withOpacity(0.3),
+                            color: context.primaryColor.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           height: 380,
@@ -214,7 +214,7 @@ class _AdminStatCard extends StatelessWidget {
                     asset,
                     height: 30,
                     colorFilter: ColorFilter.mode(
-                      Pallete.primaryColor,
+                      context.primaryColor,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -224,7 +224,7 @@ class _AdminStatCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Pallete.primaryColor,
+                      color: context.primaryColor,
                     ),
                   ),
                 ],
@@ -236,7 +236,7 @@ class _AdminStatCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: Pallete.primaryColor,
+                  color: context.primaryColor,
                 ),
               ),
             ],

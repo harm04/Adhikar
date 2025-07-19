@@ -4,9 +4,8 @@ import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/meetings_controller.dart';
 import 'package:adhikar/features/expert/controller/transaction_controller.dart';
-import 'package:adhikar/features/expert/widgets/meetings_list.dart';
 import 'package:adhikar/models/user_model.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,7 +14,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 class ReviewOrder extends ConsumerStatefulWidget {
   final UserModel expertUserModel;
   final String phone;
-  ReviewOrder({
+  const ReviewOrder({
     super.key,
     required this.expertUserModel,
     required this.phone,
@@ -72,7 +71,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
         );
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => BottomNavBar()),
+          MaterialPageRoute(builder: (context) => const BottomNavBar()),
           (route) => false,
         );
       },
@@ -101,7 +100,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
     showSnackbar(context, "Payment failed. Please try again.");
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => BottomNavBar()),
+      MaterialPageRoute(builder: (context) => const BottomNavBar()),
       (route) => false,
     );
   }
@@ -157,13 +156,13 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
       return const SizedBox.shrink();
     }
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: context.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: context.backgroundColor,
+        iconTheme: IconThemeData(color: context.iconPrimaryColor),
         title: Text(
           'Review your order',
-          style: TextStyle(color: Colors.white, fontSize: 18),
+          style: TextStyle(color: context.textPrimaryColor, fontSize: 18),
         ),
         centerTitle: true,
         elevation: 0,
@@ -190,7 +189,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
             width: double.infinity,
             decoration: BoxDecoration(
               color: isPaymentProcessing
-                  ? Colors.grey
+                  ? context.textHintColor
                   : const Color.fromRGBO(231, 209, 95, 1),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -198,13 +197,13 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
               child: isPaymentProcessing
                   ? CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        Pallete.backgroundColor,
+                        context.backgroundColor,
                       ),
                     )
                   : Text(
                       'Continue to Payment',
                       style: TextStyle(
-                        color: Pallete.backgroundColor,
+                        color: context.backgroundColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -219,9 +218,9 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
           height: 580,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Pallete.backgroundColor,
+            color: context.surfaceColor,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white, width: 1),
+            border: Border.all(color: context.borderColor, width: 1),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,7 +247,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                       height: 100, // adjust for blur height
                       child: IgnorePointer(
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(20),
                               bottomRight: Radius.circular(20),
@@ -272,7 +271,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                             '${widget.expertUserModel.firstName} ${widget.expertUserModel.lastName}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 30,
                               fontWeight: FontWeight.bold,
@@ -284,7 +283,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                               'assets/svg/verified.svg',
                               height: 30,
                               colorFilter: ColorFilter.mode(
-                                Pallete.secondaryColor,
+                                context.secondaryColor,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -301,7 +300,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                 child: Text(
                   'Booking Details',
                   style: TextStyle(
-                    color: Pallete.whiteColor,
+                    color: context.textPrimaryColor,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -319,7 +318,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                   'Name',
                   style: TextStyle(
                     fontSize: 15,
-                    color: Pallete.whiteColor,
+                    color: context.textPrimaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -329,7 +328,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                 child: Text(
                   '${currentUser.firstName} ${currentUser.lastName}',
                   style: TextStyle(
-                    color: Pallete.greyColor,
+                    color: context.textSecondaryColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -347,7 +346,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                   'Email',
                   style: TextStyle(
                     fontSize: 15,
-                    color: Pallete.whiteColor,
+                    color: context.textPrimaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -357,7 +356,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                 child: Text(
                   currentUser.email,
                   style: TextStyle(
-                    color: Pallete.greyColor,
+                    color: context.textSecondaryColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -375,7 +374,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                   'Contact Number',
                   style: TextStyle(
                     fontSize: 15,
-                    color: Pallete.whiteColor,
+                    color: context.textPrimaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -385,14 +384,14 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                 child: Text(
                   widget.phone,
                   style: TextStyle(
-                    color: Pallete.greyColor,
+                    color: context.textSecondaryColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               SizedBox(height: 10),
-              Divider(),
+              Divider(color: context.dividerColor),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20.0,
@@ -405,7 +404,7 @@ class _ReviewOrderState extends ConsumerState<ReviewOrder> {
                       'Total',
                       style: TextStyle(
                         fontSize: 20,
-                        color: Pallete.whiteColor,
+                        color: context.textPrimaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

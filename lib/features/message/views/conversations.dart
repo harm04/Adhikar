@@ -3,7 +3,7 @@ import 'package:adhikar/features/message/controller/messaging_controller.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/features/message/views/messaging.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -90,7 +90,7 @@ class ConversationsListScreen extends ConsumerWidget {
                         Text(
                           '${timeago.format(lastMessage.createdAt, locale: 'en_short')} ago',
                           style: TextStyle(
-                            color: Pallete.greyColor,
+                            color: context.textHintColor,
                             fontSize: 17,
                           ),
                         ),
@@ -100,7 +100,10 @@ class ConversationsListScreen extends ConsumerWidget {
                       lastMessage.text,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Pallete.greyColor, fontSize: 18),
+                      style: TextStyle(
+                        color: context.textHintColor,
+                        fontSize: 18,
+                      ),
                     ),
                     onTap: () {
                       Navigator.push(

@@ -1,7 +1,7 @@
 import 'package:adhikar/features/profile/views/profile.dart';
 import 'package:adhikar/models/user_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,7 +23,7 @@ class SearchCard extends StatelessWidget {
           ),
         );
       },
-      
+
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 3),
         child: Column(
@@ -46,7 +46,7 @@ class SearchCard extends StatelessWidget {
                           Text(
                             '${user.firstName} ${user.lastName}',
                             style: TextStyle(
-                              color: Pallete.whiteColor,
+                              color: context.textPrimaryColor,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -58,7 +58,7 @@ class SearchCard extends StatelessWidget {
                                     'assets/svg/verified.svg',
                                     height: 20,
                                     colorFilter: ColorFilter.mode(
-                                      Pallete.secondaryColor,
+                                      context.secondaryColor,
                                       BlendMode.srcIn,
                                     ),
                                   ),
@@ -71,7 +71,7 @@ class SearchCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Pallete.greyColor,
+                          color: context.textHintColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

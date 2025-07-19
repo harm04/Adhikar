@@ -1,7 +1,6 @@
 import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
-import 'package:adhikar/features/posts/widgets/hashtags.dart';
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/models/showcase_model.dart';
 import 'package:adhikar/models/user_model.dart';
@@ -55,7 +54,9 @@ class _CommentsListState extends ConsumerState<CommentsList> {
                                 CircleAvatar(
                                   radius: 25,
                                   backgroundImage: user.profileImage == ''
-                                      ? AssetImage(ImageTheme.defaultProfileImage)
+                                      ? AssetImage(
+                                          ImageTheme.defaultProfileImage,
+                                        )
                                       : NetworkImage(user.profileImage),
                                 ),
                                 SizedBox(width: 10),
@@ -113,7 +114,45 @@ class _CommentsListState extends ConsumerState<CommentsList> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
-                                      child: HashTags(text: commentPost.title),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Clean text without hashtags and links
+                                          Text(
+                                            commentPost.title,
+                                            style: TextStyle(
+                                              color: Pallete.whiteColor,
+                                              fontSize: 16,
+                                              height: 1.4,
+                                            ),
+                                          ),
+                                          // Hashtags separately
+                                          if (commentPost
+                                              .hashtags
+                                              .isNotEmpty) ...[
+                                            SizedBox(height: 5),
+                                            Wrap(
+                                              spacing: 6,
+                                              runSpacing: 2,
+                                              children: commentPost.hashtags
+                                                  .map((hashtag) {
+                                                    return Text(
+                                                      hashtag,
+                                                      style: TextStyle(
+                                                        color:
+                                                            Pallete.blueColor,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    );
+                                                  })
+                                                  .toList(),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
                                     ),
                                     LikeButton(
                                       size: 26,

@@ -1,4 +1,4 @@
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -56,14 +56,14 @@ class _NewsListCardState extends ConsumerState<NewsListCard> {
               ),
             Text(
               siteDomain,
-              style: TextStyle(fontSize: 16, color: Pallete.greyColor),
+              style: TextStyle(fontSize: 16, color: context.textHintColor),
             ),
             SizedBox(width: 10),
             Text(
               publishedAt != null
                   ? timeago.format(DateTime.parse(publishedAt).toLocal())
                   : '',
-              style: TextStyle(fontSize: 16, color: Pallete.greyColor),
+              style: TextStyle(fontSize: 16, color: context.textHintColor),
             ),
           ],
         ),

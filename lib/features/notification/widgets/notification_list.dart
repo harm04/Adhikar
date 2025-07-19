@@ -7,7 +7,7 @@ import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/features/posts/widgets/post_card.dart';
 import 'package:adhikar/features/showcase/widgets/showcase_list_card.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +22,12 @@ class NotificationsList extends ConsumerWidget {
     return notificationsAsync.when(
       data: (notifications) {
         if (notifications.isEmpty) {
-          return Center(child: Text('No notifications yet.'));
+          return Center(
+            child: Text(
+              'No notifications yet.',
+              style: TextStyle(color: context.textSecondaryColor),
+            ),
+          );
         }
         return ListView.builder(
           itemCount: notifications.length,
@@ -45,14 +50,19 @@ class NotificationsList extends ConsumerWidget {
                                 ? Padding(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 18,
-                                      vertical: 10,
+                                      vertical: 5,
                                     ),
-                                    child: PostCard(postmodel: post),
+                                    child: PostCard(
+                                      postmodel: post,
+                                      isReadOnly: true,
+                                    ),
                                   )
                                 : SizedBox(),
                             loading: () => Padding(
                               padding: const EdgeInsets.only(top: 8.0),
-                              child: LinearProgressIndicator(),
+                              child: LinearProgressIndicator(
+                                color: context.secondaryColor,
+                              ),
                             ),
                             error: (e, st) => SizedBox(),
                           );
@@ -70,14 +80,16 @@ class NotificationsList extends ConsumerWidget {
                                 ? Padding(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 18,
-                                      vertical: 10,
+                                      vertical: 5,
                                     ),
                                     child: ShowcaseListCard(showcase: showcase),
                                   )
                                 : SizedBox(),
                             loading: () => Padding(
                               padding: const EdgeInsets.only(top: 8.0),
-                              child: LinearProgressIndicator(),
+                              child: LinearProgressIndicator(
+                                color: context.secondaryColor,
+                              ),
                             ),
                             error: (e, st) => SizedBox(),
                           );
@@ -107,26 +119,26 @@ class NotificationsList extends ConsumerWidget {
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: Pallete.secondaryColor,
+                                color: context.secondaryColor,
                               ),
                             ),
                             subtitle: Text(
                               notification.body,
                               style: TextStyle(
                                 fontSize: 17,
-                                color: Pallete.whiteColor,
+                                color: context.textPrimaryColor,
                               ),
                             ),
                             trailing: Text(
                               '~ ${timeago.format(notification.createdAt)}',
                               style: TextStyle(
                                 fontSize: 15,
-                                color: Pallete.greyColor,
+                                color: context.textSecondaryColor,
                               ),
                             ),
                           ),
                           if (relatedCard != null) relatedCard,
-                          Divider(),
+                          Divider(color: context.dividerColor),
                         ],
                       ),
                     );
@@ -137,8 +149,12 @@ class NotificationsList extends ConsumerWidget {
           },
         );
       },
-      loading: () => Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
+      loading: () => Center(
+        child: CircularProgressIndicator(color: context.secondaryColor),
+      ),
+      error: (e, st) => Center(
+        child: Text('Error: $e', style: TextStyle(color: context.errorColor)),
+      ),
     );
   }
 }

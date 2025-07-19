@@ -1,3 +1,5 @@
+// ignore_for_file: unused_result
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,6 +58,7 @@ class _CheckInternetState extends ConsumerState<CheckInternet> {
       });
 
       if (hasInternet) {
+        // ignore: unused_result
         ref.refresh(currentUserAccountProvider);
         ref.refresh(currentUserDataProvider);
       }

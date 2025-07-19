@@ -3,13 +3,12 @@ import 'package:adhikar/common/widgets/custom_textfield.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/auth/views/signup.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
-  SignInScreen({super.key});
+  const SignInScreen({super.key});
 
   @override
   ConsumerState<SignInScreen> createState() => _LoginScreenState();
@@ -53,28 +52,28 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Login to your account',
-                          style: TextStyle(
-                            color: Pallete.whiteColor,
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                         Text(
                           'It\'s great to see you again',
-                          style: TextStyle(color: Colors.grey),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: Theme.of(context).hintColor),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Text(
                           'Email',
-                          style: TextStyle(
-                            color: Pallete.whiteColor,
-                            fontSize: 16,
-                          ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge?.copyWith(fontSize: 16),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         CustomTextfield(
                           keyboardType: TextInputType.emailAddress,
                           controller: emailController,
@@ -82,15 +81,14 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                           obsecureText: false,
                           hintText: 'email',
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         Text(
                           'Password',
-                          style: TextStyle(
-                            color: Pallete.whiteColor,
-                            fontSize: 16,
-                          ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge?.copyWith(fontSize: 16),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         CustomTextfield(
                           keyboardType: TextInputType.text,
                           controller: passwordController,
@@ -98,47 +96,49 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                           obsecureText: true,
                           hintText: 'password',
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         Row(
                           children: [
                             Text(
                               'Forgot password?',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context).hintColor,
+                                    fontSize: 16,
+                                  ),
                             ),
-                            SizedBox(width: 5),
+                            const SizedBox(width: 5),
                             TextButton(
                               onPressed: () {},
                               child: Text(
                                 'Reset password',
-                                style: TextStyle(
-                                  color: Pallete.whiteColor,
-                                  fontSize: 16,
-                                  decoration: TextDecoration.underline,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontSize: 16,
+                                      decoration: TextDecoration.underline,
+                                    ),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         GestureDetector(
                           onTap: () {
                             onLogin();
                           },
-                          child: CustomButton(text: 'Login'),
+                          child: const CustomButton(text: 'Login'),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               'Don\'t have an account?',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context).hintColor,
+                                    fontSize: 16,
+                                  ),
                             ),
                             TextButton(
                               onPressed: () {
@@ -146,18 +146,18 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return SignUpScreen();
+                                      return const SignUpScreen();
                                     },
                                   ),
                                 );
                               },
                               child: Text(
                                 'Sign up',
-                                style: TextStyle(
-                                  color: Pallete.whiteColor,
-                                  fontSize: 16,
-                                  decoration: TextDecoration.underline,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontSize: 16,
+                                      decoration: TextDecoration.underline,
+                                    ),
                               ),
                             ),
                           ],
@@ -178,7 +178,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // class SignInScreen extends ConsumerStatefulWidget {
-//   SignInScreen({super.key});
+//   const SignInScreen({super.key});
 
 //   @override
 //   ConsumerState<ConsumerStatefulWidget> createState() => _SignInScreenState();

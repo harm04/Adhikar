@@ -5,7 +5,6 @@ import 'package:adhikar/features/settings/widget/my_account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends ConsumerWidget {
   const Settings({super.key});
@@ -18,83 +17,6 @@ class Settings extends ConsumerWidget {
     }
     void signout() {
       ref.read(authControllerProvider.notifier).signout(context, ref);
-    }
-
-    Future<void> launchPrivacyPolicy() async {
-      final Uri url = Uri.parse(
-        'https://adhikarnotification.web.app/privacy-policy',
-      );
-      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-        // Show error if URL can't be launched
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Could not open Privacy Policy')),
-          );
-        }
-      }
-    }
-
-    void showLogoutDialog() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: Text(
-              'Logout',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).textTheme.bodyLarge?.color,
-              ),
-            ),
-            content: Text(
-              'Are you sure you want to logout?',
-              style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).textTheme.bodyMedium?.color,
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close dialog
-                },
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close dialog
-                  signout(); // Proceed with logout
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor:
-                      Theme.of(context).brightness == Brightness.dark
-                      ? Colors.black
-                      : Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  'Logout',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ),
-            ],
-          );
-        },
-      );
     }
 
     return Scaffold(
@@ -156,7 +78,7 @@ class Settings extends ConsumerWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return  MyAccount();
+                      return const MyAccount();
                     },
                   ),
                 ),
@@ -178,15 +100,12 @@ class Settings extends ConsumerWidget {
                 ),
               ),
               customRow('assets/svg/faq.svg', 'FAQs'),
-              GestureDetector(
-                onTap: () => launchPrivacyPolicy(),
-                child: customRow('assets/svg/lock.svg', 'Privacy Policy'),
-              ),
+              customRow('assets/svg/lock.svg', 'Privacy Policy'),
               customRow('assets/svg/terms_of_service.svg', 'Terms of Service'),
               customRow('assets/svg/about.svg', 'About Adhikar'),
               customRow('assets/svg/share.svg', 'Share App'),
               GestureDetector(
-                onTap: () => showLogoutDialog(),
+                onTap: () => signout(),
                 child: customRow('assets/svg/logout.svg', 'Logout'),
               ),
             ],

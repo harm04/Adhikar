@@ -1,7 +1,6 @@
 import 'package:adhikar/common/widgets/custom_textfield.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/models/user_model.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,7 +84,7 @@ class _AddExperienceState extends ConsumerState<AddExperience> {
               Text(
                 'Basic info',
                 style: TextStyle(
-                  color: Pallete.whiteColor,
+                  color: Theme.of(context).colorScheme.onBackground,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -93,7 +92,10 @@ class _AddExperienceState extends ConsumerState<AddExperience> {
               SizedBox(height: 20),
               Text(
                 'Add Title',
-                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontSize: 17,
+                ),
               ),
               SizedBox(height: 5),
               CustomTextfield(
@@ -106,7 +108,10 @@ class _AddExperienceState extends ConsumerState<AddExperience> {
               SizedBox(height: 15),
               Text(
                 'Add Law firm / Organisation',
-                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontSize: 17,
+                ),
               ),
               SizedBox(height: 5),
               CustomTextfield(
@@ -119,7 +124,10 @@ class _AddExperienceState extends ConsumerState<AddExperience> {
               SizedBox(height: 15),
               Text(
                 'Add Summary',
-                style: TextStyle(color: Pallete.whiteColor, fontSize: 17),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onBackground,
+                  fontSize: 17,
+                ),
               ),
               SizedBox(height: 5),
               TextField(

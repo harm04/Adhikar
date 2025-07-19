@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:adhikar/apis/posts_api.dart';
 import 'package:adhikar/apis/storage_api.dart';
 import 'package:adhikar/common/enums/post_type_enum.dart';
+import 'package:adhikar/common/utils/text_parser.dart';
 import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/features/admin/services/send_notification_service.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
@@ -148,10 +149,11 @@ class PostController extends StateNotifier<bool> {
     state = true;
     String link = _linkInTheText(text);
     final hashtags = _hashtagInText(text);
+    final cleanText = TextParser.getCleanText(text);
     final user = _ref.watch(currentUserDataProvider).value!;
     final imageUrls = await _storageApi.uploadFiles(images);
     PostModel postModel = PostModel(
-      text: text,
+      text: cleanText,
       link: link,
       hashtags: hashtags,
       uid: user.uid,
@@ -185,10 +187,11 @@ class PostController extends StateNotifier<bool> {
     state = true;
     String link = _linkInTheText(text);
     final hashtags = _hashtagInText(text);
+    final cleanText = TextParser.getCleanText(text);
     final user = _ref.watch(currentUserDataProvider).value!;
 
     PostModel postModel = PostModel(
-      text: text,
+      text: cleanText,
       link: link,
       hashtags: hashtags,
       uid: user.uid,
@@ -221,10 +224,11 @@ class PostController extends StateNotifier<bool> {
     state = true;
     String link = _linkInTheText(text);
     final hashtags = _hashtagInText(text);
+    final cleanText = TextParser.getCleanText(text);
     final user = _ref.watch(currentUserDataProvider).value!;
 
     PostModel postModel = PostModel(
-      text: text,
+      text: cleanText,
       link: link,
       hashtags: hashtags,
       uid: user.uid,
@@ -293,28 +297,12 @@ class PostController extends StateNotifier<bool> {
 
   //identifying link in the text
   String _linkInTheText(String text) {
-    String link = '';
-    final List<String> wordsInSentence = text.split(' ');
-    for (String word in wordsInSentence) {
-      if (word.startsWith('http') ||
-          word.startsWith('https') ||
-          word.startsWith('www')) {
-        link = word;
-      }
-    }
-    return link;
+    return TextParser.extractLink(text);
   }
 
   //identifying hashtag in the text
   List<String> _hashtagInText(String text) {
-    List<String> hashtags = [];
-    final List<String> wordsInSentence = text.split(' ');
-    for (String word in wordsInSentence) {
-      if (word.startsWith('#')) {
-        hashtags.add(word);
-      }
-    }
-    return hashtags;
+    return TextParser.extractHashtags(text);
   }
 
   Future<List<PostModel>> getPost() async {

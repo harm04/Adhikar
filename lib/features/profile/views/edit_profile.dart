@@ -5,7 +5,7 @@ import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/profile/widgets/edit_profile_widget.dart';
-import 'package:adhikar/main.dart';
+
 import 'package:adhikar/models/user_model.dart';
 
 import 'package:flutter/material.dart';

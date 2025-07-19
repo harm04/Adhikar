@@ -3,7 +3,6 @@ import 'package:adhikar/features/home/views/home.dart';
 import 'package:adhikar/features/nyaysahayak/views/nyaysahayak.dart';
 import 'package:adhikar/features/search/views/search.dart';
 import 'package:adhikar/features/showcase/views/showcase_list.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,12 +14,9 @@ class BottomNavBar extends StatefulWidget {
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar>
-    with TickerProviderStateMixin {
+class _BottomNavBarState extends State<BottomNavBar> {
   int _page = 0;
   late PageController pageController;
-  late AnimationController _animationController;
-  bool _isBottomNavVisible = true;
 
   List<Widget> pageList = [
      HomePage(),
@@ -34,61 +30,28 @@ class _BottomNavBarState extends State<BottomNavBar>
   void initState() {
     super.initState();
     pageController = PageController();
-
-    // Initialize animation controller
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
   }
 
   @override
   void dispose() {
     super.dispose();
     pageController.dispose();
-    _animationController.dispose();
-  }
-
-  void _hideBottomNav() {
-    if (_isBottomNavVisible) {
-      setState(() {
-        _isBottomNavVisible = false;
-      });
-      _animationController.forward();
-    }
-  }
-
-  void _showBottomNav() {
-    if (!_isBottomNavVisible) {
-      setState(() {
-        _isBottomNavVisible = true;
-      });
-      _animationController.reverse();
-    }
   }
 
   void onPageChanged(int page) {
     setState(() {
       _page = page;
     });
-    // Show bottom nav when switching pages
-    _showBottomNav();
   }
 
   void navigationTapped(int page) {
     pageController.jumpToPage(page);
-    // Show bottom nav when user taps navigation
-    _showBottomNav();
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
-    final bottomPadding = mediaQuery.padding.bottom;
-
-    // Check if we have system navigation buttons (3-button mode)
-    final hasSystemNavigation = bottomPadding > 0;
 
     // Responsive sizing
     final isSmallScreen = screenWidth < 360;
@@ -98,103 +61,90 @@ class _BottomNavBarState extends State<BottomNavBar>
     final iconSize = isSmallScreen ? 22.0 : (isLargeScreen ? 28.0 : 26.0);
     final fontSize = isSmallScreen ? 9.0 : (isLargeScreen ? 12.0 : 10.0);
 
-    return Scaffold(
-      body: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo is ScrollUpdateNotification) {
-            final scrollDelta = scrollInfo.scrollDelta ?? 0.0;
-
-            // Only react to significant scroll movements
-            if (scrollDelta.abs() > 3.0) {
-              if (scrollDelta > 0 && _isBottomNavVisible) {
-                // Scrolling down - hide bottom nav
-                _hideBottomNav();
-              } else if (scrollDelta < 0 && !_isBottomNavVisible) {
-                // Scrolling up - show bottom nav
-                _showBottomNav();
-              }
-            }
-          }
-          return false;
-        },
-        child: PageView(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: pageController,
-          onPageChanged: onPageChanged,
-          children: pageList,
-        ),
-      ),
-      bottomNavigationBar: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        height: _isBottomNavVisible ? null : 0,
-        child: AnimatedBuilder(
-          animation: _animationController,
-          builder: (context, child) {
-            return Transform.translate(
-              offset: Offset(0, _animationController.value * 100),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Pallete.backgroundColor,
-                  border: Border(
-                    top: BorderSide(
-                      color: Pallete.greyColor.withOpacity(0.3),
-                      width: 0.5,
-                    ),
-                  ),
-                ),
-                child: SafeArea(
-                  child: Container(
-                    height: baseHeight,
-                    padding: EdgeInsets.only(
-                      top: 8,
-                      bottom: hasSystemNavigation ? 8 : 16,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildNavItem(
-                          0,
-                          'assets/svg/home.svg',
-                          'Home',
-                          iconSize,
-                          fontSize,
-                        ),
-                        _buildNavItem(
-                          1,
-                          'assets/svg/gavel.svg',
-                          'Expert',
-                          iconSize,
-                          fontSize,
-                        ),
-                        _buildNavItem(
-                          2,
-                          'assets/svg/ai.svg',
-                          'AI',
-                          iconSize,
-                          fontSize,
-                        ),
-                        _buildNavItem(
-                          3,
-                          'assets/svg/search.svg',
-                          'Search',
-                          iconSize,
-                          fontSize,
-                        ),
-                        _buildNavItem(
-                          4,
-                          'assets/svg/showcase.svg',
-                          'Showcase',
-                          iconSize,
-                          fontSize,
-                        ),
-                      ],
-                    ),
+    return PopScope(
+      canPop: _page == 0, // Only allow popping if on home page
+      onPopInvoked: (didPop) {
+        if (!didPop && _page != 0) {
+          // If pop was prevented and we're not on home page, navigate to home
+          navigationTapped(0);
+        }
+      },
+      child: Scaffold(
+        // Allow content to resize when keyboard appears, but nav bar stays fixed
+        resizeToAvoidBottomInset: true,
+        body: Column(
+          children: [
+            // Main content area that will resize with keyboard
+            Expanded(
+              child: PageView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: pageController,
+                onPageChanged: onPageChanged,
+                children: pageList,
+              ),
+            ),
+            // Fixed bottom navigation bar that never moves
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                border: Border(
+                  top: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 0.5,
                   ),
                 ),
               ),
-            );
-          },
+              padding: EdgeInsets.only(
+                top: 8,
+                bottom: MediaQuery.of(context).viewPadding.bottom + 16,
+                left: 8,
+                right: 8,
+              ),
+              child: SizedBox(
+                height: baseHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildNavItem(
+                      0,
+                      'assets/svg/home.svg',
+                      'Home',
+                      iconSize,
+                      fontSize,
+                    ),
+                    _buildNavItem(
+                      1,
+                      'assets/svg/gavel.svg',
+                      'Expert',
+                      iconSize,
+                      fontSize,
+                    ),
+                    _buildNavItem(
+                      2,
+                      'assets/svg/ai.svg',
+                      'AI',
+                      iconSize,
+                      fontSize,
+                    ),
+                    _buildNavItem(
+                      3,
+                      'assets/svg/search.svg',
+                      'Search',
+                      iconSize,
+                      fontSize,
+                    ),
+                    _buildNavItem(
+                      4,
+                      'assets/svg/showcase.svg',
+                      'Showcase',
+                      iconSize,
+                      fontSize,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -209,39 +159,49 @@ class _BottomNavBarState extends State<BottomNavBar>
   ) {
     final isSelected = _page == index;
 
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final activeColor = isDarkMode ? Colors.white : Theme.of(context).primaryColor;
+    final inactiveColor = Colors.grey;
+
     return Expanded(
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () => navigationTapped(index),
           borderRadius: BorderRadius.circular(12),
-          splashColor: Pallete.whiteColor.withOpacity(0.1),
-          highlightColor: Pallete.whiteColor.withOpacity(0.05),
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(
-                  iconPath,
-                  colorFilter: ColorFilter.mode(
-                    isSelected ? Pallete.whiteColor : Pallete.greyColor,
-                    BlendMode.srcIn,
+                Flexible(
+                  child: SvgPicture.asset(
+                    iconPath,
+                    colorFilter: ColorFilter.mode(
+                      isSelected ? activeColor : inactiveColor,
+                      BlendMode.srcIn,
+                    ),
+                    height: iconSize,
                   ),
-                  height: iconSize,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: isSelected ? Pallete.whiteColor : Pallete.greyColor,
-                    fontSize: fontSize,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                const SizedBox(height: 3),
+                Flexible(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: isSelected ? activeColor : inactiveColor,
+                      fontSize: fontSize,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

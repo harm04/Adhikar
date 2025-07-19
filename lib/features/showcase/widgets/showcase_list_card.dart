@@ -4,7 +4,7 @@ import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/features/showcase/views/showcase.dart';
 import 'package:adhikar/models/showcase_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -20,6 +20,11 @@ class ShowcaseListCard extends ConsumerStatefulWidget {
 }
 
 class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
+  String _buildDisplayText() {
+    // Return only the clean title text, no hashtags or links for list view
+    return widget.showcase.title;
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDataProvider).value;
@@ -37,7 +42,7 @@ class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
         final _ = ref.refresh(getShowcaseProvider);
       },
       child: Card(
-        color: Pallete.cardColor,
+        color: Theme.of(context).cardColor,
         margin: EdgeInsets.symmetric(vertical: 8),
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 19),
@@ -86,11 +91,11 @@ class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.showcase.title,
+                            _buildDisplayText(),
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: context.textPrimaryColor,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -103,7 +108,7 @@ class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 17,
-                              color: Pallete.whiteColor,
+                              color: context.textSecondaryColor,
                             ),
                           ),
                         ],
@@ -124,7 +129,7 @@ class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
                       top: 19,
                       bottom: 19,
                     ),
-                    child: Container(width: 1.2, color: Colors.grey[400]),
+                    child: Container(width: 1.2, color: context.borderColor),
                   ),
                   LikeButton(
                     size: 26,
@@ -141,7 +146,9 @@ class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
                             ? 'assets/svg/upvote_filled.svg'
                             : 'assets/svg/upvote_outline.svg',
                         colorFilter: ColorFilter.mode(
-                          isLiked ? Pallete.secondaryColor : Pallete.whiteColor,
+                          isLiked
+                              ? context.secondaryColor
+                              : context.iconSecondaryColor,
                           BlendMode.srcIn,
                         ),
                       );
@@ -153,8 +160,8 @@ class _ShowcaseListCardState extends ConsumerState<ShowcaseListCard> {
                         text,
                         style: TextStyle(
                           color: isLiked
-                              ? Pallete.secondaryColor
-                              : Pallete.whiteColor,
+                              ? context.secondaryColor
+                              : context.textSecondaryColor,
                           fontSize: 16,
                         ),
                       ),

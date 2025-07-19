@@ -28,6 +28,9 @@ class LatestPosts extends ConsumerWidget {
           return RefreshIndicator(
             onRefresh: _refresh,
             child: ListView.builder(
+              primary:
+                  true, // Use primary scroll controller for NestedScrollView
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.only(top: 10.0),
               itemCount: posts.length,
               itemBuilder: (context, index) {

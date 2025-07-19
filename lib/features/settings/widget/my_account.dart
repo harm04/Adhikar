@@ -1,5 +1,5 @@
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,7 +27,7 @@ class MyAccount extends ConsumerWidget {
                   Text(
                     'Name',
                     style: TextStyle(
-                      color: Pallete.whiteColor,
+                      
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
                     ),
@@ -35,7 +35,7 @@ class MyAccount extends ConsumerWidget {
                   Text(
                     '${currentUser.firstName} ${currentUser.lastName}',
                     style: TextStyle(
-                      color: Pallete.greyColor,
+                     
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -53,7 +53,7 @@ class MyAccount extends ConsumerWidget {
                   Text(
                     'Email',
                     style: TextStyle(
-                      color: Pallete.whiteColor,
+                     
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
                     ),
@@ -61,7 +61,7 @@ class MyAccount extends ConsumerWidget {
                   Text(
                     currentUser.email,
                     style: TextStyle(
-                      color: Pallete.greyColor,
+                      color: context.textSecondaryColor,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -79,7 +79,7 @@ class MyAccount extends ConsumerWidget {
                   Text(
                     'Phone Number',
                     style: TextStyle(
-                      color: Pallete.whiteColor,
+                     
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
                     ),
@@ -87,7 +87,7 @@ class MyAccount extends ConsumerWidget {
                   Text(
                     currentUser.phone == '' ? 'N/A' : currentUser.phone,
                     style: TextStyle(
-                      color: Pallete.greyColor,
+                      color: context.textSecondaryColor,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),

@@ -3,9 +3,8 @@ import 'package:adhikar/common/widgets/snackbar.dart';
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/nyaysahayak/views/nyaysahayak_chat.dart';
-import 'package:adhikar/features/nyaysahayak/widget/chat_bubble.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,7 +17,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class Nyaysahayak extends ConsumerStatefulWidget {
-  Nyaysahayak({super.key});
+  const Nyaysahayak({super.key});
 
   @override
   ConsumerState<Nyaysahayak> createState() => _NyaysahayakState();
@@ -51,7 +50,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   // );
 
   // List<ChatBubble> chatBubbles = [
-  //   ChatBubble(
+  //   const ChatBubble(
   //     direction: Direction.left,
   //     message:
   //         'Hello, I am Nyaysahayak. How can I assist you solve legal trouble?',
@@ -192,7 +191,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   //     isTyping = true;
   //   });
   //   for (int i = 0; i < aiResponse.length; i++) {
-  //     await Future.delayed(Duration(milliseconds: 18));
+  //     await Future.delayed(const Duration(milliseconds: 18));
   //     setState(() {
   //       typingText = aiResponse.substring(0, i + 1);
   //     });
@@ -255,6 +254,18 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
     } catch (e) {
       showSnackbar(context, 'Error picking file: $e');
     }
+  }
+
+  // Method to reset and start new document upload
+  void startNewDocument() {
+    setState(() {
+      pickedFile = null;
+      pickedImage = null;
+      extractedText = '';
+      summaryText = '';
+      languageController.clear();
+      scanning = false;
+    });
   }
 
   Future<void> performTextRecognition() async {
@@ -398,9 +409,9 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   void _showLanguagePicker() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Pallete.backgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
@@ -419,10 +430,10 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Pallete.whiteColor,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Expanded(
                     child: ListView.builder(
                       controller: scrollController,
@@ -432,7 +443,8 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                         return ListTile(
                           title: Text(
                             language,
-                            style: TextStyle(color: Pallete.whiteColor),
+                            style: TextStyle(
+                                color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).hintColor),
                           ),
                           onTap: () {
                             setState(() {
@@ -476,7 +488,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
           IconButton(
             icon: SvgPicture.asset(
               'assets/svg/chat.svg',
-              color: Pallete.whiteColor,
+              color: Theme.of(context).iconTheme.color ?? Theme.of(context).hintColor,
               height: 25,
             ),
             onPressed: () {
@@ -497,95 +509,140 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
           padding: const EdgeInsets.all(18.0),
           child: Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Pallete.secondaryColor),
-                          color: Pallete.searchBarColor,
-                        ),
-                        alignment: Alignment.centerLeft,
-                        child: GestureDetector(
-                          onTap: () {
-                            _showLanguagePicker();
-                          },
-                          child: Container(
-                            height: 55,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    languageController.text.isEmpty
-                                        ? 'Select your language'
-                                        : languageController.text,
-                                    style: TextStyle(
-                                      color: languageController.text.isEmpty
-                                          ? Colors.grey
-                                          : Pallete.whiteColor,
-                                      fontSize: languageController.text.isEmpty
-                                          ? 14
-                                          : 16,
+              // Show language picker and upload button only if no document is processed
+              if (pickedFile == null && summaryText.isEmpty) ...[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: context.secondaryColor),
+                            color: context.surfaceColor,
+                          ),
+                          alignment: Alignment.centerLeft,
+                          child: GestureDetector(
+                            onTap: () {
+                              _showLanguagePicker();
+                            },
+                            child: Container(
+                              height: 55,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      languageController.text.isEmpty
+                                          ? 'Select your language'
+                                          : languageController.text,
+                                      style: TextStyle(
+                                        color: languageController.text.isEmpty
+                                            ? context.textHintColor
+                                            : context.textPrimaryColor,
+                                        fontSize:
+                                            languageController.text.isEmpty
+                                            ? 14
+                                            : 16,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Pallete.whiteColor,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: SizedBox(
-                      height: 55,
-                      child: GestureDetector(
-                        onTap: () => pickFile(),
-                        child: Card(
-                          elevation: 4,
-                          color: languageController.text.isEmpty
-                              ? Colors.grey.shade600
-                              : Pallete.primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Upload Document',
-                              style: TextStyle(
-                                color: languageController.text.isEmpty
-                                    ? Colors.grey.shade400
-                                    : Pallete.whiteColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                  Icon(
+                                    Icons.arrow_drop_down,
+                                    color: context.iconPrimaryColor,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 55,
+                        child: GestureDetector(
+                          onTap: () => pickFile(),
+                          child: Card(
+                            elevation: 4,
+                            color: languageController.text.isEmpty
+                                ? context.surfaceColor
+                                : context.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Upload Document',
+                                style: TextStyle(
+                                  color: languageController.text.isEmpty
+                                      ? context.textSecondaryColor
+                                      : context.textPrimaryColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              // Show "New Document" button if a document has been processed
+              if (pickedFile != null || summaryText.isNotEmpty) ...[
+                Container(
+                  width: double.infinity,
+                  height: 55,
+                  child: GestureDetector(
+                    onTap: startNewDocument,
+                    child: Card(
+                      elevation: 4,
+                      color: context.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_circle_outline,
+                              color: context.textPrimaryColor,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'New Document',
+                              style: TextStyle(
+                                color: context.textPrimaryColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              SizedBox(height: 10),
+                ),
+              ],
+              const SizedBox(height: 10),
 
               scanning
                   ? Expanded(
                       child: Center(
                         child: CircularProgressIndicator(
-                          color: Pallete.whiteColor,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor,
+                          ),
                         ),
                       ),
                     )
@@ -598,10 +655,10 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                 ? Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: Pallete.searchBarColor,
+                                      color: context.surfaceColor,
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
-                                        color: Pallete.secondaryColor,
+                                        color: context.secondaryColor,
                                       ),
                                     ),
                                     child: Row(
@@ -617,10 +674,10 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                                   .toLowerCase()
                                                   .endsWith('.pdf')
                                               ? Colors.red
-                                              : Pallete.whiteColor,
+                                              : context.iconPrimaryColor,
                                           size: 30,
                                         ),
-                                        SizedBox(width: 12),
+                                        const SizedBox(width: 12),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -629,7 +686,8 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                               Text(
                                                 'Selected File:',
                                                 style: TextStyle(
-                                                  color: Colors.grey,
+                                                  color: context
+                                                      .textSecondaryColor,
                                                   fontSize: 12,
                                                 ),
                                               ),
@@ -638,7 +696,8 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                                     .split('/')
                                                     .last,
                                                 style: TextStyle(
-                                                  color: Pallete.whiteColor,
+                                                  color:
+                                                      context.textPrimaryColor,
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -666,21 +725,42 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                 ),
                               ),
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                           ],
 
                           SizedBox(height: 20),
                           if (summaryText.isNotEmpty) ...[
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  "Summary:",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Summary:",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: context.textPrimaryColor,
+                                        ),
+                                      ),
+                                      if (languageController
+                                          .text
+                                          .isNotEmpty) ...[
+                                        Text(
+                                          "Language: ${languageController.text}",
+                                          style: TextStyle(
+                                            color: context.textSecondaryColor,
+                                            fontSize: 14,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   ),
                                 ),
-                                SizedBox(width: 15),
                                 GestureDetector(
                                   onTap: speakSummary,
                                   child: Icon(
@@ -688,8 +768,8 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                                         ? Icons.volume_up_rounded
                                         : Icons.volume_off_rounded,
                                     color: isSpeakerOn
-                                        ? Colors.green
-                                        : Colors.grey,
+                                        ? context.successColor
+                                        : context.iconSecondaryColor,
                                     size: 30,
                                   ),
                                 ),
@@ -700,13 +780,13 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                               margin: const EdgeInsets.symmetric(vertical: 8),
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
+                                color: context.cardColor,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 summaryText,
                                 style: TextStyle(
-                                  color: Pallete.primaryColor,
+                                  color: context.textPrimaryColor,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                 ),

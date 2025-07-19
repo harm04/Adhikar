@@ -1,5 +1,5 @@
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 
 enum BubbleType { top, middle, bottom, alone }
@@ -38,14 +38,14 @@ class ChatBubble extends StatelessWidget {
           margin: EdgeInsets.symmetric(vertical: 4),
           decoration: BoxDecoration(
             borderRadius: _borderRadius(direction, type),
-            color: isOnLeft ? Pallete.cardColor : Pallete.primaryColor,
+            color: isOnLeft ? context.surfaceColor : context.primaryColor,
           ),
           child: Text(
             message,
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 15,
-              color: isOnLeft ? Pallete.whiteColor : Pallete.secondaryColor,
+              color: isOnLeft ? context.textPrimaryColor : Colors.white,
             ),
           ),
         ),

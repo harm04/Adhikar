@@ -23,8 +23,7 @@ class FCMTokenManager {
         print("❌ Token invalid, generating new token for user: $userId");
 
         // Generate new token
-        final notificationService = NotificationService();
-        final newToken = await notificationService.getToken();
+        final newToken = await NotificationService.getToken();
 
         if (newToken != null &&
             newToken.isNotEmpty &&
@@ -132,8 +131,7 @@ class FCMTokenManager {
     try {
       print("🔄 Generating new FCM token for user: $userId");
 
-      final notificationService = NotificationService();
-      final newToken = await notificationService.getToken();
+      final newToken = await NotificationService.getToken();
 
       if (newToken != null && newToken.isNotEmpty) {
         final userAPI = ref.read(userAPIProvider);

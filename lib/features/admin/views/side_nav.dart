@@ -3,7 +3,7 @@ import 'package:adhikar/features/admin/views/admin_home.dart';
 import 'package:adhikar/features/admin/views/admin_push_notification.dart';
 import 'package:adhikar/features/admin/views/admin_withdraw_list.dart';
 import 'package:adhikar/features/admin/views/token_management.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -39,8 +39,12 @@ class _SideNavState extends State<SideNav> {
               child: Container(
                 height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 2, 38, 68),
+                  color: context.surfaceColor,
                   borderRadius: BorderRadius.circular(18.0),
+                  border: Border.all(
+                    color: context.borderColor,
+                    width: 1,
+                  ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(25.0),
@@ -65,11 +69,13 @@ class _SideNavState extends State<SideNav> {
                                   // Added Flexible to prevent overflow
                                   child: Text(
                                     'Adhikar',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24, // Reduced from 30
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.copyWith(
+                                          fontSize: 24, // Reduced from 30
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                     overflow: TextOverflow
                                         .ellipsis, // Handle overflow
                                   ),
@@ -78,10 +84,9 @@ class _SideNavState extends State<SideNav> {
                             ),
                             Text(
                               'Main Menu',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.copyWith(fontSize: 16),
                             ),
                           ],
                         ),
@@ -126,7 +131,7 @@ class _SideNavState extends State<SideNav> {
       height: 55,
       decoration: BoxDecoration(
         color: selectedIndex == index
-            ? Pallete.primaryColor
+            ? context.primaryColor
             : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
       ),
@@ -138,11 +143,23 @@ class _SideNavState extends State<SideNav> {
             asset,
             width: 24,
             height: 24,
-            colorFilter: ColorFilter.mode(Pallete.whiteColor, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(
+              selectedIndex == index 
+                ? Colors.white 
+                : context.iconPrimaryColor, 
+              BlendMode.srcIn
+            ),
           ),
           title: Text(
             title,
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(
+              fontSize: 18,
+              color: selectedIndex == index 
+                ? Colors.white 
+                : context.textPrimaryColor,
+            ),
           ),
           selected: selectedIndex == index,
           selectedTileColor: Colors.white24,

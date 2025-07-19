@@ -4,7 +4,7 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/expert/controller/meetings_controller.dart';
 import 'package:adhikar/models/meetings_model.dart';
 import 'package:adhikar/theme/image_theme.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -56,11 +56,11 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
-                  color: Pallete.cardColor,
+                  color: context.cardColor,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(color: Pallete.secondaryColor),
+                      border: Border.all(color: context.borderColor),
                     ),
                     height: 180,
                     width: double.infinity,
@@ -117,7 +117,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                         'assets/svg/verified.svg',
                                         height: 20,
                                         colorFilter: ColorFilter.mode(
-                                          Pallete.secondaryColor,
+                                          context.secondaryColor,
                                           BlendMode.srcIn,
                                         ),
                                       ),
@@ -131,7 +131,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                       'assets/svg/location.svg',
                                       height: 20,
                                       colorFilter: ColorFilter.mode(
-                                        Pallete.secondaryColor,
+                                        context.secondaryColor,
                                         BlendMode.srcIn,
                                       ),
                                     ),
@@ -139,7 +139,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                       expertdata.state,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Pallete.secondaryColor,
+                                        color: context.secondaryColor,
                                       ),
                                     ),
                                   ],
@@ -176,7 +176,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                           'assets/svg/lock.svg',
                                           height: 20,
                                           colorFilter: ColorFilter.mode(
-                                            Pallete.whiteColor,
+                                            context.iconPrimaryColor,
                                             BlendMode.srcIn,
                                           ),
                                         ),
@@ -193,7 +193,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 18,
-                                            color: Pallete.secondaryColor,
+                                            color: context.secondaryColor,
                                           ),
                                         ),
                                       ],
@@ -242,11 +242,11 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Card(
-                color: Pallete.cardColor,
+                color: context.cardColor,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(color: Pallete.secondaryColor),
+                    border: Border.all(color: context.borderColor),
                   ),
                   height: 180,
                   width: double.infinity,
@@ -301,7 +301,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                     'assets/svg/call.svg',
                                     height: 20,
                                     colorFilter: ColorFilter.mode(
-                                      Pallete.secondaryColor,
+                                      context.secondaryColor,
                                       BlendMode.srcIn,
                                     ),
                                   ),
@@ -311,7 +311,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                       clientData.phone,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Pallete.secondaryColor,
+                                        color: context.secondaryColor,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
@@ -450,7 +450,7 @@ class _MeetingsListCardState extends ConsumerState<MeetingsListCard> {
                                   child: Text(
                                     'Click to enter OTP',
                                     style: TextStyle(
-                                      color: Pallete.secondaryColor,
+                                      color: context.secondaryColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

@@ -1,5 +1,5 @@
 import 'package:adhikar/common/widgets/webview_page.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,7 +9,7 @@ class News extends ConsumerStatefulWidget {
   final dynamic item;
   final List<dynamic> allNews; // Pass all news items to this screen
 
-  News({super.key, required this.item, required this.allNews});
+  const News({super.key, required this.item, required this.allNews});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _NewsState();
@@ -42,6 +42,7 @@ class _NewsState extends ConsumerState<News> {
         .toList();
 
     return Scaffold(
+      backgroundColor: context.backgroundColor,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -60,7 +61,9 @@ class _NewsState extends ConsumerState<News> {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(1),
+                            color: context.isDarkMode
+                                ? Colors.black.withOpacity(1)
+                                : Colors.black.withOpacity(0.7),
                             spreadRadius: 100,
                             blurRadius: 100,
                             blurStyle: BlurStyle.normal,
@@ -78,7 +81,7 @@ class _NewsState extends ConsumerState<News> {
                       style: TextStyle(
                         fontSize: 27,
                         fontWeight: FontWeight.bold,
-                        color: Pallete.whiteColor,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -114,7 +117,7 @@ class _NewsState extends ConsumerState<News> {
                                 siteDomain,
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Pallete.greyColor,
+                                  color: context.textSecondaryColor,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -128,7 +131,7 @@ class _NewsState extends ConsumerState<News> {
                                   : '',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Pallete.greyColor,
+                                color: context.textSecondaryColor,
                               ),
                             ),
                           ],
@@ -152,7 +155,7 @@ class _NewsState extends ConsumerState<News> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Pallete.secondaryColor,
+                          color: context.secondaryColor,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(10),
                             bottomLeft: Radius.circular(10),
@@ -169,8 +172,9 @@ class _NewsState extends ConsumerState<News> {
                                 Text(
                                   'Read more',
                                   style: TextStyle(
-                                    color: Pallete.backgroundColor,
+                                    color: context.primaryColor,
                                     fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 SizedBox(width: 10),
@@ -178,7 +182,7 @@ class _NewsState extends ConsumerState<News> {
                                   'assets/svg/right_arrow.svg',
                                   height: 20,
                                   width: 20,
-                                  color: Pallete.backgroundColor,
+                                  color: context.primaryColor,
                                 ),
                               ],
                             ),
@@ -196,7 +200,7 @@ class _NewsState extends ConsumerState<News> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: Pallete.whiteColor,
+                      color: context.textPrimaryColor,
                     ),
                   ),
                 ),
@@ -208,14 +212,14 @@ class _NewsState extends ConsumerState<News> {
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Pallete.whiteColor,
+                      color: context.textPrimaryColor,
                     ),
                   ),
                 ),
                 ListView.builder(
                   shrinkWrap: true,
                   padding: const EdgeInsets.only(top: 0.0),
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: otherNews.length,
                   itemBuilder: (context, index) {
                     final news = otherNews[index];
@@ -238,74 +242,78 @@ class _NewsState extends ConsumerState<News> {
                               News(item: news, allNews: widget.allNews),
                         ),
                       ),
-                      child: Card(
-                        color: Pallete.backgroundColor,
-                        margin: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 0,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '$newsSource ·  ${newsPublishedAt != null ? timeago.format(DateTime.parse(newsPublishedAt).toLocal()) : ''}',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Pallete.greyColor,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      newsTitle,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                        color: Pallete.whiteColor,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 3,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(width: 12),
-                              // Image at right
-                              SizedBox(
-                                height: 120,
-                                width: 120,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: newsImage != null
-                                      ? Image.network(
-                                          newsImage,
-                                          height: 80,
-                                          width: 80,
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  Image.asset(
-                                                    'assets/images/logo.png',
-                                                    height: 80,
-                                                    width: 80,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                        )
-                                      : Image.asset(
-                                          'assets/images/logo.png',
-                                          height: 80,
-                                          width: 80,
-                                          fit: BoxFit.cover,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                        child: Card(
+                          color: context.cardColor,
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 0,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '$newsSource ·  ${newsPublishedAt != null ? timeago.format(DateTime.parse(newsPublishedAt).toLocal()) : ''}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: context.textSecondaryColor,
                                         ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        newsTitle,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                          color: context.textPrimaryColor,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 12),
+                                // Image at right
+                                SizedBox(
+                                  height: 120,
+                                  width: 120,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: newsImage != null
+                                        ? Image.network(
+                                            newsImage,
+                                            height: 80,
+                                            width: 80,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    Image.asset(
+                                                      'assets/images/logo.png',
+                                                      height: 80,
+                                                      width: 80,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                          )
+                                        : Image.asset(
+                                            'assets/images/logo.png',
+                                            height: 80,
+                                            width: 80,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

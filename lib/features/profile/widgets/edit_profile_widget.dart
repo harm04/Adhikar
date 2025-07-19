@@ -232,13 +232,14 @@ class _EditWidgetState extends ConsumerState<EditProfileWidget> {
             //location
             TextField(
               controller: widget.locationController,
-              readOnly: true, // Prevent manual input
+              readOnly: true,
               onTap: () async {
                 await _getCurrentLocation();
-                setState(() {}); // Update UI after fetching location
+                setState(() {}); 
               },
               decoration: InputDecoration(
                 labelText: "Location",
+                hintText: 'Tap to get current location',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
