@@ -1,7 +1,9 @@
 import 'package:adhikar/common/widgets/webview_page.dart';
 import 'package:adhikar/common/widgets/theme_toggle.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
+import 'package:adhikar/features/settings/views/faqs_page%20copy.dart';
 import 'package:adhikar/features/settings/widget/my_account.dart';
+import 'package:adhikar/features/settings/views/about_adhikar_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -99,10 +101,48 @@ class Settings extends ConsumerWidget {
                   'Feedback & Support',
                 ),
               ),
-              customRow('assets/svg/faq.svg', 'FAQs'),
-              customRow('assets/svg/lock.svg', 'Privacy Policy'),
-              customRow('assets/svg/terms_of_service.svg', 'Terms of Service'),
-              customRow('assets/svg/about.svg', 'About Adhikar'),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FAQsPage()),
+                ),
+                child: customRow('assets/svg/faq.svg', 'FAQs'),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WebViewPage(
+                      url: 'https://adhikarnotification.web.app/privacy-policy',
+                      appBarText: 'Privacy Policy',
+                    ),
+                  ),
+                ),
+                child: customRow('assets/svg/lock.svg', 'Privacy Policy'),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WebViewPage(
+                      url:
+                          'https://adhikarnotification.web.app/terms-of-service',
+                      appBarText: 'Terms of Service',
+                    ),
+                  ),
+                ),
+                child: customRow(
+                  'assets/svg/terms_of_service.svg',
+                  'Terms of Service',
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AboutAdhikarPage()),
+                ),
+                child: customRow('assets/svg/about.svg', 'About Adhikar'),
+              ),
               customRow('assets/svg/share.svg', 'Share App'),
               GestureDetector(
                 onTap: () => signout(),

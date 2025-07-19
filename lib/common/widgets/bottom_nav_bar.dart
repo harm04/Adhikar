@@ -19,10 +19,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
   late PageController pageController;
 
   List<Widget> pageList = [
-     HomePage(),
-     ExpertList(),
-     Nyaysahayak(),
-     Search(),
+    HomePage(),
+    ExpertList(),
+    Nyaysahayak(),
+    Search(),
     ShowcaseList(),
   ];
 
@@ -160,7 +160,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
     final isSelected = _page == index;
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final activeColor = isDarkMode ? Colors.white : Theme.of(context).primaryColor;
+    final activeColor = isDarkMode
+        ? Colors.white
+        : Theme.of(context).primaryColor;
     final inactiveColor = Colors.grey;
 
     return Expanded(

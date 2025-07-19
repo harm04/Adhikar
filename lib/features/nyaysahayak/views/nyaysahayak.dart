@@ -444,7 +444,12 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                           title: Text(
                             language,
                             style: TextStyle(
-                                color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).hintColor),
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.color ??
+                                  Theme.of(context).hintColor,
+                            ),
                           ),
                           onTap: () {
                             setState(() {
@@ -488,7 +493,9 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
           IconButton(
             icon: SvgPicture.asset(
               'assets/svg/chat.svg',
-              color: Theme.of(context).iconTheme.color ?? Theme.of(context).hintColor,
+              color:
+                  Theme.of(context).iconTheme.color ??
+                  Theme.of(context).hintColor,
               height: 25,
             ),
             onPressed: () {

@@ -41,10 +41,7 @@ class _SideNavState extends State<SideNav> {
                 decoration: BoxDecoration(
                   color: context.surfaceColor,
                   borderRadius: BorderRadius.circular(18.0),
-                  border: Border.all(
-                    color: context.borderColor,
-                    width: 1,
-                  ),
+                  border: Border.all(color: context.borderColor, width: 1),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(25.0),
@@ -144,21 +141,17 @@ class _SideNavState extends State<SideNav> {
             width: 24,
             height: 24,
             colorFilter: ColorFilter.mode(
-              selectedIndex == index 
-                ? Colors.white 
-                : context.iconPrimaryColor, 
-              BlendMode.srcIn
+              selectedIndex == index ? Colors.white : context.iconPrimaryColor,
+              BlendMode.srcIn,
             ),
           ),
           title: Text(
             title,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontSize: 18,
-              color: selectedIndex == index 
-                ? Colors.white 
-                : context.textPrimaryColor,
+              color: selectedIndex == index
+                  ? Colors.white
+                  : context.textPrimaryColor,
             ),
           ),
           selected: selectedIndex == index,

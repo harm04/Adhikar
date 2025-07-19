@@ -603,7 +603,9 @@ class PostCard extends ConsumerWidget {
                                     ? SvgPicture.asset(
                                         'assets/svg/bookmark_filled.svg',
                                         colorFilter: ColorFilter.mode(
-                                          Theme.of(context).colorScheme.secondary,
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
                                           BlendMode.srcIn,
                                         ),
                                       )
@@ -670,61 +672,65 @@ class PostCard extends ConsumerWidget {
                           ],
                           if (!isReadOnly)
                             PopupMenuButton<String>(
-                            icon: SvgPicture.asset(
-                              'assets/svg/more_outline.svg',
-                              colorFilter: ColorFilter.mode(
-                                Theme.of(context).hintColor,
-                                BlendMode.srcIn,
+                              icon: SvgPicture.asset(
+                                'assets/svg/more_outline.svg',
+                                colorFilter: ColorFilter.mode(
+                                  Theme.of(context).hintColor,
+                                  BlendMode.srcIn,
+                                ),
+                                height: 22,
                               ),
-                              height: 22,
+                              onSelected: (String value) {
+                                if (value == 'report') {
+                                  _showReportBottomSheet(
+                                    context,
+                                    postmodel.id,
+                                    currentUser,
+                                    user,
+                                  );
+                                }
+                                if (value == 'delete') {
+                                  ref
+                                      .read(postControllerProvider.notifier)
+                                      .deletePost(postmodel, context);
+                                }
+                              },
+                              itemBuilder: (BuildContext context) => [
+                                postmodel.uid == currentUser.uid
+                                    ? PopupMenuItem<String>(
+                                        value: 'delete',
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.delete_outline,
+                                              color: Theme.of(
+                                                context,
+                                              ).hintColor,
+                                              size: 20,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text('Delete'),
+                                          ],
+                                        ),
+                                      )
+                                    : PopupMenuItem<String>(
+                                        value: 'report',
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.flag_outlined,
+                                              color: Theme.of(
+                                                context,
+                                              ).hintColor,
+                                              size: 20,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text('Report'),
+                                          ],
+                                        ),
+                                      ),
+                              ],
                             ),
-                            onSelected: (String value) {
-                              if (value == 'report') {
-                                _showReportBottomSheet(
-                                  context,
-                                  postmodel.id,
-                                  currentUser,
-                                  user,
-                                );
-                              }
-                              if (value == 'delete') {
-                                ref
-                                    .read(postControllerProvider.notifier)
-                                    .deletePost(postmodel, context);
-                              }
-                            },
-                            itemBuilder: (BuildContext context) => [
-                              postmodel.uid == currentUser.uid
-                                  ? PopupMenuItem<String>(
-                                      value: 'delete',
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.delete_outline,
-                                            color: Theme.of(context).hintColor,
-                                            size: 20,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text('Delete'),
-                                        ],
-                                      ),
-                                    )
-                                  : PopupMenuItem<String>(
-                                      value: 'report',
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.flag_outlined,
-                                            color: Theme.of(context).hintColor,
-                                            size: 20,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text('Report'),
-                                        ],
-                                      ),
-                                    ),
-                            ],
-                          ),
                         ],
                       ),
                     ],
