@@ -436,6 +436,17 @@ class _ShowcaseState extends ConsumerState<Showcase> {
                         '',
                       ),
                       displayDirection: UIDirection.uiDirectionHorizontal,
+                      backgroundColor: context.cardColor,
+                      borderRadius: 8,
+                      bodyStyle: TextStyle(
+                        fontSize: 14,
+                        color: context.textSecondaryColor,
+                      ),
+                      titleStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: context.textPrimaryColor,
+                      ),
                     ),
                     SizedBox(height: 10),
                   ],

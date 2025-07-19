@@ -2,7 +2,6 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/withdraw/controller/withdraw_controller.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -62,7 +61,7 @@ class _AdminWithdrawListState extends ConsumerState<AdminWithdrawList> {
                           child: Card(
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Pallete.cardColor,
+                                color: Theme.of(context).cardColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Padding(
@@ -88,9 +87,11 @@ class _AdminWithdrawListState extends ConsumerState<AdminWithdrawList> {
                                               const SizedBox(width: 10),
                                               Text(
                                                 'Available balance : ₹${expert.credits.toString()}',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 16,
-                                                  color: Pallete.secondaryColor,
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.secondary,
                                                 ),
                                               ),
                                             ],
@@ -163,8 +164,9 @@ class _AdminWithdrawListState extends ConsumerState<AdminWithdrawList> {
                                                 },
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color:
-                                                        Pallete.secondaryColor,
+                                                    color: Theme.of(
+                                                      context,
+                                                    ).colorScheme.secondary,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                           8,
@@ -176,13 +178,14 @@ class _AdminWithdrawListState extends ConsumerState<AdminWithdrawList> {
                                                           8.0,
                                                         ),
                                                     child: Center(
-                                                      child: const Text(
+                                                      child: Text(
                                                         'Accept',
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: Pallete
-                                                              .primaryColor,
+                                                          color: Theme.of(
+                                                            context,
+                                                          ).primaryColor,
                                                         ),
                                                       ),
                                                     ),

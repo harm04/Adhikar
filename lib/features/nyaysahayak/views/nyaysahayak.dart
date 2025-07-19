@@ -409,7 +409,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   void _showLanguagePicker() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: context.surfaceColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -430,7 +430,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: context.textPrimaryColor,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -443,7 +443,8 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
                         return ListTile(
                           title: Text(
                             language,
-                            style: TextStyle(color: context.textPrimaryColor),
+                            style: TextStyle(
+                                color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).hintColor),
                           ),
                           onTap: () {
                             setState(() {
@@ -487,7 +488,7 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
           IconButton(
             icon: SvgPicture.asset(
               'assets/svg/chat.svg',
-              color: context.iconPrimaryColor,
+              color: Theme.of(context).iconTheme.color ?? Theme.of(context).hintColor,
               height: 25,
             ),
             onPressed: () {

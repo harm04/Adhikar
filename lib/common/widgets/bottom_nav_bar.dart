@@ -3,10 +3,8 @@ import 'package:adhikar/features/home/views/home.dart';
 import 'package:adhikar/features/nyaysahayak/views/nyaysahayak.dart';
 import 'package:adhikar/features/search/views/search.dart';
 import 'package:adhikar/features/showcase/views/showcase_list.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -91,7 +89,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 color: Theme.of(context).scaffoldBackgroundColor,
                 border: Border(
                   top: BorderSide(
-                    color: Pallete.greyColor.withOpacity(0.3),
+                    color: Theme.of(context).dividerColor,
                     width: 0.5,
                   ),
                 ),
@@ -161,14 +159,18 @@ class _BottomNavBarState extends State<BottomNavBar> {
   ) {
     final isSelected = _page == index;
 
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final activeColor = isDarkMode ? Colors.white : Theme.of(context).primaryColor;
+    final inactiveColor = Colors.grey;
+
     return Expanded(
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () => navigationTapped(index),
           borderRadius: BorderRadius.circular(12),
-          splashColor: Theme.of(context).primaryColor,
-          highlightColor: Theme.of(context).primaryColor,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             child: Column(
@@ -179,10 +181,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   child: SvgPicture.asset(
                     iconPath,
                     colorFilter: ColorFilter.mode(
-                      isSelected
-                          ? Pallete.primaryColor
-                          : Theme.of(context).iconTheme.color ??
-                                Pallete.greyColor,
+                      isSelected ? activeColor : inactiveColor,
                       BlendMode.srcIn,
                     ),
                     height: iconSize,
@@ -193,10 +192,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   child: Text(
                     label,
                     style: TextStyle(
-                      color: isSelected
-                          ? Pallete.primaryColor
-                          : Theme.of(context).textTheme.bodyMedium?.color ??
-                                Pallete.greyColor,
+                      color: isSelected ? activeColor : inactiveColor,
                       fontSize: fontSize,
                       fontWeight: isSelected
                           ? FontWeight.w600

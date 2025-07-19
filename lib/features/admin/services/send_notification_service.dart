@@ -20,12 +20,12 @@ class SendNotificationService {
       return;
     }
 
-    String serverKey = await GetServerKey().getServerKeyToken();
+    String serverKey = await GetServerKey().getServerkeyToken();
     String url =
         'https://fcm.googleapis.com/v1/projects/adhikarnotification/messages:send';
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': ' Bearer $serverKey',
+      'Authorization': 'Bearer $serverKey',
     };
 
     Map<String, dynamic> notification = {
@@ -44,13 +44,19 @@ class SendNotificationService {
       body: jsonEncode(message),
     );
 
+    print("📤 Sending individual notification");
+    print("🎯 Token: ${token.substring(0, 20)}...");
+    print("🔗 URL: $url");
+    print("📋 Request body: ${jsonEncode(message)}");
+    print("📨 Response status: ${response.statusCode}");
+
     if (response.statusCode == 200) {
       print(
         "✅ Notification sent successfully to token: ${token.substring(0, 20)}...",
       );
     } else {
       print("❌ Failed to send notification: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      print("📄 Response body: ${response.body}");
 
       // Check if token is unregistered and clean it up
       if (response.body.contains("UNREGISTERED") && userId != null) {
@@ -93,12 +99,12 @@ class SendNotificationService {
     required Map<String, dynamic>? data,
     String? imageUrl,
   }) async {
-    String serverKey = await GetServerKey().getServerKeyToken();
+    String serverKey = await GetServerKey().getServerkeyToken();
     String url =
         'https://fcm.googleapis.com/v1/projects/adhikarnotification/messages:send';
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': ' Bearer $serverKey',
+      'Authorization': 'Bearer $serverKey',
     };
 
     Map<String, dynamic> notification = {
@@ -117,19 +123,26 @@ class SendNotificationService {
       body: jsonEncode(message),
     );
 
+    print("📤 Sending notification to topic '$topic'");
+    print("🔗 URL: $url");
+    print("📋 Request body: ${jsonEncode(message)}");
+    print("📨 Response status: ${response.statusCode}");
+
     if (response.statusCode == 200) {
-      print("notification sent to topic successfully");
+      print("✅ Notification sent to topic '$topic' successfully");
     } else {
-      print("Failed to send notification to topic: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      throw Exception('Failed to send notification to topic');
+      print(
+        "❌ Failed to send notification to topic '$topic': ${response.statusCode}",
+      );
+      print("📄 Response body: ${response.body}");
+      throw Exception('Failed to send notification to topic: ${response.body}');
     }
   }
 
   // Debug method to test FCM token validity
   static Future<bool> testTokenValidity({required String token}) async {
     try {
-      String serverKey = await GetServerKey().getServerKeyToken();
+      String serverKey = await GetServerKey().getServerkeyToken();
       String url =
           'https://fcm.googleapis.com/v1/projects/adhikarnotification/messages:send';
       var headers = {

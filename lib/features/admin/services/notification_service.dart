@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
+import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/message/controller/messaging_controller.dart';
 import 'package:adhikar/features/message/views/messaging.dart';
@@ -8,6 +10,7 @@ import 'package:adhikar/features/posts/widgets/post_card.dart';
 import 'package:adhikar/features/showcase/controller/showcase_controller.dart';
 import 'package:adhikar/features/showcase/views/showcase.dart';
 import 'package:adhikar/providers/open_chat_provider.dart';
+import 'package:adhikar/main.dart' as main; // Import for navigator key
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -21,12 +24,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  static FirebaseMessaging messaging = FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin
+  _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  // Flag to track if notifications are initialized
+  static bool _isInitialized = false;
 
   //request notification permission from user
-  void requestNotificationPermission() async {
+  static void requestNotificationPermission() async {
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       badge: true,
@@ -51,7 +57,7 @@ class NotificationService {
   }
 
   //get the token for the device
-  Future<String?> getToken() async {
+  static Future<String?> getToken() async {
     // ignore: unused_local_variable
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
@@ -67,31 +73,15 @@ class NotificationService {
     return token!;
   }
 
-  //init firebase messaging
-  void initLocalNotification(
-    BuildContext context,
-    RemoteMessage message,
-    WidgetRef ref,
-  ) async {
-    var androidInitSettings = const AndroidInitializationSettings(
-      'logo_transaprent',
-    );
-    var iosInitSettings = const DarwinInitializationSettings();
-    var initializationSettings = InitializationSettings(
-      android: androidInitSettings,
-      iOS: iosInitSettings,
-    );
-    await _flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse: (payload) {
-        handleMessage(context, message, ref); // Now ref is available here!
-      },
-    );
-  }
-
   //firebase init
-  void firebaseInit(BuildContext context, WidgetRef ref) {
+  static void firebaseInit(BuildContext context, WidgetRef ref) {
     print("🔧 Initializing Firebase messaging listeners");
+
+    // Set foreground notification presentation options for iOS
+    if (Platform.isIOS) {
+      iosForgroundNotification();
+    }
+
     FirebaseMessaging.onMessage.listen((message) {
       print("📨 Received foreground message: ${message.notification?.title}");
       final openChatUserId = ref.read(openChatUserIdProvider);
@@ -107,21 +97,19 @@ class NotificationService {
       if (kDebugMode) {
         print("notification title: ${notification!.title}");
         print("notification body: ${notification.body}");
+        print("notification data: ${message.data}");
       }
-      if (Platform.isIOS) {
-        iosForgroundNotification();
-      }
-      if (Platform.isAndroid) {
-        print("📱 Processing Android notification");
-        initLocalNotification(context, message, ref);
-        showNotification(message);
-      }
+
+      // Always show our custom notification for foreground messages
+      print("📱 Processing foreground notification");
+      showNotification(message);
     });
   }
 
-  //function to show notification
-  Future<void> showNotification(RemoteMessage message) async {
-    // Initialize notifications if not already done
+  // Initialize notifications with tap handler
+  static Future<void> _initializeNotifications() async {
+    if (_isInitialized) return;
+
     var androidInitSettings = const AndroidInitializationSettings(
       'logo_transaprent',
     );
@@ -130,7 +118,103 @@ class NotificationService {
       android: androidInitSettings,
       iOS: iosInitSettings,
     );
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    // Set up the callback for notification taps
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        // Parse the payload to get navigation data
+        if (response.payload != null) {
+          _handleNotificationTap(response.payload!);
+        }
+      },
+    );
+    _isInitialized = true;
+    print("📱 Initialized local notifications with tap handler");
+  }
+
+  // Global method to handle notification tap
+  static void _handleNotificationTap(String payload) {
+    print("🔔 Notification tapped with payload: $payload");
+
+    // Parse the JSON payload to get screen navigation data
+    try {
+      final Map<String, dynamic> data = jsonDecode(payload);
+      final String? screen = data['screen'];
+
+      print("🎯 Parsed screen from payload: $screen");
+      print("📊 Full data: $data");
+
+      // Use the global navigator key to navigate
+      _navigateToScreenWithGlobalKey(screen, data);
+    } catch (e) {
+      print("❌ Error parsing notification payload: $e");
+      print("📝 Raw payload was: $payload");
+    }
+  }
+
+  // Navigate to screen using global navigator key
+  static void _navigateToScreenWithGlobalKey(
+    String? screen,
+    Map<String, dynamic> data,
+  ) {
+    print("🧭 Navigating to screen: $screen with data: $data");
+
+    // Get the current context from the global navigator key
+    final BuildContext? context = main.navigatorKey.currentState?.context;
+
+    if (context == null) {
+      print("❌ No context available for navigation");
+      print("🔍 Navigator key state: ${main.navigatorKey.currentState}");
+      return;
+    }
+
+    print("✅ Context available, proceeding with navigation");
+
+    // Navigate based on screen type
+    switch (screen) {
+      case 'notification':
+        print("📱 Navigating to Notifications screen");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Notifications()),
+        );
+        break;
+      case 'home':
+        print("🏠 Navigating to Home screen");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        break;
+      case 'news':
+        print("📰 Navigating to News screen");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => NewsList()),
+        );
+        break;
+      default:
+        print("🏠 Default navigation to Home screen");
+        // Default to home page
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BottomNavBar()),
+        );
+        break;
+    }
+  }
+
+  // Method to display notification with proper icon and navigation
+  static Future<void> showNotification(RemoteMessage message) async {
+    print(
+      "📱 showNotification called with message: ${message.notification?.title}",
+    );
+
+    // Ensure initialization
+    if (!_isInitialized) {
+      await _initializeNotifications();
+    }
 
     AndroidNotificationChannel channel = AndroidNotificationChannel(
       'adhikar_channel', // Use consistent channel ID
@@ -209,18 +293,25 @@ class NotificationService {
       print(
         "📱 Attempting to show notification: ${message.notification?.title}",
       );
+      print("📊 Message data: ${message.data}");
+
+      // Create payload with navigation data
+      final payload = jsonEncode(message.data);
+      print("🎯 Created payload: $payload");
+
       _flutterLocalNotificationsPlugin.show(
         0,
         message.notification!.title.toString(),
         message.notification!.body.toString(),
         notificationDetails,
+        payload: payload, // Add the payload here
       );
-      print("📱 Notification show request completed");
+      print("📱 Notification show request completed with payload: $payload");
     });
   }
 
   //background notification
-  Future<void> backgroundNotification(
+  static Future<void> backgroundNotification(
     BuildContext context,
     WidgetRef ref,
   ) async {
@@ -239,7 +330,7 @@ class NotificationService {
   }
 
   //handle message
-  Future<void> handleMessage(
+  static Future<void> handleMessage(
     BuildContext context,
     RemoteMessage message,
     WidgetRef ref, // <-- Add this
@@ -341,7 +432,7 @@ class NotificationService {
   }
 
   //ios foreground notification
-  Future iosForgroundNotification() async {
+  static Future iosForgroundNotification() async {
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
           alert: true,

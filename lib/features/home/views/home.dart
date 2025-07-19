@@ -34,14 +34,13 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  NotificationService notificationService = NotificationService();
   @override
   void initState() {
     super.initState();
-    notificationService.requestNotificationPermission();
-    notificationService.getToken();
-    notificationService.firebaseInit(context, ref);
-    notificationService.backgroundNotification(context, ref);
+    NotificationService.requestNotificationPermission();
+    NotificationService.getToken();
+    NotificationService.firebaseInit(context, ref);
+    NotificationService.backgroundNotification(context, ref);
   }
 
   void signout() {

@@ -56,7 +56,7 @@ class DarkColors {
   const DarkColors();
 
   // Primary colors
-  Color get primary => const Color.fromRGBO(44, 37, 115, 1);
+  Color get primary => const Color.fromARGB(255, 80, 69, 205);
   Color get secondary => const Color.fromRGBO(163, 194, 235, 1);
 
   // Background colors

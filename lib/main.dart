@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:adhikar/firebase_options.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
 import 'package:adhikar/common/widgets/check_internet.dart';
@@ -9,7 +10,6 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/auth/views/signin.dart';
 import 'package:adhikar/features/expert/views/expert_verification.dart';
 import 'package:adhikar/features/admin/views/side_nav.dart';
-import 'package:adhikar/firebase_options.dart';
 import 'package:adhikar/theme/app_theme.dart';
 import 'package:adhikar/providers/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,27 +18,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:adhikar/features/admin/services/notification_service.dart';
 
+// Global navigator key for handling navigation from notifications
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 @pragma('vm:entry-point')
-Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialize and show notification with transparent logo when app is terminated
-  final notificationService = NotificationService();
-  await notificationService.showNotification(message);
+  print('🔔 Background message received: ${message.notification?.title}');
+  print('📊 Background message data: ${message.data}');
 
-  print('Background message received: ${message.notification?.title}');
+  // Show notification directly using static method with proper navigation payload
+  await NotificationService.showNotification(message);
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
-  runApp(ProviderScope(child: const MyApp()));
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerStatefulWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   @override
   ConsumerState<MyApp> createState() => _MyAppState();
@@ -58,17 +61,35 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    // Check if app was launched from a notification
+    _checkForInitialMessage();
+
     // Listen for notification taps (background/terminated)
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      NotificationService().handleMessage(context, message, ref);
+      print("🔔 App opened from notification: ${message.data}");
+      NotificationService.handleMessage(context, message, ref);
     });
 
     // Initialize notification service
     Future.delayed(Duration(seconds: 1), () {
-      final notificationService = NotificationService();
-      notificationService.requestNotificationPermission();
-      notificationService.firebaseInit(context, ref);
+      NotificationService.requestNotificationPermission();
+      NotificationService.firebaseInit(context, ref);
     });
+  }
+
+  // Check if app was launched from a notification
+  void _checkForInitialMessage() async {
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance
+        .getInitialMessage();
+
+    if (initialMessage != null) {
+      print("🚀 App launched from notification: ${initialMessage.data}");
+      // Handle the initial message after app is fully loaded
+      Future.delayed(Duration(seconds: 2), () {
+        NotificationService.handleMessage(context, initialMessage, ref);
+      });
+    }
   }
 
   @override
@@ -84,6 +105,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     return MaterialApp(
       title: 'Adhikar',
       debugShowCheckedModeBanner: false,
+      navigatorKey: navigatorKey, // Add this line
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,

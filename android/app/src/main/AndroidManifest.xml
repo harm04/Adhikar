@@ -29,19 +29,8 @@
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme"
             />
-            <meta-data
-                android:name="com.google.firebase.messaging.default_notification_channel_id"
-                android:value="adhikar_channel"
-            />              <!-- Default notification icon for Firebase messaging -->
-            <meta-data
-                android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@drawable/logo_transaprent"
-            />
-            <!-- Default notification color for Firebase messaging -->
-            <meta-data
-                android:name="com.google.firebase.messaging.default_notification_color"
-                android:resource="@android:color/white"
-            />
+            <!-- Remove Firebase automatic notification handling to prevent duplicates -->
+            <!-- All notifications will be handled by custom NotificationService -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -70,6 +59,21 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Disable Firebase automatic notification display -->
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+
+        <!-- Disable Firebase automatic notification display -->
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+
+        <!-- Ensure only our custom notifications are shown -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="adhikar_channel" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

@@ -2,7 +2,6 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/admin/widgets/expert_verification.dart';
 import 'package:adhikar/features/expert/controller/expert_controller.dart';
-import 'package:adhikar/theme/pallete_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -68,7 +67,7 @@ class _AdminExpertListState extends ConsumerState<AdminExpertList> {
                               );
                             },
                             contentPadding: EdgeInsets.all(20),
-                            tileColor: Pallete.cardColor,
+                            tileColor: Theme.of(context).cardColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),

@@ -505,7 +505,7 @@ class PostCard extends ConsumerWidget {
                       titleStyle: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Colors.black,
+                        color: context.textPrimaryColor,
                       ),
                     ),
                     SizedBox(height: 10),

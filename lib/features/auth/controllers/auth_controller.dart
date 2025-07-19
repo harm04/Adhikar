@@ -116,8 +116,7 @@ class AuthController extends StateNotifier<bool> {
     final res = await _authAPI.signUp(email: email, password: password);
     state = false;
     res.fold((l) => showSnackbar(context, l.message), (r) async {
-      NotificationService notificationService = NotificationService();
-      String? userDeviceToken = await notificationService.getToken();
+      String? userDeviceToken = await NotificationService.getToken();
       UserModel userModel = UserModel(
         firstName: firstName,
         lastName: lastName,
@@ -499,8 +498,7 @@ class AuthController extends StateNotifier<bool> {
   Future<void> updateFCMToken(String userId) async {
     try {
       print("🔄 Starting FCM token update for user: $userId");
-      final notificationService = NotificationService();
-      String? newToken = await notificationService.getToken();
+      String? newToken = await NotificationService.getToken();
 
       if (newToken != null && newToken.isNotEmpty) {
         print("📱 Got FCM token: ${newToken.substring(0, 20)}...");
@@ -555,7 +553,7 @@ class AuthController extends StateNotifier<bool> {
     try {
       // Import the send notification service dynamically to avoid circular imports
       final GetServerKey getServerKey = GetServerKey();
-      final serverKey = await getServerKey.getServerKeyToken();
+      final serverKey = await getServerKey.getServerkeyToken();
 
       final url =
           'https://fcm.googleapis.com/v1/projects/adhikarnotification/messages:send';

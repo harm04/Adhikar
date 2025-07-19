@@ -379,6 +379,17 @@ class _CommentViewState extends ConsumerState<Comment> {
                               '',
                             ),
                             displayDirection: UIDirection.uiDirectionHorizontal,
+                            backgroundColor: Theme.of(context).cardColor,
+                            borderRadius: 8,
+                            bodyStyle: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).hintColor,
+                            ),
+                            titleStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
                           ),
                         ],
                         SizedBox(height: 20),
