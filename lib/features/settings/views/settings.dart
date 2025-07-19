@@ -4,6 +4,7 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/settings/views/faqs_page%20copy.dart';
 import 'package:adhikar/features/settings/widget/my_account.dart';
 import 'package:adhikar/features/settings/views/about_adhikar_page.dart';
+import 'package:adhikar/theme/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,6 +20,29 @@ class Settings extends ConsumerWidget {
     }
     void signout() {
       ref.read(authControllerProvider.notifier).signout(context, ref);
+    }
+
+    Future<void> showLogoutDialog(BuildContext context) async {
+      final result = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Logout', style: TextStyle(color: context.primaryColor)),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Logout'),
+            ),
+          ],
+        ),
+      );
+      if (result == true) {
+        signout();
+      }
     }
 
     return Scaffold(
@@ -145,7 +169,7 @@ class Settings extends ConsumerWidget {
               ),
               customRow('assets/svg/share.svg', 'Share App'),
               GestureDetector(
-                onTap: () => signout(),
+                onTap: () => showLogoutDialog(context),
                 child: customRow('assets/svg/logout.svg', 'Logout'),
               ),
             ],

@@ -405,7 +405,8 @@ class PostCard extends ConsumerWidget {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PodsListView(),
+                            builder: (context) =>
+                             CategoriesListView(),
                           ),
                         ),
                         child: CircleAvatar(

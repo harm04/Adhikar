@@ -25,14 +25,47 @@ class Nyaysahayak extends ConsumerStatefulWidget {
 
 class _NyaysahayakState extends ConsumerState<Nyaysahayak>
     with SingleTickerProviderStateMixin {
-  bool isLoading = false;
-  bool isTyping = false;
-  String typingText = '';
-  stt.SpeechToText speech = stt.SpeechToText();
-  bool isListening = false;
-
   XFile? pickedImage;
   File? pickedFile;
+  bool _disclaimerAccepted = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_disclaimerAccepted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showDisclaimerDialog();
+      });
+    }
+  }
+
+  void _showDisclaimerDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Disclaimer',
+          style: TextStyle(color: context.primaryColor),
+        ),
+        content: const Text(
+          'Nyaysahayak is an AI-powered legal assistant. The information provided is for general guidance only and does not constitute legal advice. For complex or personal legal matters, please consult a qualified legal professional.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _disclaimerAccepted = true;
+              });
+              Navigator.of(context).pop();
+            },
+            child: const Text('I Understand'),
+          ),
+        ],
+      ),
+    );
+  }
+
   String extractedText = '';
   String summaryText = '';
   bool scanning = false;
@@ -474,6 +507,10 @@ class _NyaysahayakState extends ConsumerState<Nyaysahayak>
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDataProvider).value;
     if (currentUser == null) {
+      return const SizedBox.shrink();
+    }
+    if (!_disclaimerAccepted) {
+      // Prevent interaction until disclaimer is accepted
       return const SizedBox.shrink();
     }
     return Scaffold(

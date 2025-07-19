@@ -303,7 +303,7 @@ class _CommentViewState extends ConsumerState<Comment> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) {
-                                    return PodsListView();
+                                    return CategoriesListView();
                                   },
                                 ),
                               ),

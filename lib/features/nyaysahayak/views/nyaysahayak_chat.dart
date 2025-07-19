@@ -1,6 +1,7 @@
 import 'package:adhikar/constants/appwrite_constants.dart';
 import 'package:adhikar/features/nyaysahayak/widget/chat_bubble.dart';
 import 'package:adhikar/theme/color_scheme.dart';
+import 'package:adhikar/theme/image_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -38,7 +39,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
       direction: Direction.left,
       message:
           'Hello, I am Nyaysahayak. How can I assist you solve legal trouble?',
-      photoUrl: 'https://i.pravatar.cc/150?img=47',
+      photoUrl: ImageTheme.defaultAdhikarLogo,
       type: BubbleType.alone,
     ),
   ];
@@ -187,7 +188,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
         ChatBubble(
           direction: Direction.left,
           message: aiResponse,
-          photoUrl: 'https://i.pravatar.cc/150?img=47',
+          photoUrl: ImageTheme.defaultAdhikarLogo,
           type: BubbleType.alone,
         ),
       ];
@@ -262,7 +263,7 @@ class _NyaysahayakChatState extends ConsumerState<NyaysahayakChat> {
                     ChatBubble(
                       direction: Direction.left,
                       message: typingText,
-                      photoUrl: 'https://i.pravatar.cc/150?img=47',
+                      photoUrl: ImageTheme.defaultAdhikarLogo,
                       type: BubbleType.alone,
                     ),
                   ...chatBubbles.reversed,

@@ -1,19 +1,19 @@
 import 'package:adhikar/features/pods/widgets/pods_card.dart';
 import 'package:flutter/material.dart';
 
-class PodsListView extends StatefulWidget {
-  const PodsListView({super.key});
+class CategoriesListView extends StatefulWidget {
+  const CategoriesListView({super.key});
 
   @override
-  State<PodsListView> createState() => _PodsListViewState();
+  State<CategoriesListView> createState() => _CategoriesListViewState();
 }
 
-class _PodsListViewState extends State<PodsListView> {
+class _CategoriesListViewState extends State<CategoriesListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pods'),
+        title: Text('Categories'),
         centerTitle: true,
         automaticallyImplyLeading: true,
       ),

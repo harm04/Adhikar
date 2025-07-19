@@ -56,10 +56,7 @@ class ChatBubble extends StatelessWidget {
   Widget _buildLeading(BubbleType type) {
     if (type == BubbleType.alone || type == BubbleType.bottom) {
       if (photoUrl != null) {
-        return CircleAvatar(
-          radius: 14,
-          backgroundImage: NetworkImage(photoUrl!),
-        );
+        return CircleAvatar(radius: 14, backgroundImage: AssetImage(photoUrl!));
       }
       return const CircleAvatar(
         backgroundColor: Colors.black12,
