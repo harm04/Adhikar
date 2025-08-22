@@ -184,7 +184,7 @@ class NotificationService {
         print("🏠 Navigating to Home screen");
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => BottomNavBar()),
         );
         break;
       case 'news':
@@ -426,7 +426,7 @@ class NotificationService {
       // Handle other screens or default action
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => BottomNavBar()),
       );
     }
   }

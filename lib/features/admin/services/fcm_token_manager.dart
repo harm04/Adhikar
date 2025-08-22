@@ -12,7 +12,7 @@ class FCMTokenManager {
     required WidgetRef ref,
   }) async {
     try {
-      print("🔍 Validating FCM token for user: $userId");
+      print("Validating FCM token for user: $userId");
 
       // Test if current token is valid
       final isValid = await SendNotificationService.testTokenValidity(
@@ -20,7 +20,7 @@ class FCMTokenManager {
       );
 
       if (!isValid) {
-        print("❌ Token invalid, generating new token for user: $userId");
+        print("Token invalid, generating new token for user: $userId");
 
         // Generate new token
         final newToken = await NotificationService.getToken();
@@ -34,7 +34,7 @@ class FCMTokenManager {
           final userAPI = ref.read(userAPIProvider);
           await userAPI.updateFCMToken(userId, newToken);
 
-          print("✅ Successfully refreshed FCM token for user: $userId");
+          print("Successfully refreshed FCM token for user: $userId");
 
           // Invalidate user providers to refresh data
           ref.invalidate(currentUserDataProvider);
@@ -43,10 +43,10 @@ class FCMTokenManager {
           return;
         }
       } else {
-        print("✅ FCM token is valid for user: $userId");
+        print("FCM token is valid for user: $userId");
       }
     } catch (e) {
-      print("❌ Error during token validation/refresh: $e");
+      print("Error during token validation/refresh: $e");
     }
   }
 
@@ -56,7 +56,7 @@ class FCMTokenManager {
   }) async {
     final results = <String, bool>{};
 
-    print("🔍 Starting bulk FCM token validation for ${users.length} users");
+    print("Starting bulk FCM token validation for ${users.length} users");
 
     for (final user in users) {
       if (user.fcmToken.isEmpty) continue;
@@ -68,13 +68,13 @@ class FCMTokenManager {
         results[user.uid] = isValid;
 
         if (isValid) {
-          print("✅ Valid: ${user.firstName} ${user.lastName}");
+          print("Valid: ${user.firstName} ${user.lastName}");
         } else {
-          print("❌ Invalid: ${user.firstName} ${user.lastName} (${user.uid})");
+          print("Invalid: ${user.firstName} ${user.lastName} (${user.uid})");
         }
       } catch (e) {
         results[user.uid] = false;
-        print("❌ Error: ${user.firstName} ${user.lastName} - $e");
+        print("Error: ${user.firstName} ${user.lastName} - $e");
       }
     }
 
@@ -97,11 +97,11 @@ class FCMTokenManager {
         .toList();
 
     if (invalidUserIds.isEmpty) {
-      print("✅ No invalid tokens to clean up");
+      print("No invalid tokens to clean up");
       return 0;
     }
 
-    print("🧹 Cleaning up ${invalidUserIds.length} invalid FCM tokens");
+    print("Cleaning up ${invalidUserIds.length} invalid FCM tokens");
 
     final userAPI = ref.read(userAPIProvider);
     int cleanedCount = 0;
@@ -110,9 +110,9 @@ class FCMTokenManager {
       try {
         await userAPI.clearFCMToken(userId);
         cleanedCount++;
-        print("🧹 Cleared token for user: $userId");
+        print("Cleared token for user: $userId");
       } catch (e) {
-        print("❌ Failed to clear token for user $userId: $e");
+        print("Failed to clear token for user $userId: $e");
       }
     }
 

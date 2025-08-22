@@ -25,8 +25,8 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  print('🔔 Background message received: ${message.notification?.title}');
-  print('📊 Background message data: ${message.data}');
+  print('Background message received: ${message.notification?.title}');
+  print('Background message data: ${message.data}');
 
   // Show notification directly using static method with proper navigation payload
   await NotificationService.showNotification(message);
