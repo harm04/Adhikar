@@ -243,7 +243,7 @@ class AuthController extends StateNotifier<bool> {
         context,
         MaterialPageRoute(builder: (context) => const BottomNavBar()),
       );
-      showSnackbar(context, 'Welcome email. You are successfully logged in');
+  showSnackbar(context, 'Welcome ${user.email}. You are successfully logged in');
     });
   }
 
