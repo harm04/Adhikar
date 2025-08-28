@@ -292,12 +292,22 @@ class AuthController extends StateNotifier<bool> {
           fcmToken: userDeviceToken ?? '',
         );
         final saveRes = await _userAPI.saveUserData(userModel);
+        bool creationFailed = false;
         saveRes.fold(
           (failure) {
-            showSnackbar(context, 'Failed to create user profile: ${failure.message}');
-            return;
+            creationFailed = true;
+            showSnackbar(
+              context,
+              'Failed to create user profile: ${failure.message}',
+            );
+          },
+          (_) {
+            debugPrint('[AuthController.googleSignIn] User profile created');
           },
         );
+        if (creationFailed) {
+          return; // Abort navigation if user document wasn't created
+        }
       }
 
       _subscribeToTopics(userModel.userType);

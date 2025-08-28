@@ -1,4 +1,3 @@
-import 'package:adhikar/apis/user_api.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/admin/services/send_notification_service.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
@@ -7,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AdminPushNotification extends ConsumerStatefulWidget {
-  AdminPushNotification({super.key});
+  const AdminPushNotification({super.key});
 
   @override
   ConsumerState<AdminPushNotification> createState() =>
@@ -317,9 +316,9 @@ class _AdminPushNotificationState extends ConsumerState<AdminPushNotification> {
                           width: MediaQuery.of(context).size.width * 0.3,
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.blue.withOpacity(0.1),
+                            color: Colors.blue.withValues(alpha: 0.1),
                             border: Border.all(
-                              color: Colors.blue.withOpacity(0.3),
+                              color: Colors.blue.withValues(alpha: 0.3),
                             ),
                             borderRadius: BorderRadius.circular(8),
                           ),
