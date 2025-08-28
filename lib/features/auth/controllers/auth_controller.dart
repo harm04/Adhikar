@@ -186,11 +186,18 @@ class AuthController extends StateNotifier<bool> {
     required WidgetRef ref,
   }) async {
     state = true;
+    debugPrint('[AuthController.signIn] start email=$email');
     final res = await _authAPI.signIn(email: email, password: password);
     state = false;
+    debugPrint('[AuthController.signIn] result isRight=${res.isRight()}');
 
-    res.fold((l) => showSnackbar(context, l.message), (r) async {
+    res.fold((l) {
+      debugPrint('[AuthController.signIn][ERROR] ${l.message}');
+      showSnackbar(context, l.message);
+    }, (r) async {
+      debugPrint('[AuthController.signIn] session id=${r.$id} userId=${r.userId}');
       final user = await _authAPI.currentUserAccount();
+      debugPrint('[AuthController.signIn] currentUserAccount id=${user?.$id} email=${user?.email}');
 
       if (user == null) {
         showSnackbar(context, "Login failed. Please try again.");
@@ -222,17 +229,78 @@ class AuthController extends StateNotifier<bool> {
     final res = await _authAPI.googleSignIn();
     state = false;
 
-    res.fold((l) => showSnackbar(context, l.message), (r) async {
+    res.fold((l) {
+      showSnackbar(context, l.message);
+    }, (_) async {
       final user = await _authAPI.currentUserAccount();
 
       if (user == null) {
         showSnackbar(context, "Login failed. Please try again.");
         return;
       }
-      final userModel = await getUserData(user.$id);
-      _subscribeToTopics(userModel.userType);
 
-      // Update FCM token for this user (MISSING IN GOOGLE SIGN-IN)
+      UserModel? userModel;
+      bool isNew = false;
+      try {
+        userModel = await getUserData(user.$id);
+      } catch (e) {
+        isNew = true;
+      }
+
+      if (userModel == null) {
+        String? userDeviceToken = await NotificationService.getToken();
+        userModel = UserModel(
+          firstName: user.name?.split(' ').first ?? '',
+          lastName: user.name?.split(' ').skip(1).join(' ') ?? '',
+          phone: user.phone ?? '',
+          email: user.email,
+          credits: 0.0,
+            meetings: [],
+            transactions: [],
+          password: '',
+          profileImage: user.prefs.data['profileImage'] ?? '',
+          bio: '',
+          createdAt: DateFormat("MMM dd").format(DateTime.now()),
+          summary: '',
+          following: [],
+          followers: [],
+          bookmarked: [],
+          uid: user.$id,
+          location: '',
+          linkedin: '',
+          twitter: '',
+          instagram: '',
+          facebook: '',
+          experienceTitle: '',
+          experienceSummary: '',
+          experienceOrganization: '',
+          eduStream: '',
+          eduDegree: '',
+          eduUniversity: '',
+          userType: 'User',
+          dob: '',
+          address1: '',
+          address2: '',
+          state: '',
+          city: '',
+          proofDoc: '',
+          idDoc: '',
+          casesWon: '',
+          experience: '',
+          description: '',
+          tags: [],
+          fcmToken: userDeviceToken ?? '',
+        );
+        final saveRes = await _userAPI.saveUserData(userModel);
+        saveRes.fold(
+          (failure) {
+            showSnackbar(context, 'Failed to create user profile: ${failure.message}');
+            return;
+          },
+        );
+      }
+
+      _subscribeToTopics(userModel.userType);
       await updateFCMToken(user.$id);
 
       ref.invalidate(currentUserAccountProvider);
@@ -243,7 +311,12 @@ class AuthController extends StateNotifier<bool> {
         context,
         MaterialPageRoute(builder: (context) => const BottomNavBar()),
       );
-      showSnackbar(context, 'Welcome email. You are successfully logged in');
+      showSnackbar(
+        context,
+        isNew
+            ? 'Welcome ${user.email}. Account created successfully'
+            : 'Welcome back ${user.email}',
+      );
     });
   }
 
