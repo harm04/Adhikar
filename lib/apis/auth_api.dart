@@ -21,7 +21,7 @@ abstract class IAuthApi {
     required String email,
     required String password,
   });
-  FutureEither<Session> googleSignIn();
+  FutureEitherVoid googleSignIn();
   FutureEitherVoid signout();
 }
 
@@ -84,13 +84,12 @@ class AuthAPI implements IAuthApi {
   }
 
   @override
-  FutureEither<Session> googleSignIn() async {
+  FutureEitherVoid googleSignIn() async {
     try {
-      final session = await _account.createOAuth2Session(
+      await _account.createOAuth2Session(
         provider: OAuthProvider.google,
       );
-
-      return right(session);
+      return right(null);
     } catch (err, stackTrace) {
       return left(Failure(err.toString(), stackTrace));
     }
