@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final tokenValidationProvider = StateProvider<Map<String, bool>>((ref) => {});
 
 class TokenManagement extends ConsumerStatefulWidget {
-  TokenManagement({super.key});
+  const TokenManagement({super.key});
 
   @override
   ConsumerState<TokenManagement> createState() => _TokenManagementState();

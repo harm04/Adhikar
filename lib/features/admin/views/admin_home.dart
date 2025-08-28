@@ -14,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class AdminHome extends ConsumerStatefulWidget {
-  AdminHome({super.key});
+  const AdminHome({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AdminHomeState();
@@ -125,7 +125,7 @@ class _AdminHomeState extends ConsumerState<AdminHome> {
                         SizedBox(height: 10),
                         if (searchController.text.trim().isNotEmpty)
                           // Show search results in the gap below the TextField
-                          Container(
+                          SizedBox(
                             height: 300, // Adjust as needed
                             child: SearchUser(query: searchController.text),
                           ),
