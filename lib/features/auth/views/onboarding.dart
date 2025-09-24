@@ -102,7 +102,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      "SignUp with Google",
+                      "Continue with Google",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -113,7 +113,24 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
               ),
             ),
-            Divider(color: Colors.grey, height: 60, indent: 34, endIndent: 34),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(child: Divider(color: Theme.of(context).dividerColor)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    'OR',
+                    style: TextStyle(
+                      color: Theme.of(context).hintColor,
+                      fontSize: 16,
+                      )
+                  ),
+                ),
+                Expanded(child: Divider(color: Theme.of(context).dividerColor)),
+              ],
+            ),
+            const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: GestureDetector(
@@ -136,7 +153,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      "SignUp with email",
+                      "Continue with email",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -147,40 +164,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Already have an account?',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).hintColor,
-                    fontSize: 16,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return SignInScreen();
-                        },
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'Log in',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 16,
-                      decoration: TextDecoration.underline,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Spacer(),
+         const Spacer(),
           ],
         ),
       ),

@@ -128,39 +128,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                           },
                           child: const CustomButton(text: 'Login'),
                         ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                color: Theme.of(context).dividerColor,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                'OR',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                color: Theme.of(context).dividerColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(authControllerProvider.notifier)
-                                .googleSignIn(context: context, ref: ref);
-                          },
-                          child: const CustomButton(
-                            text: 'Continue with Google',
-                          ),
-                        ),
+                        
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
