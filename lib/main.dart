@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:adhikar/features/auth/views/onboarding.dart';
 import 'package:adhikar/firebase_options.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:adhikar/common/widgets/bottom_nav_bar.dart';
@@ -7,7 +8,6 @@ import 'package:adhikar/common/widgets/error.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/common/widgets/splash_screnn.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
-import 'package:adhikar/features/auth/views/signin.dart';
 import 'package:adhikar/features/expert/views/expert_verification.dart';
 import 'package:adhikar/features/admin/views/side_nav.dart';
 import 'package:adhikar/theme/app_theme.dart';
@@ -158,14 +158,14 @@ class _MyAppState extends ConsumerState<MyApp> {
                               ? BottomNavBar()
                               : ExpertVerification();
                         } else {
-                          return SignInScreen();
+                          return OnboardingScreen();
                         }
                       },
                       loading: () => Loader(),
                       error: (err, st) => ErrorText(error: err.toString()),
                     );
                   } else {
-                    return SignInScreen();
+                    return OnboardingScreen();
                   }
                 },
                 error: (err, st) {

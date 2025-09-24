@@ -67,13 +67,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               const SizedBox(height: 10),
                               Text(
                                 'Create an account',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium
-                                    ?.copyWith(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.copyWith(fontSize: 16),
                               ),
                               Text(
                                 'Let\'s create your account',
