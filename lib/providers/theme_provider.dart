@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(ThemeMode.light) {
+  // Start with system so first frame follows device setting.
+  ThemeNotifier() : super(ThemeMode.system) {
     _loadTheme();
   }
 
@@ -11,7 +12,8 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 
   void _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final themeModeString = prefs.getString(_themeKey) ?? 'light';
+    // If no preference saved, follow system.
+    final themeModeString = prefs.getString(_themeKey) ?? 'system';
 
     switch (themeModeString) {
       case 'dark':
@@ -20,8 +22,8 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
       case 'system':
         state = ThemeMode.system;
         break;
-      default:
-        state = ThemeMode.light;
+      default: // 'system' or any unexpected value
+        state = ThemeMode.system;
     }
   }
 
@@ -38,7 +40,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
         themeModeString = 'system';
         break;
       default:
-        themeModeString = 'light';
+        themeModeString = 'system';
     }
 
     await prefs.setString(_themeKey, themeModeString);

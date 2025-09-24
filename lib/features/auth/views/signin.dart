@@ -3,9 +3,9 @@ import 'package:adhikar/common/widgets/custom_textfield.dart';
 import 'package:adhikar/common/widgets/loader.dart';
 import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/auth/views/signup.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:adhikar/theme/color_scheme.dart'; // added for context extension
 
 class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key});
@@ -43,6 +43,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
     return isLoading
         ? LoadingPage()
         : Scaffold(
+            backgroundColor: context.backgroundColor,
             body: SafeArea(
               child: SingleChildScrollView(
                 child: Padding(
@@ -59,19 +60,22 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                               ?.copyWith(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
+                                color: context.primaryColor,
                               ),
                         ),
                         Text(
                           'It\'s great to see you again',
                           style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: Theme.of(context).hintColor),
+                              ?.copyWith(color: context.textHintColor),
                         ),
                         const SizedBox(height: 20),
                         Text(
                           'Email',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyLarge?.copyWith(fontSize: 16),
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                fontSize: 16,
+                                color: context.textPrimaryColor,
+                              ),
                         ),
                         const SizedBox(height: 5),
                         CustomTextfield(
@@ -84,9 +88,11 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                         const SizedBox(height: 15),
                         Text(
                           'Password',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyLarge?.copyWith(fontSize: 16),
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                fontSize: 16,
+                                color: context.textPrimaryColor,
+                              ),
                         ),
                         const SizedBox(height: 5),
                         CustomTextfield(
@@ -103,7 +109,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                               'Forgot password?',
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
-                                    color: Theme.of(context).hintColor,
+                                    color: context.textHintColor,
                                     fontSize: 16,
                                   ),
                             ),
@@ -116,6 +122,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                                     ?.copyWith(
                                       fontSize: 16,
                                       decoration: TextDecoration.underline,
+                                      color: context.primaryColor,
                                     ),
                               ),
                             ),
@@ -128,7 +135,6 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                           },
                           child: const CustomButton(text: 'Login'),
                         ),
-                        
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +143,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                               'Don\'t have an account?',
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
-                                    color: Theme.of(context).hintColor,
+                                    color: context.textHintColor,
                                     fontSize: 16,
                                   ),
                             ),
@@ -158,6 +164,7 @@ class _LoginScreenState extends ConsumerState<SignInScreen> {
                                     ?.copyWith(
                                       fontSize: 16,
                                       decoration: TextDecoration.underline,
+                                      color: context.primaryColor,
                                     ),
                               ),
                             ),

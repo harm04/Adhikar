@@ -5,6 +5,7 @@ import 'package:adhikar/features/auth/controllers/auth_controller.dart';
 import 'package:adhikar/features/auth/views/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:adhikar/theme/color_scheme.dart'; // added for context extensions
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -49,10 +50,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     return isLoading
         ? LoadingPage()
         : Scaffold(
+            backgroundColor: context.backgroundColor,
             body: loading
                 ? Center(
                     child: CircularProgressIndicator(
-                      color: Theme.of(context).primaryColor,
+                      color: context.primaryColor,
                     ),
                   )
                 : SafeArea(
@@ -67,23 +69,25 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               const SizedBox(height: 10),
                               Text(
                                 'Create an account',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium?.copyWith(fontSize: 16),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontSize: 16,
+                                      color: context.textPrimaryColor,
+                                    ),
                               ),
                               Text(
                                 'Let\'s create your account',
                                 style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      color: Theme.of(context).hintColor,
-                                    ),
+                                    ?.copyWith(color: context.textHintColor),
                               ),
                               const SizedBox(height: 20),
                               Text(
                                 'First Name',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyLarge?.copyWith(fontSize: 16),
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      fontSize: 16,
+                                      color: context.textPrimaryColor,
+                                    ),
                               ),
                               const SizedBox(height: 5),
                               CustomTextfield(
@@ -97,9 +101,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               const SizedBox(height: 15),
                               Text(
                                 'Last Name',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyLarge?.copyWith(fontSize: 16),
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      fontSize: 16,
+                                      color: context.textPrimaryColor,
+                                    ),
                               ),
                               const SizedBox(height: 5),
                               CustomTextfield(
@@ -113,9 +119,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               const SizedBox(height: 15),
                               Text(
                                 'Email',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyLarge?.copyWith(fontSize: 16),
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      fontSize: 16,
+                                      color: context.textPrimaryColor,
+                                    ),
                               ),
                               const SizedBox(height: 5),
                               CustomTextfield(
@@ -128,9 +136,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               const SizedBox(height: 15),
                               Text(
                                 'Password',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyLarge?.copyWith(fontSize: 16),
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      fontSize: 16,
+                                      color: context.textPrimaryColor,
+                                    ),
                               ),
                               const SizedBox(height: 5),
                               CustomTextfield(
@@ -150,7 +160,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium
-                                            ?.copyWith(fontSize: 16),
+                                            ?.copyWith(
+                                              fontSize: 16,
+                                              color: context.textSecondaryColor,
+                                            ),
                                       ),
                                       TextSpan(
                                         text:
@@ -163,6 +176,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                               fontWeight: FontWeight.bold,
                                               decoration:
                                                   TextDecoration.underline,
+                                              color: context.primaryColor,
                                             ),
                                       ),
                                     ],
@@ -186,7 +200,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                          color: Theme.of(context).hintColor,
+                                          color: context.textHintColor,
                                           fontSize: 16,
                                         ),
                                   ),
@@ -210,6 +224,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                             fontSize: 16,
                                             decoration:
                                                 TextDecoration.underline,
+                                            color: context.primaryColor,
                                           ),
                                     ),
                                   ),
